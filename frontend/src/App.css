@@ -246,9 +246,9 @@
   width: 100%;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 16px;
-  min-height: 200px;
+  align-items: flex-end;
+  position: relative;
+  margin-bottom: 8px; /* Brought very close to the caption! */
 }
 
 /* Increased image size - manageable and prominent */
@@ -256,8 +256,9 @@
   max-width: 320px;
   width: 100%;
   height: auto;
-  max-height: 250px;
+  max-height: 220px;
   object-fit: contain;
+  display: block;
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.06));
   transition: transform 0.3s ease;
 }
@@ -271,11 +272,13 @@
   font-family: 'Merriweather', Georgia, serif;
   font-size: 21px;
   font-weight: 600;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #3300CC;
   letter-spacing: 0.15px;
   max-width: 410px;
   text-align: left;
+  margin: 0;
+  padding: 0;
 }
 
 /* Connector branches */
@@ -288,7 +291,7 @@
 
 .branch-left {
   right: -55px;
-  top: 130px;
+  bottom: 6px;
   width: 55px;
   justify-content: flex-end;
 }
@@ -311,7 +314,7 @@
 
 .branch-right {
   left: -55px;
-  top: 130px;
+  bottom: 6px;
   width: 55px;
   justify-content: flex-start;
 }
@@ -600,7 +603,7 @@
   .plan-branch {
     position: absolute;
     left: -45px;
-    top: 100px;
+    bottom: 6px;
     width: 35px;
     right: auto;
   }
