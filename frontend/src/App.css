@@ -250,7 +250,8 @@
   padding-left: 55px;
 }
 
-/* One by one load transition on scroll down: Image with caption smoothly slides and fades in */
+/* One by one load transition on scroll down:
+   Left and right side images with caption come in from their sides and glide close to the path line */
 .plan-card {
   display: flex;
   flex-direction: column;
@@ -259,23 +260,28 @@
   width: 100%;
   max-width: 440px;
   opacity: 0;
-  transform: translateY(35px);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+  transition: opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Left side items start from outer left */
 .plan-card-left {
   align-items: flex-start;
+  transform: translateX(-80px);
 }
 
+/* Right side items start from outer right */
 .plan-card-right {
   align-items: flex-start;
+  transform: translateX(80px);
 }
 
-/* Active transition when scrolled into view */
-.plan-step-row.is-revealed .plan-card {
+/* When scrolled down into view: smoothly glide inward from left and right close to the path line */
+.plan-step-row.is-revealed .plan-card-left,
+.plan-step-row.is-revealed .plan-card-right {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(0);
 }
 
 .plan-image-box {
