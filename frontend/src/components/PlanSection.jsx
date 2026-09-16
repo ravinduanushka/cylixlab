@@ -6,48 +6,40 @@ const planSteps = [
     position: 'left',
     image: '/images/stress.png',
     alt: 'Struggling to manage workload',
-    text: (
-      <>
-        Struggling to manage your workload and schedule?
-        <br />
-        Let CylixLab help you find clarity and take control.
-      </>
-    )
+    lines: [
+      'Struggling to manage your workload and schedule?',
+      'Let CylixLab help you find clarity and take control.'
+    ]
   },
   {
     id: 2,
     position: 'right',
     image: '/images/learn.png',
     alt: 'Roadmap to success',
-    text: (
-      <>
-        our roadmap to success: personalized study schedules tailored to your unique goals and learning style.
-      </>
-    )
+    lines: [
+      'our roadmap to success: personalized study schedules',
+      'tailored to your unique goals and learning style.'
+    ]
   },
   {
     id: 3,
     position: 'left',
     image: '/images/parents.png',
     alt: 'Gain valuable insights for parents',
-    text: (
-      <>
-        Gain valuable insights into your child's progress.
-        <br />
-        Empowering parents with data and understanding.
-      </>
-    )
+    lines: [
+      "Gain valuable insights into your child's progress.",
+      'Empowering parents with data and understanding.'
+    ]
   },
   {
     id: 4,
     position: 'right',
     image: '/images/sucess.png',
     alt: 'Celebrate victory and milestone',
-    text: (
-      <>
-        From effort to victory: Celebrate every milestone and step confidently toward a bright future.
-      </>
-    )
+    lines: [
+      'From effort to victory: Celebrate every milestone',
+      'and step confidently toward a bright future.'
+    ]
   }
 ];
 
@@ -56,21 +48,22 @@ const PlanSection = () => {
   const [visibleSteps, setVisibleSteps] = useState({});
 
   useEffect(() => {
-    // IntersectionObserver to load image with caption one by one with transition as you scroll
+    // Re-triggers on scroll down and scroll up again
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const stepId = entry.target.getAttribute('data-step-id');
-          if (stepId) {
-            setVisibleSteps((prev) => ({ ...prev, [stepId]: true }));
-          }
+        const stepId = entry.target.getAttribute('data-step-id');
+        if (stepId) {
+          setVisibleSteps((prev) => ({
+            ...prev,
+            [stepId]: entry.isIntersecting
+          }));
         }
       });
     };
 
     const observer = new IntersectionObserver(observerCallback, {
-      threshold: 0.2,
-      rootMargin: '0px 0px -50px 0px'
+      threshold: 0.18,
+      rootMargin: '0px 0px -40px 0px'
     });
 
     const stepElements = containerRef.current?.querySelectorAll('.plan-step-row');
@@ -86,7 +79,7 @@ const PlanSection = () => {
       <h2 className="plan-title">PLAN</h2>
 
       <div className="plan-timeline-container" ref={containerRef}>
-        {/* Solid Static Vertical Line in #3333FF (No running line) */}
+        {/* Solid Static Vertical Line in #3333FF */}
         <div className="plan-center-stem"></div>
 
         <div className="plan-steps-wrapper">
@@ -114,7 +107,17 @@ const PlanSection = () => {
                           <div className="branch-node"></div>
                         </div>
                       </div>
-                      <p className="plan-caption">{step.text}</p>
+                      <div className="plan-caption">
+                        {step.lines.map((line, idx) => (
+                          <span
+                            key={idx}
+                            className="caption-rotate-line"
+                            style={{ transitionDelay: `${0.12 + idx * 0.08}s` }}
+                          >
+                            {line}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -131,7 +134,17 @@ const PlanSection = () => {
                           <div className="branch-line"></div>
                         </div>
                       </div>
-                      <p className="plan-caption">{step.text}</p>
+                      <div className="plan-caption">
+                        {step.lines.map((line, idx) => (
+                          <span
+                            key={idx}
+                            className="caption-rotate-line"
+                            style={{ transitionDelay: `${0.12 + idx * 0.08}s` }}
+                          >
+                            {line}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
