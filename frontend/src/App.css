@@ -197,15 +197,19 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 48px;
   z-index: 2;
 }
 
 .plan-step-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
+}
+
+/* Bring the 4 categories closer together vertically */
+.plan-step-row + .plan-step-row {
+  margin-top: -70px;
 }
 
 .plan-col {
@@ -577,6 +581,10 @@
     align-items: flex-start;
     padding-left: 45px;
     margin-bottom: 36px;
+  }
+
+  .plan-step-row + .plan-step-row {
+    margin-top: 0;
   }
 
   .plan-col-left,
