@@ -637,6 +637,12 @@
   .plan-card-right {
     align-items: flex-start;
     padding: 0;
+    transform: translateX(-35px);
+  }
+
+  .plan-step-row.is-revealed .plan-card-left,
+  .plan-step-row.is-revealed .plan-card-right {
+    transform: translateX(0);
   }
 
   .plan-img {
