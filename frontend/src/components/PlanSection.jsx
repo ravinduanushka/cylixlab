@@ -53,29 +53,10 @@ const planSteps = [
 
 const PlanSection = () => {
   const containerRef = useRef(null);
-  const [lineHeight, setLineHeight] = useState(0);
   const [visibleSteps, setVisibleSteps] = useState({});
 
   useEffect(() => {
-    // 1. Scroll-driven dynamic path height calculation
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      // When the top of the container reaches 70% of viewport, progress begins
-      const startOffset = windowHeight * 0.7;
-      const totalHeight = rect.height * 0.9;
-      const currentScroll = startOffset - rect.top;
-
-      const progress = Math.min(Math.max(currentScroll / totalHeight, 0), 1);
-      setLineHeight(progress * 100);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    // 2. IntersectionObserver to slowly display/reveal each of the 4 images and text
+    // IntersectionObserver to load image with caption one by one with transition as you scroll
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -88,15 +69,14 @@ const PlanSection = () => {
     };
 
     const observer = new IntersectionObserver(observerCallback, {
-      threshold: 0.15,
-      rootMargin: '0px 0px -40px 0px'
+      threshold: 0.2,
+      rootMargin: '0px 0px -50px 0px'
     });
 
-    const stepElements = containerRef.current.querySelectorAll('.plan-step-row');
-    stepElements.forEach((el) => observer.observe(el));
+    const stepElements = containerRef.current?.querySelectorAll('.plan-step-row');
+    stepElements?.forEach((el) => observer.observe(el));
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
   }, []);
@@ -106,16 +86,8 @@ const PlanSection = () => {
       <h2 className="plan-title">PLAN</h2>
 
       <div className="plan-timeline-container" ref={containerRef}>
-        {/* Background Track Guide Line */}
-        <div className="plan-center-stem-track"></div>
-
-        {/* Animated Drawing Path (fills slowly as you scroll down) */}
-        <div
-          className="plan-center-stem-fill"
-          style={{ height: `${lineHeight}%` }}
-        >
-          <div className="stem-glow-tip"></div>
-        </div>
+        {/* Solid Static Vertical Line in #3333FF (No running line) */}
+        <div className="plan-center-stem"></div>
 
         <div className="plan-steps-wrapper">
           {planSteps.map((step) => {
