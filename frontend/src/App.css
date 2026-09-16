@@ -309,7 +309,7 @@
   transform: scale(1.03);
 }
 
-/* Increased caption letter size with #3300CC */
+/* Increased caption letter size with #3300CC and 3D perspective */
 .plan-caption {
   font-family: 'Merriweather', Georgia, serif;
   font-size: 21px;
@@ -321,6 +321,28 @@
   text-align: left;
   margin: 0;
   padding: 0;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Auto-rotate 3D flip transition: flips quickly into place on scroll */
+.caption-rotate-line {
+  display: block;
+  opacity: 0;
+  transform: perspective(600px) rotateX(-65deg) translateY(14px);
+  transform-origin: 50% 0%;
+  transition: opacity 0.4s ease-out,
+              transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Rotates into view when scrolled, and resets on scroll-up */
+.plan-step-row.is-revealed .caption-rotate-line {
+  opacity: 1;
+  transform: perspective(600px) rotateX(0deg) translateY(0);
 }
 
 /* Connector branches */
