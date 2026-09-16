@@ -79,7 +79,7 @@ const FeaturesSection = () => {
         step = 1; // forward direction: 1 to 8
       }
       setActiveCardIndex(current);
-    }, 650);
+    }, 1200); // Decreased speed: relaxed, smooth pace
 
     return () => clearInterval(interval);
   }, []);
