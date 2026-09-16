@@ -181,14 +181,14 @@
   margin: 0 auto;
 }
 
-/* Central vertical grey line */
+/* Central vertical line using #3333FF */
 .plan-center-stem {
   position: absolute;
   top: 40px;
   bottom: 60px;
   left: 50%;
-  width: 2px;
-  background-color: #cbd5e1;
+  width: 2.5px;
+  background-color: #3333FF;
   transform: translateX(-50%);
   z-index: 1;
 }
