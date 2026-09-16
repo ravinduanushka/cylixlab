@@ -48,21 +48,43 @@
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 36px;
+  gap: 12px; /* Close near each other */
 }
 
 .nav-link {
   color: #ffffff;
-  font-size: 18px;
+  font-size: 15px; /* A little smaller, clean & elegant */
   font-weight: 500;
-  letter-spacing: 0.2px;
-  transition: color 0.2s ease, opacity 0.2s ease;
+  letter-spacing: 0.3px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  border: none;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  padding: 4px 0;
+  text-decoration: none;
 }
 
+/* Pop up effect when cursor moves close / hovers over the button (without border) */
 .nav-link:hover {
-  opacity: 0.85;
+  transform: translateY(-2.5px) scale(1.05);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+}
+
+.nav-link:active {
+  transform: translateY(0) scale(1.01);
+  background: rgba(255, 255, 255, 0.28);
+  border: none;
 }
 
 /* =========================================================
@@ -534,11 +556,12 @@
   }
 
   .navbar-links {
-    gap: 18px;
+    gap: 6px;
   }
 
   .nav-link {
-    font-size: 15px;
+    font-size: 13px;
+    padding: 4px 10px;
   }
 
   .hero-section {
