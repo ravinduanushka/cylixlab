@@ -431,22 +431,37 @@
 
 .feature-card {
   background-color: #ffffff;
-  border: 1.5px solid #1a355e;
-  border-radius: 12px;
+  /* Feature border rectangle line in blue color */
+  border: 1.8px solid #3333FF;
+  border-radius: 14px;
   padding: 34px 18px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  transition: all 0.28s ease;
   min-height: 200px;
   justify-content: flex-start;
+  position: relative;
+  /* Smooth transition when becoming little large and returning to previous size */
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.35s ease,
+              border-width 0.35s ease;
 }
 
+/* User hover state */
 .feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(26, 53, 94, 0.12);
-  border-color: #0f274a;
+  transform: translateY(-8px) scale(1.06);
+  box-shadow: 0 14px 30px rgba(51, 51, 255, 0.28);
+  border-color: #3300CC;
+}
+
+/* 1-8 and 8-1 continuous pulse: becomes little large and returns to previous size */
+.feature-card.card-pulse-large {
+  transform: translateY(-8px) scale(1.06);
+  border-color: #3300CC;
+  border-width: 2.2px;
+  box-shadow: 0 14px 32px rgba(51, 51, 255, 0.28), 0 0 18px rgba(51, 51, 255, 0.16);
 }
 
 .feature-icon-wrapper {
@@ -455,7 +470,12 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 12px;
-  color: #1a355e;
+  color: #3333FF;
+  transition: transform 0.35s ease;
+}
+
+.feature-card.card-pulse-large .feature-icon-wrapper {
+  transform: scale(1.12);
 }
 
 .feature-card-title {
