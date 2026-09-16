@@ -442,11 +442,12 @@
   min-height: 200px;
   justify-content: flex-start;
   position: relative;
-  /* Smooth transition when becoming little large and returning to previous size */
-  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
-              box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
-              border-color 0.35s ease,
-              border-width 0.35s ease;
+  /* Ultra-smooth, calm transition when becoming little large and returning to previous size */
+  will-change: transform, box-shadow, border-color;
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.6s ease,
+              border-width 0.6s ease;
 }
 
 /* User hover state */
@@ -456,7 +457,7 @@
   border-color: #3300CC;
 }
 
-/* 1-8 and 8-1 continuous pulse: becomes little large and returns to previous size */
+/* 1-8 and 8-1 continuous pulse: gently becomes little large and smoothly returns to previous size */
 .feature-card.card-pulse-large {
   transform: translateY(-8px) scale(1.06);
   border-color: #3300CC;
@@ -471,7 +472,7 @@
   justify-content: center;
   margin-bottom: 12px;
   color: #3333FF;
-  transition: transform 0.35s ease;
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .feature-card.card-pulse-large .feature-icon-wrapper {
