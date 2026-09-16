@@ -5,10 +5,11 @@ const planSteps = [
     id: 1,
     position: 'left',
     image: '/images/stress.png',
-    alt: 'Struggling with workload',
+    alt: 'Struggling to manage workload',
     text: (
       <>
-        Struggling to manage your workload and schedule?<br />
+        Struggling to manage your workload and schedule?
+        <br />
         Let CylixLab help you find clarity and take control.
       </>
     )
@@ -31,7 +32,8 @@ const planSteps = [
     alt: 'Gain valuable insights for parents',
     text: (
       <>
-        Gain valuable insights into your child's progress.<br />
+        Gain valuable insights into your child's progress.
+        <br />
         Empowering parents with data and understanding.
       </>
     )
@@ -54,56 +56,53 @@ const PlanSection = () => {
     <section id="plan" className="plan-section">
       <h2 className="plan-title">PLAN</h2>
 
-      <div className="timeline-container">
-        {/* Central Vertical Line */}
-        <div className="timeline-vertical-line"></div>
+      <div className="plan-timeline-container">
+        {/* Central Vertical Stem */}
+        <div className="plan-center-stem"></div>
 
-        <div className="timeline-steps">
-          {planSteps.map((step) => (
-            <div key={step.id} className={`timeline-row timeline-row-${step.position}`}>
-              
-              {step.position === 'left' ? (
-                <>
-                  {/* Content on Left */}
-                  <div className="timeline-item timeline-item-left">
-                    <div className="timeline-image-box">
-                      <img src={step.image} alt={step.alt} className="timeline-img" />
+        <div className="plan-steps-wrapper">
+          {planSteps.map((step) => {
+            const isLeft = step.position === 'left';
+            return (
+              <div key={step.id} className={`plan-step-row ${isLeft ? 'row-left' : 'row-right'}`}>
+                
+                {/* Left Side Container */}
+                <div className="plan-col plan-col-left">
+                  {isLeft && (
+                    <div className="plan-card plan-card-left">
+                      <div className="plan-image-box">
+                        <img src={step.image} alt={step.alt} className="plan-img" />
+                        {/* Branch line connecting to center stem */}
+                        <div className="plan-branch branch-left">
+                          <div className="branch-line"></div>
+                          <div className="branch-node"></div>
+                        </div>
+                      </div>
+                      <p className="plan-caption">{step.text}</p>
                     </div>
-                    <p className="timeline-text">{step.text}</p>
-                  </div>
+                  )}
+                </div>
 
-                  {/* Connector to Center */}
-                  <div className="timeline-connector connector-left">
-                    <div className="connector-line"></div>
-                    <div className="connector-node"></div>
-                  </div>
-
-                  {/* Empty Right Column for balance */}
-                  <div className="timeline-item timeline-item-spacer"></div>
-                </>
-              ) : (
-                <>
-                  {/* Empty Left Column for balance */}
-                  <div className="timeline-item timeline-item-spacer"></div>
-
-                  {/* Connector to Center */}
-                  <div className="timeline-connector connector-right">
-                    <div className="connector-node"></div>
-                    <div className="connector-line"></div>
-                  </div>
-
-                  {/* Content on Right */}
-                  <div className="timeline-item timeline-item-right">
-                    <div className="timeline-image-box">
-                      <img src={step.image} alt={step.alt} className="timeline-img" />
+                {/* Right Side Container */}
+                <div className="plan-col plan-col-right">
+                  {!isLeft && (
+                    <div className="plan-card plan-card-right">
+                      <div className="plan-image-box">
+                        <img src={step.image} alt={step.alt} className="plan-img" />
+                        {/* Branch line connecting from center stem */}
+                        <div className="plan-branch branch-right">
+                          <div className="branch-node"></div>
+                          <div className="branch-line"></div>
+                        </div>
+                      </div>
+                      <p className="plan-caption">{step.text}</p>
                     </div>
-                    <p className="timeline-text">{step.text}</p>
-                  </div>
-                </>
-              )}
+                  )}
+                </div>
 
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
