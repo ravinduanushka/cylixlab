@@ -1,6 +1,8 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section id="home" className="hero-section">
       <div className="hero-overlay"></div>
@@ -12,7 +14,11 @@ const Hero = () => {
             <button type="button" className="btn-hero btn-login">
               Login
             </button>
-            <button type="button" className="btn-hero btn-get-started">
+            <button
+              type="button"
+              className="btn-hero btn-get-started"
+              onClick={() => navigate('/register')}
+            >
               Get Start
             </button>
           </div>

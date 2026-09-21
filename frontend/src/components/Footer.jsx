@@ -1,5 +1,4 @@
-import React from 'react';
-import { LinkedInIcon, FacebookIcon, YoutubeIcon, PhoneIcon } from './Icons';
+import { LinkedInIcon, FacebookIcon, YoutubeIcon, PhoneIcon, MailIcon } from './Icons';
 
 const Footer = () => {
   return (
@@ -7,28 +6,29 @@ const Footer = () => {
       <div className="footer-container">
         <h2 className="footer-title">CylixLab | 2026</h2>
         <p className="footer-copyright">
-          @2026 CMWA Production . All Right Reserved.
+          &copy; 2026 CMWA Production. All Rights Reserved.
         </p>
 
         <div className="footer-socials">
           <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
-            <LinkedInIcon />
+            <LinkedInIcon size={16} />
           </a>
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Facebook">
-            <FacebookIcon />
+            <FacebookIcon size={16} />
           </a>
           <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="YouTube">
-            <YoutubeIcon />
+            <YoutubeIcon size={17} />
           </a>
         </div>
 
         <div className="footer-contact">
           <a href="mailto:info@CylixLab.com" className="contact-item contact-email">
-            info@CylixLab.com
+            <MailIcon size={16} />
+            <span>info@CylixLab.com</span>
           </a>
-          <span className="contact-divider"></span>
+          <span className="contact-divider" aria-hidden="true"></span>
           <a href="tel:+94771234567" className="contact-item contact-phone">
-            <PhoneIcon />
+            <PhoneIcon size={15} />
             <span>+94 77 123 4567</span>
           </a>
         </div>

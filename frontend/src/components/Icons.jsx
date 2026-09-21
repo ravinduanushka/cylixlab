@@ -1,5 +1,3 @@
-import React from 'react';
-
 // 1. Detailed Reports - Document with bar chart
 export const ReportIcon = ({ size = 48, color = '#1e3a5f' }) => (
   <svg width={size} height={size} viewBox="0 0 48 48" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -115,74 +113,34 @@ export const AnalyzeProgressIcon = ({ size = 48, color = '#1e3a5f' }) => (
   </svg>
 );
 
-// Social Media & Phone Icons
-export const LinkedInIcon = ({ size = 28 }) => (
-  <div style={{
-    width: size,
-    height: size,
-    backgroundColor: '#000',
-    color: '#fff',
-    borderRadius: '4px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 'bold',
-    fontSize: '15px',
-    fontFamily: 'sans-serif'
-  }}>
-    in
-  </div>
+// Social Media & Contact Icons
+export const LinkedInIcon = ({ size = 16, color = '#ffffff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
+  </svg>
 );
 
-export const FacebookIcon = ({ size = 28 }) => (
-  <div style={{
-    width: size,
-    height: size,
-    backgroundColor: '#000',
-    color: '#fff',
-    borderRadius: '4px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 'bold',
-    fontSize: '17px',
-    fontFamily: 'sans-serif'
-  }}>
-    f
-  </div>
+export const FacebookIcon = ({ size = 16, color = '#ffffff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+    <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.52-.14-2.71-.14-2.77 0-4.79 1.69-4.79 4.92v2.58H7v4h3V22h4v-8.5z" />
+  </svg>
 );
 
-export const YoutubeIcon = ({ size = 28 }) => (
-  <div style={{
-    width: size,
-    height: size,
-    backgroundColor: '#000',
-    color: '#fff',
-    borderRadius: '4px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }}>
-    <svg width="16" height="14" viewBox="0 0 24 24" fill="#fff">
-      <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 20c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 4c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/>
-    </svg>
-  </div>
+export const YoutubeIcon = ({ size = 18, color = '#ffffff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+  </svg>
 );
 
-export const PhoneIcon = ({ size = 20 }) => (
-  <div style={{
-    width: '28px',
-    height: '28px',
-    backgroundColor: '#000',
-    color: '#fff',
-    borderRadius: '5px',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: '8px'
-  }}>
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff">
-      <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/>
-    </svg>
-  </div>
+export const MailIcon = ({ size = 15, color = '#ffffff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
+
+export const PhoneIcon = ({ size = 15, color = '#ffffff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+    <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z" />
+  </svg>
 );
