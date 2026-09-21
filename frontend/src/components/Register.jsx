@@ -101,13 +101,8 @@ const Register = () => {
         {/* Step 2: Registration Form (Student or Parent) */}
         {role && (
           <div className="register-form-wrapper">
-            <h2 className="register-role-header">
+            <h1 className="register-role-header">
               {role === 'student' ? 'Student Registration' : 'Parent Registration'}
-            </h2>
-            <h1 className="register-heading">
-              {role === 'student'
-                ? "Ready to Rock Your Studies? Let's Go!"
-                : "Support Your Child's Learning Journey!"}
             </h1>
 
             {error && <div className="register-alert register-alert-error">{error}</div>}

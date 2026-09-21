@@ -774,21 +774,19 @@
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 6px 0;
   transition: all 0.25s ease;
   z-index: 20;
 }
 
 .register-home-link:hover {
-  background: rgba(255, 255, 255, 0.9);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   color: #004899;
+  transform: translateX(-3px);
+  background: none;
+  box-shadow: none;
 }
 
 .register-container {
