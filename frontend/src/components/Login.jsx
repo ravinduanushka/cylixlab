@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { GoogleIcon } from './Icons';
-import GoogleAuthModal from './GoogleAuthModal';
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
+    email: localStorage.getItem('lastRegisteredEmail') || '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
 
@@ -22,46 +22,47 @@ const Login = () => {
     }));
   };
 
-  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
+  // Google sign in directly loads previous registered email and signs in
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    setMessage(null);
 
-  const handleAuthSuccess = (data) => {
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-    }
-    if (data.user) {
-      localStorage.setItem('user', JSON.stringify(data.user));
-    }
-    setMessage(data.message || 'Login successful! Redirecting...');
-    setTimeout(() => {
-      navigate('/');
-    }, 1500);
-  };
+    const targetEmail = (formData.email || localStorage.getItem('lastRegisteredEmail') || '').trim();
 
-  const handleGoogleClick = () => {
-    if (window.google?.accounts?.id && import.meta.env.VITE_GOOGLE_CLIENT_ID) {
-      window.google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: async (credentialResponse) => {
-          try {
-            const response = await axios.post('/api/auth/google', {
-              token: credentialResponse.credential,
-            });
-            handleAuthSuccess(response.data);
-          } catch (err) {
-            setError(err.response?.data?.message || 'Google authentication failed.');
-          }
-        },
-      });
-      window.google.accounts.id.prompt();
+    if (!targetEmail) {
+      setError('Please enter your email above to continue with Google.');
       return;
     }
 
-    setIsGoogleModalOpen(true);
-  };
+    const targetName = localStorage.getItem('lastRegisteredName') || targetEmail.split('@')[0];
+    const targetRole = localStorage.getItem('lastRegisteredRole') || 'student';
 
-  const handleGoogleSubmit = async (googleData) => {
-    const response = await axios.post('/api/auth/google', googleData);
-    handleAuthSuccess(response.data);
+    setGoogleLoading(true);
+    try {
+      const response = await axios.post('/api/auth/google', {
+        email: targetEmail,
+        name: targetName,
+        role: targetRole,
+      });
+
+      if (response.data?.token) {
+        localStorage.setItem('token', response.data.token);
+      }
+      if (response.data?.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+
+      setMessage(response.data?.message || 'Login successful! Redirecting...');
+      setTimeout(() => {
+        navigate('/');
+      }, 1200);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || 'Google sign-in failed. Please try again.'
+      );
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -91,7 +92,7 @@ const Login = () => {
       setMessage('Login successful! Redirecting...');
       setTimeout(() => {
         navigate('/');
-      }, 1500);
+      }, 1200);
     } catch (err) {
       setError(
         err.response?.data?.message || 'Login failed. Please check your credentials.'
@@ -167,7 +168,7 @@ const Login = () => {
               <button
                 type="submit"
                 className="btn-signup"
-                disabled={loading}
+                disabled={loading || googleLoading}
               >
                 {loading ? 'Logging In...' : 'Log In'}
               </button>
@@ -181,11 +182,11 @@ const Login = () => {
               <button
                 type="button"
                 className="btn-google-signin"
-                onClick={handleGoogleClick}
-                disabled={loading}
+                onClick={handleGoogleSignIn}
+                disabled={loading || googleLoading}
               >
                 <GoogleIcon size={19} />
-                <span>Sign in with Google</span>
+                <span>{googleLoading ? 'Signing in with Google...' : 'Sign in with Google'}</span>
               </button>
 
               <div className="register-signin-prompt">
@@ -198,13 +199,6 @@ const Login = () => {
           </form>
         </div>
       </div>
-
-      <GoogleAuthModal
-        isOpen={isGoogleModalOpen}
-        onClose={() => setIsGoogleModalOpen(false)}
-        onGoogleSubmit={handleGoogleSubmit}
-        mode="login"
-      />
     </div>
   );
 };

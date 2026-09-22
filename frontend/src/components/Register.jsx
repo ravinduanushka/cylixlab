@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { GoogleIcon } from './Icons';
-import GoogleAuthModal from './GoogleAuthModal';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -19,53 +17,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
-  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
-
-  const handleAuthSuccess = (data) => {
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-    }
-    if (data.user) {
-      localStorage.setItem('user', JSON.stringify(data.user));
-    }
-    setMessage(data.message || 'Registration successful! Redirecting...');
-    setTimeout(() => {
-      navigate('/');
-    }, 1500);
-  };
-
-  const handleGoogleClick = () => {
-    if (window.google?.accounts?.id && import.meta.env.VITE_GOOGLE_CLIENT_ID) {
-      window.google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: async (credentialResponse) => {
-          try {
-            const response = await axios.post('/api/auth/google', {
-              token: credentialResponse.credential,
-              role: role || 'student',
-              studentName: role === 'parent' ? formData.studentName : undefined,
-            });
-            handleAuthSuccess(response.data);
-          } catch (err) {
-            setError(err.response?.data?.message || 'Google registration failed.');
-          }
-        },
-      });
-      window.google.accounts.id.prompt();
-      return;
-    }
-
-    setIsGoogleModalOpen(true);
-  };
-
-  const handleGoogleSubmit = async (googleData) => {
-    const response = await axios.post('/api/auth/google', {
-      ...googleData,
-      role: role || googleData.role || 'student',
-      studentName: (role === 'parent' || googleData.role === 'parent') ? (formData.studentName || googleData.studentName) : undefined,
-    });
-    handleAuthSuccess(response.data);
-  };
 
   const handleRoleSelect = (selectedRole) => {
     setRole(selectedRole);
@@ -131,10 +82,14 @@ const Register = () => {
 
       const response = await axios.post('/api/auth/register', payload);
 
+      localStorage.setItem('lastRegisteredEmail', formData.email);
+      localStorage.setItem('lastRegisteredName', formData.name);
+      localStorage.setItem('lastRegisteredRole', role);
+
       setMessage(response.data?.message || 'Registration successful! You can now log in.');
       setTimeout(() => {
         navigate('/login');
-      }, 2000);
+      }, 1500);
     } catch (err) {
       setError(
         err.response?.data?.message || 'Registration failed. Please check your details and try again.'
