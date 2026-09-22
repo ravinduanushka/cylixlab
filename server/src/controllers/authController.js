@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 // 1. Register User
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role, gender, age } = req.body;
+    const { name, email, password, role, gender, age, studentName } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -16,18 +16,21 @@ const registerUser = async (req, res) => {
       email,
       password,
       gender,
-      age: age ? Number(age) : undefined,
+      age: role === 'student' && age ? Number(age) : undefined,
+      studentName: role === 'parent' ? studentName : undefined,
       role: role || 'student',
+      isVerified: true,
     });
 
     res.status(201).json({
       success: true,
-      message: 'Registration successful. Please verify your email.',
+      message: 'Registration successful! You can now log in.',
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        studentName: user.studentName,
       },
     });
   } catch (error) {
@@ -52,6 +55,10 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Please provide email and password' });
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid Credentials' });
@@ -62,13 +69,15 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid Credentials' });
     }
 
-    if (!user.isVerified) {
+    if (process.env.REQUIRE_EMAIL_VERIFICATION === 'true' && !user.isVerified) {
       return res.status(401).json({ message: 'Please verify your email first.' });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '7d',
-    });
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || 'cylixlab_default_jwt_secret',
+      { expiresIn: '7d' }
+    );
 
     res.status(200).json({
       success: true,
@@ -78,6 +87,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        studentName: user.studentName,
       },
     });
   } catch (error) {

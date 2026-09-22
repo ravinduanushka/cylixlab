@@ -746,7 +746,8 @@
 /* =========================================================
    6. REGISTRATION PAGE
    ========================================================= */
-.register-page {
+.register-page,
+.login-page {
   position: relative;
   width: 100%;
   min-height: 100vh;
@@ -964,6 +965,15 @@
   pointer-events: none;
 }
 
+.register-actions-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  margin-top: 4px;
+}
+
 .btn-signup {
   width: 100%;
   padding: 13px 24px;
@@ -975,7 +985,7 @@
   border-radius: 24px;
   border: none;
   cursor: pointer;
-  margin-top: 6px;
+  margin-top: 0;
   box-shadow: 0 4px 14px rgba(1, 53, 128, 0.35);
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -995,11 +1005,40 @@
   cursor: not-allowed;
 }
 
+.register-signin-prompt {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+  text-align: center;
+}
+
+.register-signin-prompt span {
+  color: #1e293b;
+}
+
+.register-signin-link {
+  color: #013580;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: all 0.2s ease;
+  margin-left: 3px;
+}
+
+.register-signin-link:hover {
+  color: #0256c9;
+}
+
+.role-signin-prompt {
+  margin-top: 32px;
+}
+
 .register-footer-links {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 .btn-switch-role {
@@ -1055,7 +1094,83 @@
   }
 }
 
+/* =========================================================
+   7. LOGIN PAGE
+   ========================================================= */
+.login-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 42px 36px 36px 36px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.35s ease forwards;
+  box-sizing: border-box;
+}
+
+.login-card-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 24px;
+  text-align: center;
+  letter-spacing: -0.3px;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.login-input {
+  background-color: rgba(198, 218, 250, 0.78);
+  border: 1px solid rgba(162, 191, 238, 0.6);
+}
+
+.login-input:focus {
+  background-color: rgba(212, 229, 255, 0.95);
+  border-color: #3b82f6;
+}
+
+.btn-login-submit {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.login-signup-prompt {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  text-align: center;
+  margin-top: 6px;
+}
+
 @media (max-width: 640px) {
+  .login-card {
+    padding: 32px 22px;
+    margin: 0 10px;
+  }
+
+  .login-card-title {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
   .register-main-title {
     font-size: 30px;
   }

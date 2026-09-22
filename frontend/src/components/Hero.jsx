@@ -11,7 +11,11 @@ const Hero = () => {
           <h1 className="hero-title">Welcome to CylixLab</h1>
           <p className="hero-subtitle">Learn Smarter. Achieve More</p>
           <div className="hero-button-group">
-            <button type="button" className="btn-hero btn-login">
+            <button
+              type="button"
+              className="btn-hero btn-login"
+              onClick={() => navigate('/login')}
+            >
               Login
             </button>
             <button

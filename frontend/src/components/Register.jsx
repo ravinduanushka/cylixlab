@@ -9,6 +9,7 @@ const Register = () => {
     name: '',
     email: '',
     age: '',
+    studentName: '',
     gender: 'Male',
     password: '',
     confirmPassword: '',
@@ -36,14 +37,21 @@ const Register = () => {
     setError(null);
     setMessage(null);
 
-    if (!formData.name || !formData.email || !formData.age || !formData.password || !formData.confirmPassword) {
-      setError('Please fill in all required fields.');
-      return;
-    }
+    if (role === 'student') {
+      if (!formData.name || !formData.email || !formData.age || !formData.password || !formData.confirmPassword) {
+        setError('Please fill in all required fields.');
+        return;
+      }
 
-    if (Number(formData.age) <= 0 || isNaN(Number(formData.age))) {
-      setError('Please enter a valid age.');
-      return;
+      if (Number(formData.age) <= 0 || isNaN(Number(formData.age))) {
+        setError('Please enter a valid age.');
+        return;
+      }
+    } else {
+      if (!formData.name || !formData.email || !formData.studentName || !formData.password || !formData.confirmPassword) {
+        setError('Please fill in all required fields, including Student Name.');
+        return;
+      }
     }
 
     if (formData.password !== formData.confirmPassword) {
@@ -58,19 +66,26 @@ const Register = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('/api/auth/register', {
+      const payload = {
         name: formData.name,
         email: formData.email,
-        age: Number(formData.age),
         gender: formData.gender,
         password: formData.password,
         role: role,
-      });
+      };
+
+      if (role === 'student') {
+        payload.age = Number(formData.age);
+      } else {
+        payload.studentName = formData.studentName;
+      }
+
+      const response = await axios.post('/api/auth/register', payload);
 
       setMessage(response.data?.message || 'Registration successful! You can now log in.');
       setTimeout(() => {
-        navigate('/');
-      }, 2500);
+        navigate('/login');
+      }, 2000);
     } catch (err) {
       setError(
         err.response?.data?.message || 'Registration failed. Please check your details and try again.'
@@ -112,6 +127,13 @@ const Register = () => {
               >
                 Parent
               </button>
+            </div>
+
+            <div className="register-signin-prompt role-signin-prompt">
+              <span>Already have an account? </span>
+              <Link to="/login" className="register-signin-link">
+                Sign In
+              </Link>
             </div>
           </div>
         )}
@@ -162,24 +184,42 @@ const Register = () => {
                   />
                 </div>
 
-                {/* 3. Age */}
-                <div className="form-group">
-                  <label htmlFor="age" className="form-label">
-                    Age
-                  </label>
-                  <input
-                    type="number"
-                    id="age"
-                    name="age"
-                    min="4"
-                    max="120"
-                    className="form-input-pill"
-                    placeholder="Age"
-                    value={formData.age}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+                {/* 3. Age (Student) or Student Name (Parent) */}
+                {role === 'student' ? (
+                  <div className="form-group">
+                    <label htmlFor="age" className="form-label">
+                      Age
+                    </label>
+                    <input
+                      type="number"
+                      id="age"
+                      name="age"
+                      min="4"
+                      max="120"
+                      className="form-input-pill"
+                      placeholder="Age"
+                      value={formData.age}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                ) : (
+                  <div className="form-group">
+                    <label htmlFor="studentName" className="form-label">
+                      Student Name
+                    </label>
+                    <input
+                      type="text"
+                      id="studentName"
+                      name="studentName"
+                      className="form-input-pill"
+                      placeholder="Student Name"
+                      value={formData.studentName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                )}
 
                 {/* 4. Gender */}
                 <div className="form-group">
@@ -239,24 +279,32 @@ const Register = () => {
                 </div>
               </div>
 
-              {/* Sign Up Button */}
-              <button
-                type="submit"
-                className="btn-signup"
-                disabled={loading}
-              >
-                {loading ? 'Signing Up...' : 'Sign Up'}
-              </button>
-
-              {/* Back to role selection */}
-              <div className="register-footer-links">
+              {/* Bottom Actions */}
+              <div className="register-actions-group">
                 <button
-                  type="button"
-                  className="btn-switch-role"
-                  onClick={() => setRole(null)}
+                  type="submit"
+                  className="btn-signup"
+                  disabled={loading}
                 >
-                  &larr; Choose different role
+                  {loading ? 'Signing Up...' : 'Sign Up'}
                 </button>
+
+                <div className="register-signin-prompt">
+                  <span>Already have an account? </span>
+                  <Link to="/login" className="register-signin-link">
+                    Sign In
+                  </Link>
+                </div>
+
+                <div className="register-footer-links">
+                  <button
+                    type="button"
+                    className="btn-switch-role"
+                    onClick={() => setRole(null)}
+                  >
+                    &larr; Choose different role
+                  </button>
+                </div>
               </div>
             </form>
           </div>

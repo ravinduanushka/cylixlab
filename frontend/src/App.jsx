@@ -5,6 +5,7 @@ import PlanSection from './components/PlanSection';
 import FeaturesSection from './components/FeaturesSection';
 import Footer from './components/Footer';
 import Register from './components/Register';
+import Login from './components/Login';
 import './App.css';
 
 const Home = () => (
@@ -24,6 +25,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
     </Routes>
   );
 }
