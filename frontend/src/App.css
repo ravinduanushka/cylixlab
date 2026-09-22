@@ -756,7 +756,7 @@
   justify-content: center;
   padding: 40px 20px;
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.40), rgba(255, 255, 255, 0.40)),
+    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
     url('/images/login-register.png'), 
     url('/images/login and register .png');
   background-size: cover;
@@ -766,7 +766,7 @@
   box-sizing: border-box;
 }
 
-/* Whole page pure white high transparency frosted layer */
+/* Whole page smooth pure white high-transparency layer (no blur, completely smooth image display) */
 .register-page::before,
 .login-page::before {
   content: '';
@@ -777,9 +777,7 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.15);
   pointer-events: none;
   z-index: 1;
 }
