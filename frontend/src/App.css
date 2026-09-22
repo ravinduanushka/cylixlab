@@ -764,6 +764,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   box-sizing: border-box;
+  animation: pageFadeIn 0.35s ease-out;
 }
 
 /* Whole page smooth pure white high-transparency layer (no blur, completely smooth image display) */
@@ -820,6 +821,7 @@
   text-align: center;
   position: relative;
   z-index: 10;
+  animation: pageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* --- Role Selection Step: Previous style, no card border --- */
@@ -832,25 +834,28 @@
   border: none;
   box-shadow: none;
   padding: 0;
-  animation: fadeIn 0.35s ease forwards;
+  animation: pageEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .register-main-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 38px;
+  font-size: 30px;
   font-weight: 800;
   color: #0a1629;
-  margin-bottom: 6px;
-  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+  text-align: center;
 }
 
 .register-role-subtitle {
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   color: #004899;
-  margin-bottom: 38px;
+  margin-bottom: 30px;
   letter-spacing: 0.1px;
+  text-align: center;
 }
 
 .role-button-group {
@@ -902,16 +907,17 @@
   border: none;
   box-shadow: none;
   padding: 0;
-  animation: fadeIn 0.35s ease forwards;
+  animation: pageEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .register-role-header {
   font-family: 'Poppins', sans-serif;
-  font-size: 34px;
+  font-size: 30px;
   font-weight: 800;
   color: #0a1629;
   margin-bottom: 24px;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
   text-align: center;
 }
 
@@ -1122,6 +1128,26 @@
   }
 }
 
+@keyframes pageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 /* =========================================================
    7. LOGIN PAGE & SOCIAL AUTH
    ========================================================= */
@@ -1196,12 +1222,13 @@
 
 @media (max-width: 640px) {
   .register-main-title {
-    font-size: 30px;
+    font-size: 24px;
+    margin-bottom: 6px;
   }
 
   .register-role-subtitle {
-    font-size: 18px;
-    margin-bottom: 28px;
+    font-size: 15px;
+    margin-bottom: 22px;
   }
 
   .role-button-group {
