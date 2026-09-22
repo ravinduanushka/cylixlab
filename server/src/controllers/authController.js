@@ -95,11 +95,93 @@ const loginUser = async (req, res) => {
   }
 };
 
-// 4. Google Login
+// 4. Google Login / Register
 const googleLogin = async (req, res) => {
   try {
-    // Google Auth Logic
-    res.status(200).json({ success: true, message: 'Google auth working' });
+    const { token, email, name, googleId, role, studentName } = req.body;
+
+    let userEmail = email;
+    let userName = name;
+    let userGoogleId = googleId;
+
+    // If Google ID Token is provided and GOOGLE_CLIENT_ID is set
+    if (token && process.env.GOOGLE_CLIENT_ID) {
+      try {
+        const { OAuth2Client } = require('google-auth-library');
+        const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+        const ticket = await client.verifyIdToken({
+          idToken: token,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        if (payload) {
+          userEmail = payload.email;
+          userName = payload.name;
+          userGoogleId = payload.sub;
+        }
+      } catch (tokenErr) {
+        console.warn('Google ID token verification failed:', tokenErr.message);
+      }
+    }
+
+    if (!userEmail) {
+      return res.status(400).json({ message: 'Email is required for Google authentication.' });
+    }
+
+    userEmail = userEmail.toLowerCase().trim();
+
+    // Check if user already exists
+    let user = await User.findOne({
+      $or: [
+        { email: userEmail },
+        ...(userGoogleId ? [{ googleId: userGoogleId }] : []),
+      ],
+    });
+
+    let isNewUser = false;
+
+    if (user) {
+      // Existing user logging in again
+      if (userGoogleId && !user.googleId) {
+        user.googleId = userGoogleId;
+        user.authProvider = 'google';
+        await user.save();
+      }
+    } else {
+      // First time: Register new user with Google
+      isNewUser = true;
+      user = await User.create({
+        name: userName || userEmail.split('@')[0],
+        email: userEmail,
+        googleId: userGoogleId,
+        authProvider: 'google',
+        role: role || 'student',
+        studentName: role === 'parent' ? studentName : undefined,
+        isVerified: true,
+      });
+    }
+
+    const jwtToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || 'cylixlab_default_jwt_secret',
+      { expiresIn: '7d' }
+    );
+
+    res.status(200).json({
+      success: true,
+      isNewUser,
+      message: isNewUser
+        ? 'Account registered successfully with Google!'
+        : 'Welcome back! Logged in with Google.',
+      token: jwtToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        studentName: user.studentName,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }

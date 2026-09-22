@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { GoogleIcon } from './Icons';
+import GoogleAuthModal from './GoogleAuthModal';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,6 +20,48 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
+
+  const handleAuthSuccess = (data) => {
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+    }
+    if (data.user) {
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
+    setMessage(data.message || 'Login successful! Redirecting...');
+    setTimeout(() => {
+      navigate('/');
+    }, 1500);
+  };
+
+  const handleGoogleClick = () => {
+    if (window.google?.accounts?.id && import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: async (credentialResponse) => {
+          try {
+            const response = await axios.post('/api/auth/google', {
+              token: credentialResponse.credential,
+            });
+            handleAuthSuccess(response.data);
+          } catch (err) {
+            setError(err.response?.data?.message || 'Google authentication failed.');
+          }
+        },
+      });
+      window.google.accounts.id.prompt();
+      return;
+    }
+
+    setIsGoogleModalOpen(true);
+  };
+
+  const handleGoogleSubmit = async (googleData) => {
+    const response = await axios.post('/api/auth/google', googleData);
+    handleAuthSuccess(response.data);
   };
 
   const handleSubmit = async (e) => {
@@ -58,7 +102,7 @@ const Login = () => {
   };
 
   return (
-    <div className="login-page">
+    <div className="register-page">
       {/* Top navigation back button */}
       <Link to="/" className="register-home-link" aria-label="Back to home">
         <svg
@@ -76,15 +120,15 @@ const Login = () => {
         <span>Back to Home</span>
       </Link>
 
-      <div className="login-container">
-        <div className="login-card">
-          <h1 className="login-card-title">Log in to your Account</h1>
+      <div className="register-container">
+        <div className="register-form-wrapper login-form-wrapper">
+          <h1 className="register-role-header">Log in to your Account</h1>
 
           {error && <div className="register-alert register-alert-error">{error}</div>}
           {message && <div className="register-alert register-alert-success">{message}</div>}
 
-          <form onSubmit={handleSubmit} className="login-form" noValidate>
-            {/* Email Field */}
+          <form onSubmit={handleSubmit} className="register-form" noValidate>
+            {/* 1. Email Field */}
             <div className="form-group">
               <label htmlFor="login-email" className="form-label">
                 Email
@@ -93,7 +137,7 @@ const Login = () => {
                 type="email"
                 id="login-email"
                 name="email"
-                className="form-input-pill login-input"
+                className="form-input-pill"
                 placeholder="Enter Your Email"
                 value={formData.email}
                 onChange={handleChange}
@@ -101,7 +145,7 @@ const Login = () => {
               />
             </div>
 
-            {/* Password Field */}
+            {/* 2. Password Field */}
             <div className="form-group">
               <label htmlFor="login-password" className="form-label">
                 Password
@@ -110,7 +154,7 @@ const Login = () => {
                 type="password"
                 id="login-password"
                 name="password"
-                className="form-input-pill login-input"
+                className="form-input-pill"
                 placeholder="Enter Your Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -118,25 +162,49 @@ const Login = () => {
               />
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="btn-signup btn-login-submit"
-              disabled={loading}
-            >
-              {loading ? 'Logging In...' : 'Log In'}
-            </button>
+            {/* Actions: Log In Button, Divider, Google Sign In, & Sign Up Prompt */}
+            <div className="register-actions-group">
+              <button
+                type="submit"
+                className="btn-signup"
+                disabled={loading}
+              >
+                {loading ? 'Logging In...' : 'Log In'}
+              </button>
 
-            {/* Don't have an account? Sign Up */}
-            <div className="login-signup-prompt">
-              <span>Don't have an account? </span>
-              <Link to="/register" className="register-signin-link">
-                Sign Up
-              </Link>
+              <div className="auth-divider">
+                <span className="auth-divider-line"></span>
+                <span className="auth-divider-text">or</span>
+                <span className="auth-divider-line"></span>
+              </div>
+
+              <button
+                type="button"
+                className="btn-google-signin"
+                onClick={handleGoogleClick}
+                disabled={loading}
+              >
+                <GoogleIcon size={19} />
+                <span>Sign in with Google</span>
+              </button>
+
+              <div className="register-signin-prompt">
+                <span>Don't have an account? </span>
+                <Link to="/register" className="register-signin-link">
+                  Sign Up
+                </Link>
+              </div>
             </div>
           </form>
         </div>
       </div>
+
+      <GoogleAuthModal
+        isOpen={isGoogleModalOpen}
+        onClose={() => setIsGoogleModalOpen(false)}
+        onGoogleSubmit={handleGoogleSubmit}
+        mode="login"
+      />
     </div>
   );
 };
