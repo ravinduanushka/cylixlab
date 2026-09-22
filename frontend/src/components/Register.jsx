@@ -8,8 +8,10 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
+    age: '',
     gender: 'Male',
+    password: '',
+    confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -34,8 +36,23 @@ const Register = () => {
     setError(null);
     setMessage(null);
 
-    if (!formData.name || !formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.age || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all required fields.');
+      return;
+    }
+
+    if (Number(formData.age) <= 0 || isNaN(Number(formData.age))) {
+      setError('Please enter a valid age.');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match. Please re-enter.');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters.');
       return;
     }
 
@@ -44,8 +61,9 @@ const Register = () => {
       const response = await axios.post('/api/auth/register', {
         name: formData.name,
         email: formData.email,
-        password: formData.password,
+        age: Number(formData.age),
         gender: formData.gender,
+        password: formData.password,
         role: role,
       });
 
@@ -64,9 +82,9 @@ const Register = () => {
 
   return (
     <div className="register-page">
-      {/* Top navigation back button */}
+      {/* Top navigation back button - clean, no background */}
       <Link to="/" className="register-home-link" aria-label="Back to home">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         <span>Back to Home</span>
@@ -110,7 +128,7 @@ const Register = () => {
 
             <form onSubmit={handleSubmit} className="register-form" noValidate>
               <div className="register-form-grid">
-                {/* Full Name */}
+                {/* 1. Full Name */}
                 <div className="form-group">
                   <label htmlFor="fullName" className="form-label">
                     Full Name
@@ -127,7 +145,7 @@ const Register = () => {
                   />
                 </div>
 
-                {/* Email */}
+                {/* 2. Email */}
                 <div className="form-group">
                   <label htmlFor="email" className="form-label">
                     Email
@@ -144,24 +162,26 @@ const Register = () => {
                   />
                 </div>
 
-                {/* Password */}
+                {/* 3. Age */}
                 <div className="form-group">
-                  <label htmlFor="password" className="form-label">
-                    Password
+                  <label htmlFor="age" className="form-label">
+                    Age
                   </label>
                   <input
-                    type="password"
-                    id="password"
-                    name="password"
+                    type="number"
+                    id="age"
+                    name="age"
+                    min="4"
+                    max="120"
                     className="form-input-pill"
-                    placeholder="Password"
-                    value={formData.password}
+                    placeholder="Age"
+                    value={formData.age}
                     onChange={handleChange}
                     required
                   />
                 </div>
 
-                {/* Gender */}
+                {/* 4. Gender */}
                 <div className="form-group">
                   <label htmlFor="gender" className="form-label">
                     Gender
@@ -182,6 +202,40 @@ const Register = () => {
                       ▼
                     </span>
                   </div>
+                </div>
+
+                {/* 5. Password */}
+                <div className="form-group">
+                  <label htmlFor="password" className="form-label">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    className="form-input-pill"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                {/* 6. Confirm Password */}
+                <div className="form-group">
+                  <label htmlFor="confirmPassword" className="form-label">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    className="form-input-pill"
+                    placeholder="Confirm Password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
               </div>
 
