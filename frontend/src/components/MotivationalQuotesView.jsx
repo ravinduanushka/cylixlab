@@ -130,15 +130,31 @@ const parseQuotesText = (rawText) => {
   return parsed.length > 0 ? parsed : DEFAULT_QUOTES;
 };
 
+const CARD_STEP = 92; // 82px card height + 10px gap
+const VISIBLE_COUNT = 4;
+
 const MotivationalQuotesView = () => {
   const [quotes, setQuotes] = useState(DEFAULT_QUOTES);
+  const [startIndex, setStartIndex] = useState(0);
   const scrollAreaRef = useRef(null);
+  const isWheelingRef = useRef(false);
+
+  const maxIndex = Math.max(0, quotes.length - VISIBLE_COUNT);
+
+  // Scroll to a specific card index
+  const scrollToCard = (index, smooth = true) => {
+    if (!scrollAreaRef.current) return;
+    const clamped = Math.max(0, Math.min(index, maxIndex));
+    setStartIndex(clamped);
+    scrollAreaRef.current.scrollTo({
+      top: clamped * CARD_STEP,
+      behavior: smooth ? 'smooth' : 'instant',
+    });
+  };
 
   // Scroll to top on mount so Quote 1 is immediately visible
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = 0;
-    }
+    scrollToCard(0, false);
   }, []);
 
   useEffect(() => {
@@ -164,15 +180,79 @@ const MotivationalQuotesView = () => {
     fetchQuotesFile();
   }, []);
 
-  // Forward mouse wheel from outer container directly to quotes scroll area
-  const handleOuterWheel = (e) => {
-    if (scrollAreaRef.current && !scrollAreaRef.current.contains(e.target)) {
-      scrollAreaRef.current.scrollTop += e.deltaY;
+  // One-by-one wheel handler: 1 notch = exactly 1 quote
+  const handleWheel = (e) => {
+    if (isWheelingRef.current) return;
+    isWheelingRef.current = true;
+    setTimeout(() => {
+      isWheelingRef.current = false;
+    }, 180);
+
+    const delta = e.deltaY;
+    if (Math.abs(delta) < 6) return;
+
+    if (delta > 0) {
+      // Scroll down: hide first number quote, show next number quote below
+      setStartIndex((prev) => {
+        const next = Math.min(prev + 1, maxIndex);
+        if (scrollAreaRef.current) {
+          scrollAreaRef.current.scrollTo({ top: next * CARD_STEP, behavior: 'smooth' });
+        }
+        return next;
+      });
+    } else {
+      // Scroll up: hide last number quote, restore previous quote above
+      setStartIndex((prev) => {
+        const next = Math.max(prev - 1, 0);
+        if (scrollAreaRef.current) {
+          scrollAreaRef.current.scrollTo({ top: next * CARD_STEP, behavior: 'smooth' });
+        }
+        return next;
+      });
+    }
+  };
+
+  // Listen for keyboard ArrowDown / ArrowUp
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        e.preventDefault();
+        setStartIndex((prev) => {
+          const next = Math.min(prev + 1, maxIndex);
+          if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollTo({ top: next * CARD_STEP, behavior: 'smooth' });
+          }
+          return next;
+        });
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        setStartIndex((prev) => {
+          const next = Math.max(prev - 1, 0);
+          if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollTo({ top: next * CARD_STEP, behavior: 'smooth' });
+          }
+          return next;
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [maxIndex]);
+
+  // Keep startIndex in sync if user manually drags the scrollbar
+  const handleNativeScroll = () => {
+    if (!scrollAreaRef.current || isWheelingRef.current) return;
+    const currentTop = scrollAreaRef.current.scrollTop;
+    const computedIndex = Math.round(currentTop / CARD_STEP);
+    const clamped = Math.max(0, Math.min(computedIndex, maxIndex));
+    if (clamped !== startIndex) {
+      setStartIndex(clamped);
     }
   };
 
   return (
-    <div className="quotes-content-wrapper" onWheel={handleOuterWheel}>
+    <div className="quotes-content-wrapper" onWheel={handleWheel}>
       {/* Subtitle centered above the quotes stage */}
       <h2 className="quotes-main-subtitle">
         &quot;Every small step brings you closer to your goal. Complete the missing piece and keep moving forward.&quot;
@@ -187,7 +267,6 @@ const MotivationalQuotesView = () => {
             alt="Goal Puzzle Step Illustration"
             className="quotes-bg-img"
             onError={(e) => {
-              // Try the alternative filename if needed
               if (!e.currentTarget.src.includes('motivation%20al%20quates')) {
                 e.currentTarget.src = '/images/motivation al quates .jpg';
               }
@@ -198,9 +277,8 @@ const MotivationalQuotesView = () => {
         {/* Scrollable list of quotes that scrolls up and down over the fixed image */}
         <div
           className="quotes-scroll-area"
-          ref={(el) => {
-            scrollAreaRef.current = el;
-          }}
+          ref={scrollAreaRef}
+          onScroll={handleNativeScroll}
           tabIndex={0}
           role="region"
           aria-label="Motivational quotes list"
@@ -225,6 +303,39 @@ const MotivationalQuotesView = () => {
               );
             })}
           </div>
+        </div>
+
+        {/* Floating scroll step controls (Up / Down) */}
+        <div className="quotes-scroll-controls" aria-label="Quotes navigation">
+          <button
+            type="button"
+            className={`quotes-nav-arrow-btn quotes-nav-arrow-up ${startIndex === 0 ? 'btn-disabled' : ''}`}
+            onClick={() => scrollToCard(startIndex - 1)}
+            disabled={startIndex === 0}
+            title="Scroll up (previous quote)"
+            aria-label="Previous quote"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+          </button>
+
+          <span className="quotes-counter-badge" title="Current visible quotes">
+            {startIndex + 1}–{Math.min(startIndex + VISIBLE_COUNT, quotes.length)}
+          </span>
+
+          <button
+            type="button"
+            className={`quotes-nav-arrow-btn quotes-nav-arrow-down ${startIndex >= maxIndex ? 'btn-disabled' : ''}`}
+            onClick={() => scrollToCard(startIndex + 1)}
+            disabled={startIndex >= maxIndex}
+            title="Scroll down (next quote)"
+            aria-label="Next quote"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
