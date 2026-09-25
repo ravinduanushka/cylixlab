@@ -3013,4 +3013,176 @@
   }
 }
 
+/* =========================================================
+   LEARNING PATH DETAIL VIEW (PDF DISPLAY & 30-MIN TIMER)
+   ========================================================= */
+
+.lp-detail-container {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 12px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInLpDetail 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeInLpDetail {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lp-detail-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.lp-back-btn {
+  background: transparent;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #1e293b;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.lp-back-btn:hover {
+  background-color: #f1f5f9;
+  color: #2563eb;
+  transform: translateX(-3px);
+}
+
+.lp-pill-badge {
+  background: #e52525;
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 8px 24px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(229, 37, 37, 0.38);
+  letter-spacing: 0.2px;
+}
+
+.lp-description-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14.5px;
+  color: #1e293b;
+  line-height: 1.55;
+  margin: 0 0 28px 0;
+  max-width: 680px;
+}
+
+.lp-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100%;
+}
+
+/* Left: PDF Display Box (grey container matching screenshot) */
+.lp-pdf-display-box {
+  background-color: #d1d5db;
+  border-radius: 6px;
+  width: 380px;
+  height: 480px;
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.lp-pdf-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.lp-pdf-placeholder-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: -0.2px;
+}
+
+.lp-pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Right: Time Duration Box */
+.lp-timer-box {
+  background-color: #4a90e2;
+  border-radius: 6px;
+  width: 220px;
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  box-shadow: 0 4px 14px rgba(74, 144, 226, 0.3);
+  margin-top: 8px;
+}
+
+.lp-timer-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 6px;
+}
+
+.lp-timer-digits {
+  font-family: 'Poppins', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+}
+
+/* Responsive adjustments for Detail View */
+@media (max-width: 768px) {
+  .lp-content-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .lp-pdf-display-box {
+    width: 100%;
+    max-width: 360px;
+    height: 400px;
+    min-height: 400px;
+  }
+  .lp-timer-box {
+    width: 100%;
+    max-width: 360px;
+    margin-top: 0;
+  }
+}
+
+
 

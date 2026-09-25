@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Footer from './Footer';
 import TodoListManager from './TodoListManager';
+import LearningPathDetailView from './LearningPathDetailView';
 
 // Icons
 const IconUser = ({ color = '#ffffff' }) => (
@@ -95,6 +96,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
   // 'personal' = Personal Details view on same page
   // 'todo' = Manage Your To-Do List view (scrollable page)
   const [currentView, setCurrentView] = useState(initialView);
+  const [activeLearningPath, setActiveLearningPath] = useState(null);
   const [userData, setUserData] = useState({
     name: 'User',
     age: '14',
@@ -186,10 +188,13 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
       {/* 2. MAIN CONTENT (SAME PAGE IN-PLACE SWITCH) */}
       <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : ''}`}>
         {/* Back to Student Dashboard below header in black color */}
-        {(currentView === 'personal' || currentView === 'todo' || currentView === 'learning') && (
+        {(currentView === 'personal' || currentView === 'todo' || (currentView === 'learning' && !activeLearningPath)) && (
           <button
             className="dashboard-back-link-below"
-            onClick={() => setCurrentView('dashboard')}
+            onClick={() => {
+              setCurrentView('dashboard');
+              setActiveLearningPath(null);
+            }}
             aria-label="Back to Student Dashboard"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -200,13 +205,19 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
         )}
 
         {/* Learning view title "What you do?" centered above */}
-        {currentView === 'learning' && (
+        {currentView === 'learning' && !activeLearningPath && (
           <h2 className="learning-main-title">What you do?</h2>
         )}
 
-        <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : ''}`}>
-          {/* Left Icon Pill Capsule */}
-          <aside className={`student-icon-capsule ${currentView === 'todo' ? 'todo-capsule-sticky' : currentView === 'learning' ? 'learning-capsule' : ''}`} aria-label="Feature navigation icons">
+        {currentView === 'learning' && activeLearningPath ? (
+          <LearningPathDetailView
+            pathId={activeLearningPath}
+            onBack={() => setActiveLearningPath(null)}
+          />
+        ) : (
+          <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : ''}`}>
+            {/* Left Icon Pill Capsule */}
+            <aside className={`student-icon-capsule ${currentView === 'todo' ? 'todo-capsule-sticky' : currentView === 'learning' ? 'learning-capsule' : ''}`} aria-label="Feature navigation icons">
             {currentView === 'personal' ? (
               // In Personal Details view: ONLY the first icon (User Icon) displays at top
               <div
@@ -348,7 +359,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                       key={`lp-${num}`}
                       type="button"
                       className="learning-action-red-btn"
-                      onClick={() => alert(`Starting Learning Path ${num}...`)}
+                      onClick={() => setActiveLearningPath(num)}
                     >
                       Learning Path {num}
                     </button>
@@ -403,7 +414,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             </div>
           )}
         </div>
-      </main>
+      )}
+    </main>
 
       {/* 3. FOOTER (COMPACT HEIGHT) */}
       <Footer compact={true} className="student-dashboard-footer" />
