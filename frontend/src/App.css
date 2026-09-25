@@ -3543,5 +3543,272 @@
   }
 }
 
+/* =========================================================
+   ONLINE CHATBOX VIEW (MATCHING USER SCREENSHOT)
+   ========================================================= */
+
+.student-dashboard-main.chat-view-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 18px 20px 48px;
+  min-height: calc(100vh - 84px - 140px);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.chat-main-subtitle {
+  font-family: 'Merriweather', 'Georgia', serif;
+  font-size: 21px;
+  font-weight: 700;
+  color: #000000;
+  margin: 6px 0 24px 0;
+  text-align: center;
+  letter-spacing: -0.2px;
+  animation: fadeIn 0.35s ease both;
+}
+
+.student-content-container.chat-content-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  max-width: 960px;
+  width: 100%;
+}
+
+/* 4th slot active icon badge in left capsule */
+.capsule-icon-wrapper.chat-icon-badge {
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+  transition: transform 0.2s ease;
+}
+
+.capsule-slot.chat-active-slot:hover .chat-icon-badge {
+  transform: scale(1.08);
+}
+
+/* Chat container wrapper */
+.chat-content-wrapper {
+  flex: 1;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Large blue chatbox window */
+.chat-blue-window {
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+  width: 100%;
+  height: 440px;
+  border-radius: 18px;
+  padding: 20px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 28px rgba(37, 99, 235, 0.32);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scrollable messages area */
+.chat-messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.chat-messages-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages-area::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+}
+
+.chat-bubble-row {
+  display: flex;
+  width: 100%;
+  animation: fadeInMessage 0.25s ease-out both;
+}
+
+.chat-bubble-row.user-row {
+  justify-content: flex-end;
+}
+
+.chat-bubble-row.bot-row {
+  justify-content: flex-start;
+}
+
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message-bubble {
+  max-width: 82%;
+  padding: 10px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  word-break: break-word;
+}
+
+.user-bubble {
+  background-color: #ffffff;
+  color: #1e293b;
+  border-radius: 16px 16px 3px 16px;
+}
+
+.bot-bubble {
+  background-color: #f0f7ff;
+  color: #0f172a;
+  border-radius: 16px 16px 16px 3px;
+  border-left: 3px solid #60a5fa;
+}
+
+.chat-message-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.chat-message-time {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10.5px;
+  opacity: 0.65;
+  display: block;
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Typing indicator */
+.chat-typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #2563eb;
+  border-radius: 50%;
+  animation: typingDotPulse 1.2s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingDotPulse {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Bottom grey input bar matching screenshot */
+.chat-input-bar {
+  background-color: #d1d5db;
+  border-radius: 12px;
+  height: 52px;
+  padding: 6px 8px 6px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-text-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.chat-text-input::placeholder {
+  color: #4b5563;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Dark send button with play/arrow icon */
+.chat-send-btn {
+  width: 42px;
+  height: 40px;
+  background-color: #262626;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, background-color 0.18s ease;
+  flex-shrink: 0;
+}
+
+.chat-send-btn:hover {
+  background-color: #0f172a;
+  transform: scale(1.05);
+}
+
+.chat-send-btn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+  .student-content-container.chat-content-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .chat-blue-window {
+    height: 380px;
+  }
+
+  .chat-main-subtitle {
+    font-size: 18px;
+    padding: 0 10px;
+  }
+}
+
 
 
