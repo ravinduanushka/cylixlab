@@ -3803,25 +3803,28 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 18px 20px 60px;
-  min-height: calc(100vh - 84px - 140px);
+  padding: 12px 20px 10px;
+  height: calc(100vh - 84px - 105px);
+  max-height: calc(100vh - 84px - 105px);
   box-sizing: border-box;
   width: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
 .student-content-container.quotes-content-container {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: 40px;
+  gap: 36px;
   max-width: 1140px;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-/* Sticky left capsule on scroll */
+/* Left capsule stays fixed at the side */
 .student-icon-capsule.quotes-capsule {
-  position: sticky;
-  top: 24px;
   align-self: flex-start;
   flex-shrink: 0;
 }
@@ -3830,48 +3833,75 @@
   flex: 1;
   max-width: 920px;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
 
+/* The caption bar stays fixed at the top under back link */
 .quotes-main-subtitle {
   font-family: 'Merriweather', 'Georgia', serif;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
   color: #000000;
-  margin: 0 0 24px 0;
+  margin: 0 0 14px 0;
   text-align: center;
   width: 100%;
   letter-spacing: -0.2px;
-  line-height: 1.5;
+  line-height: 1.45;
+  flex-shrink: 0;
   animation: fadeIn 0.35s ease both;
 }
 
-/* Stage wrapper with goal illustration & cards */
+/* Only the quotes stage wrapper scrolls down and up - page stays fixed */
 .quotes-stage-wrapper {
   position: relative;
   width: 100%;
-  min-height: 700px;
+  flex: 1;
+  height: calc(100% - 46px);
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 0 40px;
+  padding: 10px 12px 30px;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+.quotes-stage-wrapper::-webkit-scrollbar {
+  width: 7px;
+}
+
+.quotes-stage-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+}
+
+.quotes-stage-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(0, 54, 167, 0.35);
+  border-radius: 4px;
+}
+
+.quotes-stage-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 54, 167, 0.6);
 }
 
 /* 3D Goal Illustration positioned in the center */
 .quotes-bg-illustration {
   position: sticky;
-  top: 100px;
-  width: 480px;
-  max-width: 85%;
+  top: 40px;
+  width: 440px;
+  max-width: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: 0.92;
+  opacity: 0.9;
   z-index: 1;
-  margin-bottom: -460px;
+  margin-bottom: -430px;
   transition: opacity 0.3s ease;
 }
 
@@ -3889,27 +3919,26 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 28px;
 }
 
 /* Quote card pill styling matching screenshot */
 .quote-pill-card {
   background-color: #d1d5db;
-  border-radius: 20px;
-  padding: 16px 22px;
+  border-radius: 18px;
+  padding: 16px 24px;
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  width: 66%;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  width: 70%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
   box-sizing: border-box;
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
 }
 
 .quote-pill-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-  background-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
 }
 
 /* Alternating staggered positioning */
