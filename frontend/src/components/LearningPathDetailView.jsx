@@ -72,8 +72,8 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
 
   return (
     <div className="lp-detail-container">
-      {/* Top row with Back button and Active Path Pill Badge */}
-      <div className="lp-detail-header-row">
+      {/* Top action row */}
+      <div className="lp-top-action-bar">
         <button
           type="button"
           className="lp-back-btn"
@@ -85,9 +85,21 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
           </svg>
           <span>Back to Learning Paths</span>
         </button>
+      </div>
 
+      {/* Learning Path Badge on left and Time Duration in the right side corner */}
+      <div className="lp-header-badge-row">
+        {/* Active Learning Path Pill Badge */}
         <div className="lp-pill-badge">
           {meta.title}
+        </div>
+
+        {/* Time Duration box in the right side corner */}
+        <div className="lp-timer-box compact">
+          <span className="lp-timer-title">Time Duration</span>
+          <span className="lp-timer-digits" aria-live="polite">
+            {minutes} : {seconds}
+          </span>
         </div>
       </div>
 
@@ -96,30 +108,19 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
         {meta.description}
       </p>
 
-      {/* Main Two-Column Row: PDF Display Area (Left) & Time Duration Box (Right) */}
-      <div className="lp-content-row">
-        {/* Left: PDF Display Box (Blank for now, ready for Admin PDF push) */}
-        <div className="lp-pdf-display-box">
-          {pdfUrl ? (
-            <iframe
-              src={pdfUrl}
-              title={`PDF document for ${meta.title}`}
-              className="lp-pdf-iframe"
-            />
-          ) : (
-            <div className="lp-pdf-placeholder">
-              <span className="lp-pdf-placeholder-text">pdf display</span>
-            </div>
-          )}
-        </div>
-
-        {/* Right: Time Duration Box */}
-        <div className="lp-timer-box">
-          <span className="lp-timer-title">Time Duration</span>
-          <span className="lp-timer-digits" aria-live="polite">
-            {minutes} : {seconds}
-          </span>
-        </div>
+      {/* PDF Display Box (Blank for now, ready for Admin PDF push) */}
+      <div className="lp-pdf-display-box">
+        {pdfUrl ? (
+          <iframe
+            src={pdfUrl}
+            title={`PDF document for ${meta.title}`}
+            className="lp-pdf-iframe"
+          />
+        ) : (
+          <div className="lp-pdf-placeholder">
+            <span className="lp-pdf-placeholder-text">pdf display</span>
+          </div>
+        )}
       </div>
     </div>
   );

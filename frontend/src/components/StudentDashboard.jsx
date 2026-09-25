@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Footer from './Footer';
 import TodoListManager from './TodoListManager';
 import LearningPathDetailView from './LearningPathDetailView';
+import AssignmentDetailView from './AssignmentDetailView';
 
 // Icons
 const IconUser = ({ color = '#ffffff' }) => (
@@ -97,6 +98,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
   // 'todo' = Manage Your To-Do List view (scrollable page)
   const [currentView, setCurrentView] = useState(initialView);
   const [activeLearningPath, setActiveLearningPath] = useState(null);
+  const [activeAssignment, setActiveAssignment] = useState(null);
   const [userData, setUserData] = useState({
     name: 'User',
     age: '14',
@@ -154,46 +156,39 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
   }, [currentView]);
 
   return (
-    <div className={`student-dashboard-page ${currentView === 'todo' ? 'scrollable-page' : ''}`}>
-      {/* 1. HEADER */}
-      {currentView === 'learning' ? (
-        <header className="learning-dashboard-header">
-          <div className="learning-header-pattern" aria-hidden="true">
-            <svg viewBox="0 0 320 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M120 -20 L240 110 M160 -20 L280 110 M200 -20 L320 110" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5" />
-              <rect x="210" y="10" width="60" height="60" transform="rotate(45 240 40)" stroke="rgba(255,255,255,0.22)" strokeWidth="1.5" />
-              <rect x="250" y="20" width="40" height="40" transform="rotate(45 270 40)" stroke="rgba(255,255,255,0.16)" strokeWidth="1.2" />
-            </svg>
-          </div>
-          <h1 className="learning-header-title">Learning & Assignments</h1>
-          <span className="learning-header-logo">CylixLab</span>
-        </header>
-      ) : (
-        <header className="student-dashboard-header">
-          <div className="header-brand-container">
-            <span className="header-brand-logo">CylixLab</span>
-          </div>
-          <div className="header-welcome-text">
-            <h1>
-              {currentView === 'personal'
-                ? `Hello ${userData.name || 'User'} , See your details`
-                : currentView === 'todo'
-                ? 'Manage Your To-Do List'
-                : `welcome back , ${userData.name ? userData.name.toLowerCase() : 'user'} !`}
-            </h1>
-          </div>
-        </header>
-      )}
+    <div className={`student-dashboard-page ${(currentView === 'todo' || activeAssignment) ? 'scrollable-page' : ''}`}>
+      {/* 1. UNIFIED HEADER FOR ALL STUDENT DASHBOARD PAGES */}
+      <header className="student-dashboard-header">
+        <div className="learning-header-pattern" aria-hidden="true">
+          <svg viewBox="0 0 380 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M120 -20 L250 110 M170 -20 L300 110 M220 -20 L350 110" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5" />
+            <rect x="250" y="8" width="65" height="65" transform="rotate(45 282 40)" stroke="rgba(255,255,255,0.24)" strokeWidth="1.6" />
+            <rect x="295" y="16" width="46" height="46" transform="rotate(45 318 39)" stroke="rgba(255,255,255,0.18)" strokeWidth="1.4" />
+            <rect x="330" y="24" width="30" height="30" transform="rotate(45 345 39)" stroke="rgba(255,255,255,0.12)" strokeWidth="1.2" />
+          </svg>
+        </div>
+        <h1 className="learning-header-title">
+          {currentView === 'personal'
+            ? `Hello ${userData.name || 'User'} , See your details`
+            : currentView === 'todo'
+            ? 'Manage Your To-Do List'
+            : currentView === 'learning'
+            ? 'Learning & Assignments'
+            : `welcome back , ${userData.name ? userData.name.toLowerCase() : 'user'} !`}
+        </h1>
+        <span className="learning-header-logo">CylixLab</span>
+      </header>
 
       {/* 2. MAIN CONTENT (SAME PAGE IN-PLACE SWITCH) */}
       <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : ''}`}>
         {/* Back to Student Dashboard below header in black color */}
-        {(currentView === 'personal' || currentView === 'todo' || (currentView === 'learning' && !activeLearningPath)) && (
+        {(currentView === 'personal' || currentView === 'todo' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
           <button
             className="dashboard-back-link-below"
             onClick={() => {
               setCurrentView('dashboard');
               setActiveLearningPath(null);
+              setActiveAssignment(null);
             }}
             aria-label="Back to Student Dashboard"
           >
@@ -205,7 +200,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
         )}
 
         {/* Learning view title "What you do?" centered above */}
-        {currentView === 'learning' && !activeLearningPath && (
+        {currentView === 'learning' && !activeLearningPath && !activeAssignment && (
           <h2 className="learning-main-title">What you do?</h2>
         )}
 
@@ -213,6 +208,11 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
           <LearningPathDetailView
             pathId={activeLearningPath}
             onBack={() => setActiveLearningPath(null)}
+          />
+        ) : currentView === 'learning' && activeAssignment ? (
+          <AssignmentDetailView
+            assignmentId={activeAssignment}
+            onBack={() => setActiveAssignment(null)}
           />
         ) : (
           <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : ''}`}>
@@ -376,7 +376,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                       key={`as-${num}`}
                       type="button"
                       className="learning-action-red-btn"
-                      onClick={() => alert(`Opening Assignment ${num} (MCQ Paper)...`)}
+                      onClick={() => setActiveAssignment(num)}
                     >
                       Assignment {num}
                     </button>
