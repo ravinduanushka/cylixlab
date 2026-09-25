@@ -1,8 +1,8 @@
 import { LinkedInIcon, FacebookIcon, YoutubeIcon, PhoneIcon, MailIcon } from './Icons';
 
-const Footer = () => {
+const Footer = ({ compact = false, className = '' }) => {
   return (
-    <footer id="about" className="footer-section">
+    <footer id="about" className={`footer-section ${compact ? 'footer-compact' : ''} ${className}`}>
       <div className="footer-container">
         <h2 className="footer-title">CylixLab | 2026</h2>
         <p className="footer-copyright">
