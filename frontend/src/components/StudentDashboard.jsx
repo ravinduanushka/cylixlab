@@ -207,10 +207,6 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
           <h2 className="learning-main-title">What you do?</h2>
         )}
 
-        {/* Chat view subtitle matching screenshot */}
-        {currentView === 'chat' && (
-          <h2 className="chat-main-subtitle">&quot;Ask questions, share updates, and collaborate instantly.&quot;</h2>
-        )}
 
         {currentView === 'learning' && activeLearningPath ? (
           <LearningPathDetailView
@@ -281,8 +277,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                   title="Click to go back to Student Dashboard"
                   style={{ cursor: 'pointer' }}
                 >
-                  <div className="capsule-icon-wrapper chat-icon-badge">
-                    <IconChat color="#2f80ed" size={26} />
+                  <div className="capsule-icon-wrapper">
+                    <IconChat color="#ffffff" size={26} />
                   </div>
                 </div>
               </>
@@ -414,6 +410,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             </div>
           ) : currentView === 'chat' ? (
             <div className="chat-content-wrapper">
+              <h2 className="chat-main-subtitle">&quot;Ask questions, share updates, and collaborate instantly.&quot;</h2>
               <OnlineChatbox />
             </div>
           ) : (

@@ -1432,14 +1432,13 @@
   display: block;
 }
 
-/* Cycle pulse: left icon small increase and decrease */
+/* Cycle pulse: left icon scale increase without any white background */
 .capsule-slot.pulse-active {
-  background: rgba(255, 255, 255, 0.22);
+  background: transparent;
 }
 
 .capsule-slot.pulse-active .capsule-icon-wrapper {
-  transform: scale(1.36);
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
+  transform: scale(1.38);
 }
 
 /* Center Blinking Directional Arrows */
@@ -3563,8 +3562,9 @@
   font-size: 21px;
   font-weight: 700;
   color: #000000;
-  margin: 6px 0 24px 0;
+  margin: 0 0 18px 0;
   text-align: center;
+  width: 100%;
   letter-spacing: -0.2px;
   animation: fadeIn 0.35s ease both;
 }
@@ -3573,48 +3573,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 36px;
-  max-width: 960px;
+  gap: 48px;
+  max-width: 1140px;
   width: 100%;
-}
-
-/* 4th slot active icon badge in left capsule */
-.capsule-icon-wrapper.chat-icon-badge {
-  background-color: #ffffff;
-  border-radius: 8px;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
-  transition: transform 0.2s ease;
-}
-
-.capsule-slot.chat-active-slot:hover .chat-icon-badge {
-  transform: scale(1.08);
 }
 
 /* Chat container wrapper */
 .chat-content-wrapper {
   flex: 1;
-  max-width: 620px;
+  max-width: 920px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Large blue chatbox window */
+/* Large blue chatbox window with increased width & spacious layout */
 .chat-blue-window {
   background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
   width: 100%;
-  height: 440px;
-  border-radius: 18px;
-  padding: 20px 20px 16px;
+  height: 480px;
+  border-radius: 20px;
+  padding: 24px 24px 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 10px 28px rgba(37, 99, 235, 0.32);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.35);
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
