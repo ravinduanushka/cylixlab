@@ -4,6 +4,7 @@ import TodoListManager from './TodoListManager';
 import LearningPathDetailView from './LearningPathDetailView';
 import AssignmentDetailView from './AssignmentDetailView';
 import OnlineChatbox from './OnlineChatbox';
+import MotivationalQuotesView from './MotivationalQuotesView';
 
 // Icons
 const IconUser = ({ color = '#ffffff' }) => (
@@ -41,8 +42,8 @@ const IconChat = ({ color = '#ffffff', size = 24 }) => (
   </svg>
 );
 
-const IconQuotes = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+const IconQuotes = ({ color = '#ffffff', size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 12c0 3.866-3.582 7-8 7-1.12 0-2.19-.2-3.15-.57L4 19.5l1.3-3.25C4.5 15.02 4 13.58 4 12c0-3.866 3.582-7 8-7s8 3.134 8 7z" />
     <path d="M9 10.5h2.5M8 13.5h4" strokeWidth="1.8" />
   </svg>
@@ -177,15 +178,17 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             ? 'Learning & Assignments'
             : currentView === 'chat'
             ? 'Online Chatbox'
+            : currentView === 'quotes'
+            ? 'Motivational Quotes'
             : `welcome back , ${userData.name ? userData.name.toLowerCase() : 'user'} !`}
         </h1>
         <span className="learning-header-logo">CylixLab</span>
       </header>
 
       {/* 2. MAIN CONTENT (SAME PAGE IN-PLACE SWITCH) */}
-      <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : currentView === 'chat' ? 'chat-view-main' : ''}`}>
+      <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : currentView === 'chat' ? 'chat-view-main' : currentView === 'quotes' ? 'quotes-view-main' : ''}`}>
         {/* Back to Student Dashboard below header in black color */}
-        {(currentView === 'personal' || currentView === 'todo' || currentView === 'chat' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
+        {(currentView === 'personal' || currentView === 'todo' || currentView === 'chat' || currentView === 'quotes' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
           <button
             className="dashboard-back-link-below"
             onClick={() => {
@@ -219,9 +222,9 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             onBack={() => setActiveAssignment(null)}
           />
         ) : (
-          <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : currentView === 'chat' ? 'chat-content-container' : ''}`}>
+          <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : currentView === 'chat' ? 'chat-content-container' : currentView === 'quotes' ? 'quotes-content-container' : ''}`}>
             {/* Left Icon Pill Capsule */}
-            <aside className={`student-icon-capsule ${currentView === 'todo' ? 'todo-capsule-sticky' : currentView === 'learning' ? 'learning-capsule' : currentView === 'chat' ? 'chat-capsule' : ''}`} aria-label="Feature navigation icons">
+            <aside className={`student-icon-capsule ${currentView === 'todo' ? 'todo-capsule-sticky' : currentView === 'learning' ? 'learning-capsule' : currentView === 'chat' ? 'chat-capsule' : currentView === 'quotes' ? 'quotes-capsule' : ''}`} aria-label="Feature navigation icons">
             {currentView === 'personal' ? (
               // In Personal Details view: ONLY the first icon (User Icon) displays at top
               <div
@@ -282,6 +285,24 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                   </div>
                 </div>
               </>
+            ) : currentView === 'quotes' ? (
+              // In Motivational Quotes view: Display in the 5th place (5th slot)
+              <>
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div
+                  className="capsule-slot single-active-slot quotes-active-slot"
+                  onClick={() => setCurrentView('dashboard')}
+                  title="Click to go back to Student Dashboard"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="capsule-icon-wrapper">
+                    <IconQuotes color="#ffffff" size={26} />
+                  </div>
+                </div>
+              </>
             ) : (
               // In Dashboard view: All 6 icons display and cycle
               features.map((item, index) => {
@@ -295,6 +316,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                       else if (item.id === 'todo') setCurrentView('todo');
                       else if (item.id === 'learning') setCurrentView('learning');
                       else if (item.id === 'chat') setCurrentView('chat');
+                      else if (item.id === 'quotes') setCurrentView('quotes');
                     }}
                     title={
                       item.id === 'personal'
@@ -305,6 +327,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                         ? 'Click to open Learning & Assignments'
                         : item.id === 'chat'
                         ? 'Click to open Online Chatbox'
+                        : item.id === 'quotes'
+                        ? 'Click to open Motivational Quotes'
                         : item.title
                     }
                   >
@@ -413,6 +437,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
               <h2 className="chat-main-subtitle">&quot;Ask questions, share updates, and collaborate instantly.&quot;</h2>
               <OnlineChatbox />
             </div>
+          ) : currentView === 'quotes' ? (
+            <MotivationalQuotesView />
           ) : (
             <div className="student-features-list">
               {features.map((feature, index) => {
@@ -433,6 +459,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                         setCurrentView('learning');
                       } else if (feature.id === 'chat') {
                         setCurrentView('chat');
+                      } else if (feature.id === 'quotes') {
+                        setCurrentView('quotes');
                       } else {
                         console.log(`Selected feature: ${feature.title}`);
                       }
