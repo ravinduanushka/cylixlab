@@ -3906,7 +3906,7 @@
   pointer-events: none;
 }
 
-/* Quotes scroll area: exactly 4 cards visible at any time, snap step scroll */
+/* Quotes scroll area: exactly 4 cards visible at any time, snap step scroll, completely clean (no visible scrollbar) */
 .quotes-scroll-area {
   position: relative;
   z-index: 3;
@@ -3914,31 +3914,19 @@
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
-  padding: 4px 20px 4px 6px;
+  padding: 4px 8px 4px 8px;
   box-sizing: border-box;
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
   outline: none;
-  scrollbar-width: thin;
-  scrollbar-color: #2563eb rgba(0, 0, 0, 0.08);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge */
 }
 
 .quotes-scroll-area::-webkit-scrollbar {
-  width: 8px;
-}
-
-.quotes-scroll-area::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-}
-
-.quotes-scroll-area::-webkit-scrollbar-thumb {
-  background: #2563eb;
-  border-radius: 4px;
-}
-
-.quotes-scroll-area::-webkit-scrollbar-thumb:hover {
-  background: #1d4ed8;
+  display: none; /* Chrome, Safari, Opera */
+  width: 0;
+  height: 0;
 }
 
 /* Staggered alternating list (left, right, left, right...) */
@@ -4034,63 +4022,6 @@
   max-width: 100%;
 }
 
-/* Floating step controls on the right */
-.quotes-scroll-controls {
-  position: absolute;
-  right: -2px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 6px 4px;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4px);
-}
-
-.quotes-nav-arrow-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #2563eb;
-  color: #ffffff;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
-  padding: 0;
-}
-
-.quotes-nav-arrow-btn:hover:not(.btn-disabled) {
-  background: #1d4ed8;
-  transform: scale(1.1);
-}
-
-.quotes-nav-arrow-btn.btn-disabled {
-  background: #cbd5e1;
-  color: #94a3b8;
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
-}
-
-.quotes-counter-badge {
-  font-family: 'Poppins', sans-serif;
-  font-size: 10.5px;
-  font-weight: 600;
-  color: #2563eb;
-  padding: 2px 2px;
-  letter-spacing: -0.2px;
-  white-space: nowrap;
-}
-
 @media (max-width: 768px) {
   .student-content-container.quotes-content-container {
     flex-direction: column;
@@ -4104,10 +4035,6 @@
   .quotes-fixed-bg-illustration {
     position: absolute;
     width: 280px;
-  }
-
-  .quotes-scroll-controls {
-    right: 2px;
   }
 }
 
