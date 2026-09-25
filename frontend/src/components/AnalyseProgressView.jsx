@@ -224,12 +224,41 @@ const AnalyseProgressView = () => {
         </section>
       </div>
 
-      {/* Dynamic Green Feedback Box */}
-      <div className="ap-green-feedback-box" role="region" aria-label="Performance feedback">
-        <span className="ap-asterisk" aria-hidden="true">✱</span>
-        <div className="ap-feedback-text-wrap">
-          <span className="ap-feedback-title">{feedback.tier} - </span>
-          <span className="ap-feedback-message">{feedback.text}</span>
+      {/* Green Feedback Box Displaying All 3 Feedback Messages */}
+      <div className="ap-green-feedback-box" role="region" aria-label="Performance feedback messages">
+        <div className="ap-feedback-list">
+          {/* 1. 0 - 10 marks */}
+          <div className="ap-feedback-row">
+            <span className="ap-asterisk" aria-hidden="true">✱</span>
+            <div className="ap-feedback-text-wrap">
+              <span className="ap-feedback-title">0-10 marks – </span>
+              <span className="ap-feedback-message">
+                Don&apos;t be discouraged! Review the lessons and foundational concepts, and try again to improve your score.
+              </span>
+            </div>
+          </div>
+
+          {/* 2. 10 - 20 Marks */}
+          <div className="ap-feedback-row">
+            <span className="ap-asterisk" aria-hidden="true">✱</span>
+            <div className="ap-feedback-text-wrap">
+              <span className="ap-feedback-title">10 - 20 Marks – </span>
+              <span className="ap-feedback-message">
+                Solid work! You have understood the key concepts well. With a little more focus, you can easily reach top marks.
+              </span>
+            </div>
+          </div>
+
+          {/* 3. 20 - 30 Marks */}
+          <div className="ap-feedback-row">
+            <span className="ap-asterisk" aria-hidden="true">✱</span>
+            <div className="ap-feedback-text-wrap">
+              <span className="ap-feedback-title">20 - 30 Marks – </span>
+              <span className="ap-feedback-message">
+                Excellent work! You have shown a deep understanding of the subject and completed your tasks with great precision.
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
