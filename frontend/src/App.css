@@ -4135,23 +4135,27 @@
 
 .student-content-container.progress-content-container {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
   width: 100%;
-  max-width: 1040px;
+  max-width: 1060px;
   margin: 0 auto;
   gap: 36px;
   box-sizing: border-box;
+  padding-top: 36px;
 }
 
 .student-icon-capsule.progress-capsule {
-  position: sticky;
-  top: 18px;
+  align-self: center;
+  flex-shrink: 0;
+  margin-top: 0;
+  position: static;
 }
 
 .capsule-slot.progress-active-slot {
-  background-color: #2563eb;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 .ap-page-container {
@@ -4435,34 +4439,46 @@
   height: 18px;
 }
 
-/* Bottom: Dynamic Green Feedback Box matching screenshot */
+/* Bottom: Dynamic Green Feedback Box displaying all 3 messages */
 .ap-green-feedback-box {
   background-color: #65a30d;
   color: #000000;
   border-radius: 6px;
-  padding: 22px 28px;
+  padding: 20px 26px;
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  flex-direction: column;
   width: 100%;
   box-sizing: border-box;
   box-shadow: 0 4px 16px rgba(101, 163, 13, 0.25);
-  transition: background-color 0.3s ease;
+}
+
+.ap-feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.ap-feedback-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
 }
 
 .ap-asterisk {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 900;
   line-height: 1;
   color: #000000;
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .ap-feedback-text-wrap {
   font-family: 'Poppins', serif, sans-serif;
-  font-size: 19px;
-  line-height: 1.45;
+  font-size: 16px;
+  line-height: 1.5;
   color: #000000;
 }
 

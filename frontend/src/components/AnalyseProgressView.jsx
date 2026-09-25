@@ -11,33 +11,6 @@ const ASSIGNMENTS_CONFIG = [
 const MAX_MARKS = 30;
 const Y_AXIS_TICKS = [30, 24, 18, 12, 6, 0];
 
-const getFeedbackForMarks = (marks) => {
-  if (marks === null || marks === undefined) {
-    return {
-      tier: '0-10 marks',
-      text: "Don't be discouraged! Review the lessons and foundational concepts, and try again to improve your score.",
-    };
-  }
-
-  const numericMarks = Number(marks);
-  if (numericMarks <= 10) {
-    return {
-      tier: '0-10 marks',
-      text: "Don't be discouraged! Review the lessons and foundational concepts, and try again to improve your score.",
-    };
-  }
-  if (numericMarks <= 20) {
-    return {
-      tier: '10 - 20 Marks',
-      text: 'Solid work! You have understood the key concepts well. With a little more focus, you can easily reach top marks.',
-    };
-  }
-  return {
-    tier: '20 - 30 Marks',
-    text: 'Excellent work! You have shown a deep understanding of the subject and completed your tasks with great precision.',
-  };
-};
-
 const AnalyseProgressView = () => {
   const [assignmentsData, setAssignmentsData] = useState({});
   const [selectedAssignmentId, setSelectedAssignmentId] = useState('01');
@@ -72,10 +45,6 @@ const AnalyseProgressView = () => {
     };
   }, []);
 
-  // Determine active assignment for the feedback box
-  const activeAssignmentRecord = assignmentsData[selectedAssignmentId];
-  const activeMarks = activeAssignmentRecord?.completed ? activeAssignmentRecord.marks : null;
-  const feedback = getFeedbackForMarks(activeMarks);
 
   // Demo / Simulation helpers so user can test all 3 tiers right away
   const handleSimulateScore = (id, marks) => {
