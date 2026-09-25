@@ -5,6 +5,7 @@ import LearningPathDetailView from './LearningPathDetailView';
 import AssignmentDetailView from './AssignmentDetailView';
 import OnlineChatbox from './OnlineChatbox';
 import MotivationalQuotesView from './MotivationalQuotesView';
+import AnalyseProgressView from './AnalyseProgressView';
 
 // Icons
 const IconUser = ({ color = '#ffffff' }) => (
@@ -49,9 +50,9 @@ const IconQuotes = ({ color = '#ffffff', size = 24 }) => (
   </svg>
 );
 
-const IconProgress = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="3" fill="#ffffff" />
+const IconProgress = ({ color = '#ffffff', size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3" fill={color} />
     <circle cx="5" cy="7" r="2.2" />
     <circle cx="19" cy="7" r="2.2" />
     <circle cx="12" cy="20" r="2.2" />
@@ -158,7 +159,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
   }, [currentView]);
 
   return (
-    <div className={`student-dashboard-page ${(currentView === 'todo' || activeAssignment) ? 'scrollable-page' : ''}`}>
+    <div className={`student-dashboard-page ${(currentView === 'todo' || currentView === 'progress' || activeAssignment) ? 'scrollable-page' : ''}`}>
       {/* 1. UNIFIED HEADER FOR ALL STUDENT DASHBOARD PAGES */}
       <header className="student-dashboard-header">
         <div className="learning-header-pattern" aria-hidden="true">
@@ -180,15 +181,17 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             ? 'Online Chatbox'
             : currentView === 'quotes'
             ? 'Motivational Quotes'
+            : currentView === 'progress'
+            ? 'Analyse Progress'
             : `welcome back , ${userData.name ? userData.name.toLowerCase() : 'user'} !`}
         </h1>
         <span className="learning-header-logo">CylixLab</span>
       </header>
 
       {/* 2. MAIN CONTENT (SAME PAGE IN-PLACE SWITCH) */}
-      <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : currentView === 'chat' ? 'chat-view-main' : currentView === 'quotes' ? 'quotes-view-main' : ''}`}>
+      <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : currentView === 'chat' ? 'chat-view-main' : currentView === 'quotes' ? 'quotes-view-main' : currentView === 'progress' ? 'progress-view-main' : ''}`}>
         {/* Back to Student Dashboard below header in black color */}
-        {(currentView === 'personal' || currentView === 'todo' || currentView === 'chat' || currentView === 'quotes' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
+        {(currentView === 'personal' || currentView === 'todo' || currentView === 'chat' || currentView === 'quotes' || currentView === 'progress' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
           <button
             className="dashboard-back-link-below"
             onClick={() => {
@@ -222,9 +225,9 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             onBack={() => setActiveAssignment(null)}
           />
         ) : (
-          <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : currentView === 'chat' ? 'chat-content-container' : currentView === 'quotes' ? 'quotes-content-container' : ''}`}>
+          <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : currentView === 'chat' ? 'chat-content-container' : currentView === 'quotes' ? 'quotes-content-container' : currentView === 'progress' ? 'progress-content-container' : ''}`}>
             {/* Left Icon Pill Capsule */}
-            <aside className={`student-icon-capsule ${currentView === 'todo' ? 'todo-capsule-sticky' : currentView === 'learning' ? 'learning-capsule' : currentView === 'chat' ? 'chat-capsule' : currentView === 'quotes' ? 'quotes-capsule' : ''}`} aria-label="Feature navigation icons">
+            <aside className={`student-icon-capsule ${currentView === 'todo' ? 'todo-capsule-sticky' : currentView === 'learning' ? 'learning-capsule' : currentView === 'chat' ? 'chat-capsule' : currentView === 'quotes' ? 'quotes-capsule' : currentView === 'progress' ? 'progress-capsule' : ''}`} aria-label="Feature navigation icons">
             {currentView === 'personal' ? (
               // In Personal Details view: ONLY the first icon (User Icon) displays at top
               <div
@@ -304,6 +307,25 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                 </div>
                 <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
               </>
+            ) : currentView === 'progress' ? (
+              // In Analyze Progress view: Display in the 6th place (6th slot)
+              <>
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div
+                  className="capsule-slot single-active-slot progress-active-slot"
+                  onClick={() => setCurrentView('dashboard')}
+                  title="Click to go back to Student Dashboard"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="capsule-icon-wrapper">
+                    <IconProgress color="#ffffff" size={26} />
+                  </div>
+                </div>
+              </>
             ) : (
               // In Dashboard view: All 6 icons display and cycle
               features.map((item, index) => {
@@ -318,6 +340,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                       else if (item.id === 'learning') setCurrentView('learning');
                       else if (item.id === 'chat') setCurrentView('chat');
                       else if (item.id === 'quotes') setCurrentView('quotes');
+                      else if (item.id === 'progress') setCurrentView('progress');
                     }}
                     title={
                       item.id === 'personal'
@@ -330,6 +353,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                         ? 'Click to open Online Chatbox'
                         : item.id === 'quotes'
                         ? 'Click to open Motivational Quotes'
+                        : item.id === 'progress'
+                        ? 'Click to open Analyse Progress'
                         : item.title
                     }
                   >
@@ -440,6 +465,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             </div>
           ) : currentView === 'quotes' ? (
             <MotivationalQuotesView />
+          ) : currentView === 'progress' ? (
+            <AnalyseProgressView />
           ) : (
             <div className="student-features-list">
               {features.map((feature, index) => {
@@ -462,6 +489,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                         setCurrentView('chat');
                       } else if (feature.id === 'quotes') {
                         setCurrentView('quotes');
+                      } else if (feature.id === 'progress') {
+                        setCurrentView('progress');
                       } else {
                         console.log(`Selected feature: ${feature.title}`);
                       }

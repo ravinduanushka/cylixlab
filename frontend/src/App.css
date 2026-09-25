@@ -4129,6 +4129,434 @@
   }
 }
 
+/* =========================================================
+   ANALYSE PROGRESS VIEW (BAR CHART, FINISHED WORKS, GREEN BOX)
+   ========================================================= */
 
+.student-content-container.progress-content-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  gap: 36px;
+  box-sizing: border-box;
+}
 
+.student-icon-capsule.progress-capsule {
+  position: sticky;
+  top: 18px;
+}
 
+.capsule-slot.progress-active-slot {
+  background-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.ap-page-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 28px;
+  padding: 8px 0 48px;
+  box-sizing: border-box;
+}
+
+/* Top 2 Columns */
+.ap-top-columns {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  width: 100%;
+}
+
+.ap-section-title {
+  font-family: 'Poppins', serif, sans-serif;
+  font-size: 23px;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.3px;
+}
+
+/* Left: Chart Card */
+.ap-chart-card {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ap-chart-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 440px;
+  height: 230px;
+}
+
+.ap-yaxis-title {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4b5563;
+  letter-spacing: 0.3px;
+  user-select: none;
+}
+
+.ap-chart-plot-area {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  display: flex;
+}
+
+.ap-yaxis-ticks {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100% - 24px);
+  padding-right: 8px;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.ap-tick-label {
+  font-family: 'Poppins', monospace, sans-serif;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #6b7280;
+  line-height: 1;
+  text-align: right;
+  min-width: 18px;
+}
+
+.ap-grid-lines {
+  position: absolute;
+  left: 28px;
+  right: 0;
+  top: 4px;
+  height: calc(100% - 28px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.ap-grid-line {
+  width: 100%;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.ap-grid-line:last-child {
+  background-color: #9ca3af;
+}
+
+.ap-bars-group {
+  position: absolute;
+  left: 32px;
+  right: 6px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+}
+
+.ap-bar-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 48px;
+  height: 100%;
+  justify-content: flex-end;
+  cursor: pointer;
+  padding: 0 2px;
+  box-sizing: border-box;
+}
+
+.ap-bar-column:focus {
+  outline: none;
+}
+
+.ap-bar-column.ap-bar-selected .ap-xaxis-label {
+  color: #1e40af;
+  font-weight: 700;
+}
+
+.ap-bar-track {
+  width: 36px;
+  height: calc(100% - 24px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.ap-bar-fill {
+  width: 100%;
+  min-height: 4px;
+  border-radius: 2px 2px 0 0;
+  transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease, transform 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.ap-bar-column:hover .ap-bar-fill {
+  filter: brightness(1.1);
+  transform: scaleY(1.02);
+  transform-origin: bottom;
+}
+
+.ap-bar-tooltip {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #111827;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ap-bar-column:hover .ap-bar-tooltip,
+.ap-bar-column.ap-bar-selected .ap-bar-tooltip {
+  opacity: 1;
+}
+
+.ap-xaxis-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  color: #4b5563;
+  margin-top: 6px;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.ap-xaxis-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  margin-top: 8px;
+  user-select: none;
+}
+
+/* Right: Finished Works Card */
+.ap-finished-card {
+  width: 290px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ap-finished-box {
+  width: 100%;
+  background-color: #d9d9d9;
+  border-radius: 8px;
+  padding: 20px 22px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.ap-finished-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.ap-finished-row:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.ap-finished-row.ap-row-selected {
+  background-color: rgba(255, 255, 255, 0.55);
+}
+
+.ap-finished-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17.5px;
+  font-weight: 700;
+  color: #000000;
+  letter-spacing: -0.2px;
+}
+
+.ap-check-square {
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.ap-check-square.checked {
+  background-color: #4dd0e1;
+  border: none;
+}
+
+.ap-check-square.unchecked {
+  background-color: #ffffff;
+  border: 1.5px solid #9ca3af;
+}
+
+.ap-check-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Bottom: Dynamic Green Feedback Box matching screenshot */
+.ap-green-feedback-box {
+  background-color: #65a30d;
+  color: #000000;
+  border-radius: 6px;
+  padding: 22px 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 16px rgba(101, 163, 13, 0.25);
+  transition: background-color 0.3s ease;
+}
+
+.ap-asterisk {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  color: #000000;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ap-feedback-text-wrap {
+  font-family: 'Poppins', serif, sans-serif;
+  font-size: 19px;
+  line-height: 1.45;
+  color: #000000;
+}
+
+.ap-feedback-title {
+  font-weight: 700;
+  color: #000000;
+}
+
+.ap-feedback-message {
+  font-weight: 500;
+  color: #000000;
+}
+
+/* Front-End Live Test Toolbar */
+.ap-test-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-top: 6px;
+}
+
+.ap-test-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  margin-right: 4px;
+}
+
+.ap-test-btn {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ap-test-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.ap-test-btn-all {
+  background-color: #e0f2fe;
+  border-color: #7dd3fc;
+  color: #0369a1;
+}
+
+.ap-test-btn-all:hover {
+  background-color: #bae6fd;
+}
+
+.ap-test-btn-reset {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.ap-test-btn-reset:hover {
+  background-color: #fecaca;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .student-content-container.progress-content-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .ap-top-columns {
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .ap-chart-card,
+  .ap-finished-card {
+    width: 100%;
+    max-width: 440px;
+  }
+
+  .ap-feedback-text-wrap {
+    font-size: 16px;
+  }
+}
