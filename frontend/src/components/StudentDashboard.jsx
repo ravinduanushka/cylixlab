@@ -302,6 +302,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                     <IconQuotes color="#ffffff" size={26} />
                   </div>
                 </div>
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
               </>
             ) : (
               // In Dashboard view: All 6 icons display and cycle

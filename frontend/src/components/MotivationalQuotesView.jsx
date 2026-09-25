@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Default quotes fallback loaded from motivational quotes .txt
 const DEFAULT_QUOTES = [
@@ -132,6 +132,14 @@ const parseQuotesText = (rawText) => {
 
 const MotivationalQuotesView = () => {
   const [quotes, setQuotes] = useState(DEFAULT_QUOTES);
+  const scrollAreaRef = useRef(null);
+
+  // Scroll to top on mount so Quote 1 is immediately visible
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = 0;
+    }
+  }, []);
 
   useEffect(() => {
     // Attempt to dynamically fetch from public text file
@@ -156,47 +164,67 @@ const MotivationalQuotesView = () => {
     fetchQuotesFile();
   }, []);
 
+  // Forward mouse wheel from outer container directly to quotes scroll area
+  const handleOuterWheel = (e) => {
+    if (scrollAreaRef.current && !scrollAreaRef.current.contains(e.target)) {
+      scrollAreaRef.current.scrollTop += e.deltaY;
+    }
+  };
+
   return (
-    <div className="quotes-content-wrapper">
+    <div className="quotes-content-wrapper" onWheel={handleOuterWheel}>
       {/* Subtitle centered above the quotes stage */}
       <h2 className="quotes-main-subtitle">
         &quot;Every small step brings you closer to your goal. Complete the missing piece and keep moving forward.&quot;
       </h2>
 
-      {/* Main stage with background goal illustration & staggered cards */}
+      {/* Main stage with fixed background goal illustration & scrollable quotes cards */}
       <div className="quotes-stage-wrapper">
-        {/* Background Goal Illustration */}
-        <div className="quotes-bg-illustration" aria-hidden="true">
+        {/* Fixed 3D Goal Illustration: NEVER scrolls, always fully displayed in the center */}
+        <div className="quotes-fixed-bg-illustration" aria-hidden="true">
           <img
             src="/images/motivational-quotes.jpg"
             alt="Goal Puzzle Step Illustration"
             className="quotes-bg-img"
             onError={(e) => {
-              // Hide or fallback gracefully if image is loading
-              e.currentTarget.style.opacity = '0.15';
+              // Try the alternative filename if needed
+              if (!e.currentTarget.src.includes('motivation%20al%20quates')) {
+                e.currentTarget.src = '/images/motivation al quates .jpg';
+              }
             }}
           />
         </div>
 
-        {/* Staggered list of 15 quotes (alternating left / right) */}
-        <div className="quotes-staggered-list">
-          {quotes.map((item, index) => {
-            const isRight = index % 2 === 1;
-            return (
-              <div
-                key={`quote-${item.id}`}
-                className={`quote-pill-card ${isRight ? 'quote-card-right' : 'quote-card-left'}`}
-              >
-                <span className="quote-number">{item.number}</span>
-                <div className="quote-text-content">
-                  <p className="quote-body">&ldquo;{item.quote}&rdquo;</p>
-                  {item.speaker && (
-                    <span className="quote-speaker">{item.speaker}</span>
-                  )}
+        {/* Scrollable list of quotes that scrolls up and down over the fixed image */}
+        <div
+          className="quotes-scroll-area"
+          ref={(el) => {
+            scrollAreaRef.current = el;
+          }}
+          tabIndex={0}
+          role="region"
+          aria-label="Motivational quotes list"
+        >
+          {/* Staggered list of 15 quotes (alternating left / right) */}
+          <div className="quotes-staggered-list">
+            {quotes.map((item, index) => {
+              const isRight = index % 2 === 1;
+              return (
+                <div
+                  key={`quote-${item.id}`}
+                  className={`quote-pill-card ${isRight ? 'quote-card-right' : 'quote-card-left'}`}
+                >
+                  <span className="quote-number">{item.number}</span>
+                  <div className="quote-text-content">
+                    <p className="quote-body">&ldquo;{item.quote}&rdquo;</p>
+                    {item.speaker && (
+                      <span className="quote-speaker">{item.speaker}</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

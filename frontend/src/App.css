@@ -3802,8 +3802,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 56px 20px 12px;
+  justify-content: center;
+  padding: 54px 20px 10px;
+  flex: 1;
   height: calc(100vh - 84px - 105px);
   max-height: calc(100vh - 84px - 105px);
   box-sizing: border-box;
@@ -3818,18 +3819,21 @@
   align-items: center;
   justify-content: center;
   gap: 36px;
-  max-width: 1140px;
+  max-width: 1160px;
   width: 100%;
   height: 100%;
+  flex: 1;
   min-height: 0;
   overflow: hidden;
+  position: relative;
 }
 
-/* Left capsule: Vertically centered in the middle, clearly below the back link */
+/* Left capsule: Vertically centered in the middle, clearly below Back to Student Dashboard */
 .student-icon-capsule.quotes-capsule {
   align-self: center;
   flex-shrink: 0;
   margin-top: 0;
+  z-index: 10;
 }
 
 .quotes-content-wrapper {
@@ -3843,15 +3847,16 @@
   flex-direction: column;
   align-items: center;
   overflow: hidden;
+  position: relative;
 }
 
-/* The caption bar stays fixed at the top */
+/* Caption bar stays fixed at the top */
 .quotes-main-subtitle {
   font-family: 'Merriweather', 'Georgia', serif;
   font-size: 19px;
   font-weight: 700;
   color: #000000;
-  margin: 0 0 16px 0;
+  margin: 0 0 14px 0;
   text-align: center;
   width: 100%;
   letter-spacing: -0.2px;
@@ -3860,84 +3865,102 @@
   animation: fadeIn 0.35s ease both;
 }
 
-/* Only the quotes stage wrapper scrolls down and up smoothly */
+/* Stage wrapper: holds the fixed background illustration AND the scrollable quotes */
 .quotes-stage-wrapper {
   position: relative;
   width: 100%;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 14px 40px 10px;
   box-sizing: border-box;
-  scroll-behavior: smooth;
 }
 
-.quotes-stage-wrapper::-webkit-scrollbar {
-  width: 8px;
-}
-
-.quotes-stage-wrapper::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-}
-
-.quotes-stage-wrapper::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  border-radius: 4px;
-}
-
-.quotes-stage-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
-}
-
-/* 3D Goal Illustration in background: absolute positioned, NO negative margin */
-.quotes-bg-illustration {
+/* 3D Goal Illustration: completely FIXED in center, never scrolls, full display */
+.quotes-fixed-bg-illustration {
   position: absolute;
-  top: 90px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  width: 440px;
-  max-width: 80%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  max-width: 85%;
+  max-height: 85%;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
   opacity: 0.9;
-  z-index: 0;
+  z-index: 1;
+  user-select: none;
 }
 
 .quotes-bg-img {
   width: 100%;
   height: auto;
+  max-height: 380px;
   object-fit: contain;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.09));
+  pointer-events: none;
+}
+
+/* Quotes scroll area: scrolls smoothly up and down over the fixed background image */
+.quotes-scroll-area {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 8px 16px 36px 8px;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  outline: none;
+}
+
+.quotes-scroll-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.quotes-scroll-area::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.quotes-scroll-area::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+.quotes-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
 }
 
 /* Staggered alternating list (left, right, left, right...) */
 .quotes-staggered-list {
   position: relative;
-  z-index: 2;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  padding: 4px 0 24px;
+  gap: 26px;
+  padding: 4px 0 28px;
 }
 
 /* Quote card pill styling matching screenshot */
 .quote-pill-card {
   background-color: #d1d5db;
   border-radius: 18px;
-  padding: 16px 24px;
+  padding: 15px 22px;
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  width: 70%;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
+  width: 68%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
 }
@@ -4005,10 +4028,8 @@
     width: 100%;
   }
 
-  .quotes-bg-illustration {
-    position: relative;
-    top: 0;
-    margin-bottom: 20px;
+  .quotes-fixed-bg-illustration {
+    position: absolute;
     width: 280px;
   }
 }
