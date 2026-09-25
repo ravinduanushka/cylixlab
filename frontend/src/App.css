@@ -3803,30 +3803,33 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 12px 20px 10px;
+  padding: 56px 20px 12px;
   height: calc(100vh - 84px - 105px);
   max-height: calc(100vh - 84px - 105px);
   box-sizing: border-box;
   width: 100%;
   overflow: hidden;
   position: relative;
+  min-height: 0;
 }
 
 .student-content-container.quotes-content-container {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   gap: 36px;
   max-width: 1140px;
   width: 100%;
   height: 100%;
+  min-height: 0;
   overflow: hidden;
 }
 
-/* Left capsule stays fixed at the side */
+/* Left capsule: Vertically centered in the middle, clearly below the back link */
 .student-icon-capsule.quotes-capsule {
-  align-self: flex-start;
+  align-self: center;
   flex-shrink: 0;
+  margin-top: 0;
 }
 
 .quotes-content-wrapper {
@@ -3834,19 +3837,21 @@
   max-width: 920px;
   width: 100%;
   height: 100%;
+  min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
 }
 
-/* The caption bar stays fixed at the top under back link */
+/* The caption bar stays fixed at the top */
 .quotes-main-subtitle {
   font-family: 'Merriweather', 'Georgia', serif;
   font-size: 19px;
   font-weight: 700;
   color: #000000;
-  margin: 0 0 14px 0;
+  margin: 0 0 16px 0;
   text-align: center;
   width: 100%;
   letter-spacing: -0.2px;
@@ -3855,44 +3860,46 @@
   animation: fadeIn 0.35s ease both;
 }
 
-/* Only the quotes stage wrapper scrolls down and up - page stays fixed */
+/* Only the quotes stage wrapper scrolls down and up smoothly */
 .quotes-stage-wrapper {
   position: relative;
   width: 100%;
   flex: 1;
-  height: calc(100% - 46px);
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 12px 30px;
+  padding: 8px 14px 40px 10px;
   box-sizing: border-box;
   scroll-behavior: smooth;
 }
 
 .quotes-stage-wrapper::-webkit-scrollbar {
-  width: 7px;
+  width: 8px;
 }
 
 .quotes-stage-wrapper::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 4px;
 }
 
 .quotes-stage-wrapper::-webkit-scrollbar-thumb {
-  background: rgba(0, 54, 167, 0.35);
+  background: #3b82f6;
   border-radius: 4px;
 }
 
 .quotes-stage-wrapper::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 54, 167, 0.6);
+  background: #2563eb;
 }
 
-/* 3D Goal Illustration positioned in the center */
+/* 3D Goal Illustration in background: absolute positioned, NO negative margin */
 .quotes-bg-illustration {
-  position: sticky;
-  top: 40px;
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 440px;
   max-width: 80%;
   display: flex;
@@ -3900,9 +3907,7 @@
   justify-content: center;
   pointer-events: none;
   opacity: 0.9;
-  z-index: 1;
-  margin-bottom: -430px;
-  transition: opacity 0.3s ease;
+  z-index: 0;
 }
 
 .quotes-bg-img {
@@ -3920,6 +3925,7 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
+  padding: 4px 0 24px;
 }
 
 /* Quote card pill styling matching screenshot */
