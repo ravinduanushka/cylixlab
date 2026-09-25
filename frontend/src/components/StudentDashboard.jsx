@@ -412,6 +412,10 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                 </div>
               </div>
             </div>
+          ) : currentView === 'chat' ? (
+            <div className="chat-content-wrapper">
+              <OnlineChatbox />
+            </div>
           ) : (
             <div className="student-features-list">
               {features.map((feature, index) => {
@@ -430,6 +434,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                         setCurrentView('todo');
                       } else if (feature.id === 'learning') {
                         setCurrentView('learning');
+                      } else if (feature.id === 'chat') {
+                        setCurrentView('chat');
                       } else {
                         console.log(`Selected feature: ${feature.title}`);
                       }
