@@ -223,9 +223,9 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             onBack={() => setActiveAssignment(null)}
           />
         ) : (
-          <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : ''}`}>
+          <div className={`student-content-container ${currentView === 'todo' ? 'todo-content-container' : currentView === 'learning' ? 'learning-content-container' : currentView === 'chat' ? 'chat-content-container' : ''}`}>
             {/* Left Icon Pill Capsule */}
-            <aside className={`student-icon-capsule ${currentView === 'todo' ? 'todo-capsule-sticky' : currentView === 'learning' ? 'learning-capsule' : ''}`} aria-label="Feature navigation icons">
+            <aside className={`student-icon-capsule ${currentView === 'todo' ? 'todo-capsule-sticky' : currentView === 'learning' ? 'learning-capsule' : currentView === 'chat' ? 'chat-capsule' : ''}`} aria-label="Feature navigation icons">
             {currentView === 'personal' ? (
               // In Personal Details view: ONLY the first icon (User Icon) displays at top
               <div
@@ -269,6 +269,23 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                   </div>
                 </div>
               </>
+            ) : currentView === 'chat' ? (
+              // In Online Chatbox view: Display in the 4th place (4th slot)
+              <>
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div
+                  className="capsule-slot single-active-slot chat-active-slot"
+                  onClick={() => setCurrentView('dashboard')}
+                  title="Click to go back to Student Dashboard"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="capsule-icon-wrapper chat-icon-badge">
+                    <IconChat color="#2f80ed" size={26} />
+                  </div>
+                </div>
+              </>
             ) : (
               // In Dashboard view: All 6 icons display and cycle
               features.map((item, index) => {
@@ -281,6 +298,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                       if (item.id === 'personal') setCurrentView('personal');
                       else if (item.id === 'todo') setCurrentView('todo');
                       else if (item.id === 'learning') setCurrentView('learning');
+                      else if (item.id === 'chat') setCurrentView('chat');
                     }}
                     title={
                       item.id === 'personal'
@@ -289,6 +307,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                         ? 'Click to open To-Do Lists'
                         : item.id === 'learning'
                         ? 'Click to open Learning & Assignments'
+                        : item.id === 'chat'
+                        ? 'Click to open Online Chatbox'
                         : item.title
                     }
                   >
