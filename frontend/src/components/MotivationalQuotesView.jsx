@@ -304,39 +304,6 @@ const MotivationalQuotesView = () => {
             })}
           </div>
         </div>
-
-        {/* Floating scroll step controls (Up / Down) */}
-        <div className="quotes-scroll-controls" aria-label="Quotes navigation">
-          <button
-            type="button"
-            className={`quotes-nav-arrow-btn quotes-nav-arrow-up ${startIndex === 0 ? 'btn-disabled' : ''}`}
-            onClick={() => scrollToCard(startIndex - 1)}
-            disabled={startIndex === 0}
-            title="Scroll up (previous quote)"
-            aria-label="Previous quote"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 15l-6-6-6 6" />
-            </svg>
-          </button>
-
-          <span className="quotes-counter-badge" title="Current visible quotes">
-            {startIndex + 1}–{Math.min(startIndex + VISIBLE_COUNT, quotes.length)}
-          </span>
-
-          <button
-            type="button"
-            className={`quotes-nav-arrow-btn quotes-nav-arrow-down ${startIndex >= maxIndex ? 'btn-disabled' : ''}`}
-            onClick={() => scrollToCard(startIndex + 1)}
-            disabled={startIndex >= maxIndex}
-            title="Scroll down (next quote)"
-            aria-label="Next quote"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          </button>
-        </div>
       </div>
     </div>
   );
