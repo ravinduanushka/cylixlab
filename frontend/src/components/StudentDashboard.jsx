@@ -3,6 +3,7 @@ import Footer from './Footer';
 import TodoListManager from './TodoListManager';
 import LearningPathDetailView from './LearningPathDetailView';
 import AssignmentDetailView from './AssignmentDetailView';
+import OnlineChatbox from './OnlineChatbox';
 
 // Icons
 const IconUser = ({ color = '#ffffff' }) => (
@@ -31,12 +32,12 @@ const IconLearning = ({ color = '#ffffff', size = 26 }) => (
   </svg>
 );
 
-const IconChat = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+const IconChat = ({ color = '#ffffff', size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 0 1-3.12-.5L4 21l1.42-3.79C4.52 15.82 4 14 4 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-    <circle cx="8.5" cy="12" r="1.2" fill="#ffffff" stroke="none" />
-    <circle cx="12" cy="12" r="1.2" fill="#ffffff" stroke="none" />
-    <circle cx="15.5" cy="12" r="1.2" fill="#ffffff" stroke="none" />
+    <circle cx="8.5" cy="12" r="1.2" fill={color} stroke="none" />
+    <circle cx="12" cy="12" r="1.2" fill={color} stroke="none" />
+    <circle cx="15.5" cy="12" r="1.2" fill={color} stroke="none" />
   </svg>
 );
 
@@ -174,15 +175,17 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             ? 'Manage Your To-Do List'
             : currentView === 'learning'
             ? 'Learning & Assignments'
+            : currentView === 'chat'
+            ? 'Online Chatbox'
             : `welcome back , ${userData.name ? userData.name.toLowerCase() : 'user'} !`}
         </h1>
         <span className="learning-header-logo">CylixLab</span>
       </header>
 
       {/* 2. MAIN CONTENT (SAME PAGE IN-PLACE SWITCH) */}
-      <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : ''}`}>
+      <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : currentView === 'chat' ? 'chat-view-main' : ''}`}>
         {/* Back to Student Dashboard below header in black color */}
-        {(currentView === 'personal' || currentView === 'todo' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
+        {(currentView === 'personal' || currentView === 'todo' || currentView === 'chat' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
           <button
             className="dashboard-back-link-below"
             onClick={() => {
@@ -202,6 +205,11 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
         {/* Learning view title "What you do?" centered above */}
         {currentView === 'learning' && !activeLearningPath && !activeAssignment && (
           <h2 className="learning-main-title">What you do?</h2>
+        )}
+
+        {/* Chat view subtitle matching screenshot */}
+        {currentView === 'chat' && (
+          <h2 className="chat-main-subtitle">&quot;Ask questions, share updates, and collaborate instantly.&quot;</h2>
         )}
 
         {currentView === 'learning' && activeLearningPath ? (
