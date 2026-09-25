@@ -74,6 +74,29 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
   const handleSubmit = () => {
     setIsSubmitted(true);
     setShowSubmitModal(true);
+    try {
+      const stored = localStorage.getItem('cylixlab_assignments_data');
+      const progressData = stored ? JSON.parse(stored) : {};
+      progressData[assignmentId] = {
+        assignmentId,
+        completed: true,
+        marks: answeredCount,
+        total: totalQuestions,
+        answeredCount,
+        submittedAt: new Date().toISOString(),
+      };
+      localStorage.setItem('cylixlab_assignments_data', JSON.stringify(progressData));
+      window.dispatchEvent(new CustomEvent('cylixlab_assignment_updated', { detail: { assignmentId, marks: answeredCount } }));
+    } catch (e) {
+      console.error('Error saving assignment progress:', e);
+    }
+  };
+
+  const scrollToQuestion = (qId) => {
+    const el = document.getElementById(`question-card-${qId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   };
 
   return (
@@ -93,100 +116,128 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
         </button>
       </div>
 
-      {/* Header Row: Assignment 01 Pill on left & Time Duration Box on right */}
-      <div className="as-header-badge-row">
-        <div className="as-pill-badge">
-          Assignment {assignmentId}
-        </div>
+      {/* Main 2-column layout: Left questions & Right countdown + quiz navigation */}
+      <div className="as-main-columns-wrap">
+        {/* Left Column: Assignment Pill, Instructions, PDF, 30 MCQ Questions, Submit */}
+        <div className="as-content-column">
+          <div className="as-pill-badge">
+            Assignment {assignmentId}
+          </div>
 
-        <div className="as-timer-box">
-          <span className="as-timer-title">Time Duration</span>
-          <span className="as-timer-digits" aria-live="polite">
-            {minutes} : {seconds}
-          </span>
-        </div>
-      </div>
+          {/* Instructions block */}
+          <div className="as-instructions-block">
+            <p className="as-instruction-line">
+              + Review the provided problem statement carefully and implement the specified requirements.
+            </p>
+            <p className="as-instruction-line">
+              + Test your implementation thoroughly to ensure all test cases pass and verify your progress.
+            </p>
+            <p className="as-instruction-line">
+              + &quot;Mark the correct answer using the check icon (&#x2705;) corresponding to the statement.&quot;
+            </p>
+          </div>
 
-      {/* Instructions block */}
-      <div className="as-instructions-block">
-        <p className="as-instruction-line">
-          + Review the provided problem statement carefully and implement the specified requirements.
-        </p>
-        <p className="as-instruction-line">
-          + Test your implementation thoroughly to ensure all test cases pass and verify your progress.
-        </p>
-        <p className="as-instruction-line">
-          + &quot;Mark the correct answer using the check icon (&#x2705;) corresponding to the statement.&quot;
-        </p>
-      </div>
-
-      {/* Optional Admin PDF viewer (if uploaded) */}
-      {pdfUrl && (
-        <div className="as-pdf-wrapper">
-          <iframe src={pdfUrl} title={`Assignment ${assignmentId} PDF`} className="as-pdf-frame" />
-        </div>
-      )}
-
-      {/* 30 MCQ Questions */}
-      <div className="as-questions-list">
-        {questionsList.map((q) => {
-          const selected = selectedAnswers[q.id];
-          return (
-            <div key={`q-${q.id}`} className="as-question-card">
-              {/* Question Badge */}
-              <div className="as-question-badge">
-                {q.label}
-              </div>
-
-              {/* Question Container with 4 Options and Circles */}
-              <div className="as-mcq-box">
-                {[1, 2, 3, 4].map((optNum) => {
-                  const isChecked = selected === optNum;
-                  return (
-                    <div
-                      key={`q-${q.id}-opt-${optNum}`}
-                      className={`as-option-row ${isChecked ? 'as-option-selected' : ''}`}
-                      onClick={() => handleSelectOption(q.id, optNum)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          handleSelectOption(q.id, optNum);
-                        }
-                      }}
-                      aria-label={`Option ${optNum} for ${q.label}`}
-                    >
-                      <span className="as-option-number">{optNum}.</span>
-                      <div className={`as-option-circle ${isChecked ? 'checked' : ''}`}>
-                        {isChecked && (
-                          <svg className="as-check-icon" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+          {/* Optional Admin PDF viewer (if uploaded) */}
+          {pdfUrl && (
+            <div className="as-pdf-wrapper">
+              <iframe src={pdfUrl} title={`Assignment ${assignmentId} PDF`} className="as-pdf-frame" />
             </div>
-          );
-        })}
-      </div>
+          )}
 
-      {/* Bottom Submission Action Bar */}
-      <div className="as-submission-bar">
-        <div className="as-progress-text">
-          Completed: <strong>{answeredCount}</strong> / {totalQuestions} Questions
+          {/* 30 MCQ Questions */}
+          <div className="as-questions-list">
+            {questionsList.map((q) => {
+              const selected = selectedAnswers[q.id];
+              return (
+                <div key={`q-${q.id}`} id={`question-card-${q.id}`} className="as-question-card">
+                  {/* Question Badge */}
+                  <div className="as-question-badge">
+                    {q.label}
+                  </div>
+
+                  {/* Question Container with 4 Options and Circles */}
+                  <div className="as-mcq-box">
+                    {[1, 2, 3, 4].map((optNum) => {
+                      const isChecked = selected === optNum;
+                      return (
+                        <div
+                          key={`q-${q.id}-opt-${optNum}`}
+                          className={`as-option-row ${isChecked ? 'as-option-selected' : ''}`}
+                          onClick={() => handleSelectOption(q.id, optNum)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleSelectOption(q.id, optNum);
+                            }
+                          }}
+                          aria-label={`Option ${optNum} for ${q.label}`}
+                        >
+                          <span className="as-option-number">{optNum}.</span>
+                          <div className={`as-option-circle ${isChecked ? 'checked' : ''}`}>
+                            {isChecked && (
+                              <svg className="as-check-icon" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Bottom Submission Action Bar */}
+          <div className="as-submission-bar">
+            <div className="as-progress-text">
+              Completed: <strong>{answeredCount}</strong> / {totalQuestions} Questions
+            </div>
+            <button
+              type="button"
+              className="as-submit-btn"
+              onClick={handleSubmit}
+              disabled={isSubmitted}
+            >
+              {isSubmitted ? 'Assignment Submitted' : 'Submit Assignment'}
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          className="as-submit-btn"
-          onClick={handleSubmit}
-          disabled={isSubmitted}
-        >
-          {isSubmitted ? 'Assignment Submitted' : 'Submit Assignment'}
-        </button>
+
+        {/* Right Sidebar Column: Countdown Timer + Quiz Navigation Table */}
+        <aside className="as-sidebar-column">
+          <div className="as-timer-box">
+            <span className="as-timer-title">Time Duration</span>
+            <span className="as-timer-digits" aria-live="polite">
+              {minutes} : {seconds}
+            </span>
+          </div>
+
+          {/* Quiz Navigation Table (5 Columns x 6 Rows = 30 Cells) */}
+          <div className="as-quiz-nav-card">
+            <h4 className="as-quiz-nav-title">Quiz navigation</h4>
+            <div className="as-quiz-nav-table" role="grid" aria-label="Quiz question navigation">
+              {questionsList.map((q) => {
+                const isMarked = !!selectedAnswers[q.id];
+                return (
+                  <button
+                    key={`nav-q-${q.id}`}
+                    type="button"
+                    className={`as-nav-cell ${isMarked ? 'as-cell-marked' : 'as-cell-unmarked'}`}
+                    onClick={() => scrollToQuestion(q.id)}
+                    title={`Question ${q.id}: ${isMarked ? 'Marked (Finished)' : 'Not finished yet'}`}
+                    aria-label={`Question ${q.id} ${isMarked ? 'marked' : 'not yet marked'}`}
+                  >
+                    {q.id}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </aside>
       </div>
 
       {/* Submission Modal Dialog */}
