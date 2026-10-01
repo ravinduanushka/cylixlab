@@ -3893,35 +3893,37 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 54px 20px 10px;
+  justify-content: flex-start;
+  padding: 36px 20px 70px;
   flex: 1;
-  height: calc(100vh - 84px - 105px);
-  max-height: calc(100vh - 84px - 105px);
+  min-height: calc(100vh - 84px - 105px);
+  height: auto;
   box-sizing: border-box;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
-  min-height: 0;
 }
 
 .student-content-container.quotes-content-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 36px;
   max-width: 1160px;
   width: 100%;
-  height: 100%;
+  height: auto;
   flex: 1;
-  min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
+  margin: 0 auto;
 }
 
-/* Left capsule: Vertically centered in the middle, clearly below Back to Student Dashboard */
+/* Left capsule: Sticky in the vertical middle of viewport while page scrolls down */
 .student-icon-capsule.quotes-capsule {
-  align-self: center;
+  position: sticky;
+  top: 50%;
+  transform: translateY(-50%);
+  align-self: flex-start;
   flex-shrink: 0;
   margin-top: 0;
   z-index: 10;
@@ -3931,23 +3933,22 @@
   flex: 1;
   max-width: 920px;
   width: 100%;
-  height: 100%;
-  min-height: 0;
+  height: auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 
-/* Caption bar stays fixed at the top */
+/* Caption bar stays at the top of the quotes content */
 .quotes-main-subtitle {
   font-family: 'Merriweather', 'Georgia', serif;
   font-size: 19px;
   font-weight: 700;
   color: #000000;
-  margin: 0 0 14px 0;
+  margin: 0 0 24px 0;
   text-align: center;
   width: 100%;
   letter-spacing: -0.2px;
@@ -3956,96 +3957,69 @@
   animation: fadeIn 0.35s ease both;
 }
 
-/* Stage wrapper: holds the fixed background illustration AND the 4-card scroll window */
+/* Stage wrapper: holds the background illustration AND the fully displayed quotes list */
 .quotes-stage-wrapper {
   position: relative;
   width: 100%;
-  height: 380px;
-  max-height: 380px;
-  min-height: 380px;
-  overflow: hidden;
+  height: auto;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
 }
 
-/* 3D Goal Illustration: completely FIXED in center, never scrolls, full display */
+/* 3D Goal Illustration: sticky in the center behind the quotes as user scrolls down */
 .quotes-fixed-bg-illustration {
-  position: absolute;
+  position: sticky;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
   width: 480px;
   max-width: 85%;
-  max-height: 85%;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 0.85;
   z-index: 1;
   user-select: none;
+  height: 0;
+  margin: 0 auto;
 }
 
 .quotes-bg-img {
   width: 100%;
   height: auto;
-  max-height: 360px;
+  max-height: 380px;
   object-fit: contain;
   filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.09));
   pointer-events: none;
 }
 
-/* Quotes scroll area: exactly 4 cards visible at any time, snap step scroll, completely clean (no visible scrollbar) */
-.quotes-scroll-area {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-  height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  padding: 4px 8px 4px 8px;
-  box-sizing: border-box;
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
-  outline: none;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE / Edge */
-}
-
-.quotes-scroll-area::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-  width: 0;
-  height: 0;
-}
-
-/* Staggered alternating list (left, right, left, right...) */
+/* Staggered alternating list of all quotes (left, right, left, right...) fully displayed */
 .quotes-staggered-list {
   position: relative;
+  z-index: 2;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 2px 0 10px;
+  gap: 12px;
+  padding: 4px 0 20px;
 }
 
 /* Quote card pill styling matching Figma screenshot */
 .quote-pill-card {
   background-color: #d1d5db;
   border-radius: 16px;
-  padding: 8px 18px;
+  padding: 10px 18px;
   display: flex;
   align-items: center;
   gap: 12px;
   width: 65%;
-  height: 82px;
   min-height: 82px;
-  max-height: 82px;
+  height: auto;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 }
 
@@ -4079,23 +4053,18 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   flex: 1;
   min-width: 0;
 }
 
 .quote-body {
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
   color: #1f2937;
-  line-height: 1.35;
+  line-height: 1.4;
   margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .quote-speaker {
@@ -4116,7 +4085,13 @@
 @media (max-width: 768px) {
   .student-content-container.quotes-content-container {
     flex-direction: column;
+    align-items: center;
     gap: 16px;
+  }
+
+  .student-icon-capsule.quotes-capsule {
+    position: static;
+    transform: none;
   }
 
   .quote-pill-card {
@@ -4124,7 +4099,6 @@
   }
 
   .quotes-fixed-bg-illustration {
-    position: absolute;
     width: 280px;
   }
 }
