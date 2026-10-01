@@ -3957,9 +3957,11 @@
   line-height: 1.45;
   flex-shrink: 0;
   animation: fadeIn 0.35s ease both;
+  position: relative;
+  z-index: 2;
 }
 
-/* Stage wrapper: holds the background illustration AND the fully displayed quotes list */
+/* Stage wrapper: holds the fully displayed quotes list */
 .quotes-stage-wrapper {
   position: relative;
   width: 100%;
@@ -3971,31 +3973,33 @@
   box-sizing: border-box;
 }
 
-/* 3D Goal Illustration: sticky in the center behind the quotes as user scrolls down */
+/* 3D Goal Illustration: fixed across desktop background and positioned comfortably down from header */
 .quotes-fixed-bg-illustration {
-  position: sticky;
-  top: 50vh;
-  transform: translateY(-50%);
-  width: 480px;
-  max-width: 85%;
+  position: fixed;
+  top: 160px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: calc(100vh - 160px);
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: 0.85;
-  z-index: 1;
+  z-index: 0;
   user-select: none;
-  height: 0;
-  margin: 0 auto;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .quotes-bg-img {
   width: 100%;
-  height: auto;
-  max-height: 380px;
+  height: 100%;
+  max-width: 100vw;
+  max-height: calc(100vh - 175px);
   object-fit: contain;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.09));
   pointer-events: none;
+  user-select: none;
 }
 
 /* Staggered alternating list of all quotes (left, right, left, right...) fully displayed */
@@ -4101,7 +4105,8 @@
   }
 
   .quotes-fixed-bg-illustration {
-    width: 280px;
+    top: 120px;
+    height: calc(100vh - 120px);
   }
 }
 
