@@ -159,7 +159,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
   }, [currentView]);
 
   return (
-    <div className={`student-dashboard-page ${(currentView === 'todo' || currentView === 'progress' || activeAssignment) ? 'scrollable-page' : ''}`}>
+    <div className={`student-dashboard-page ${(currentView === 'todo' || currentView === 'progress' || currentView === 'quotes' || activeAssignment) ? 'scrollable-page' : ''}`}>
       {/* 1. UNIFIED HEADER FOR ALL STUDENT DASHBOARD PAGES */}
       <header className="student-dashboard-header">
         <div className="learning-header-pattern" aria-hidden="true">
