@@ -501,6 +501,8 @@
    5. FOOTER SECTION
    ========================================================= */
 .footer-section {
+  position: relative;
+  z-index: 5;
   width: 100%;
   background-color: #494fc4;
   color: #ffffff;
@@ -1289,6 +1291,7 @@
   box-shadow: 0 4px 16px rgba(0, 54, 167, 0.28);
   overflow: hidden;
   box-sizing: border-box;
+  z-index: 10;
 }
 
 .student-dashboard-header .learning-header-pattern,

@@ -158,27 +158,27 @@ const MotivationalQuotesView = () => {
 
   return (
     <div className="quotes-content-wrapper">
+      {/* Background 3D Goal Illustration: fixed across desktop background */}
+      <div className="quotes-fixed-bg-illustration" aria-hidden="true">
+        <img
+          src="/images/motivational-quotes.jpg"
+          alt="Goal Puzzle Step Illustration"
+          className="quotes-bg-img"
+          onError={(e) => {
+            if (!e.currentTarget.src.includes('motivation%20al%20quates')) {
+              e.currentTarget.src = '/images/motivation al quates .jpg';
+            }
+          }}
+        />
+      </div>
+
       {/* Subtitle centered above the quotes stage */}
       <h2 className="quotes-main-subtitle">
         &quot;Every small step brings you closer to your goal. Complete the missing piece and keep moving forward.&quot;
       </h2>
 
-      {/* Main stage with background goal illustration & fully displayed quotes cards */}
+      {/* Main stage with fully displayed quotes cards */}
       <div className="quotes-stage-wrapper">
-        {/* Background 3D Goal Illustration */}
-        <div className="quotes-fixed-bg-illustration" aria-hidden="true">
-          <img
-            src="/images/motivational-quotes.jpg"
-            alt="Goal Puzzle Step Illustration"
-            className="quotes-bg-img"
-            onError={(e) => {
-              if (!e.currentTarget.src.includes('motivation%20al%20quates')) {
-                e.currentTarget.src = '/images/motivation al quates .jpg';
-              }
-            }}
-          />
-        </div>
-
         {/* Staggered list of 15 quotes (alternating left / right) - fully displayed */}
         <div className="quotes-staggered-list">
           {quotes.map((item, index) => {
