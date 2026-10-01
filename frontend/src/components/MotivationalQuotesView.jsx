@@ -130,32 +130,8 @@ const parseQuotesText = (rawText) => {
   return parsed.length > 0 ? parsed : DEFAULT_QUOTES;
 };
 
-const CARD_STEP = 92; // 82px card height + 10px gap
-const VISIBLE_COUNT = 4;
-
 const MotivationalQuotesView = () => {
   const [quotes, setQuotes] = useState(DEFAULT_QUOTES);
-  const [startIndex, setStartIndex] = useState(0);
-  const scrollAreaRef = useRef(null);
-  const isWheelingRef = useRef(false);
-
-  const maxIndex = Math.max(0, quotes.length - VISIBLE_COUNT);
-
-  // Scroll to a specific card index
-  const scrollToCard = (index, smooth = true) => {
-    if (!scrollAreaRef.current) return;
-    const clamped = Math.max(0, Math.min(index, maxIndex));
-    setStartIndex(clamped);
-    scrollAreaRef.current.scrollTo({
-      top: clamped * CARD_STEP,
-      behavior: smooth ? 'smooth' : 'instant',
-    });
-  };
-
-  // Scroll to top on mount so Quote 1 is immediately visible
-  useEffect(() => {
-    scrollToCard(0, false);
-  }, []);
 
   useEffect(() => {
     // Attempt to dynamically fetch from public text file
@@ -180,87 +156,16 @@ const MotivationalQuotesView = () => {
     fetchQuotesFile();
   }, []);
 
-  // One-by-one wheel handler: 1 notch = exactly 1 quote
-  const handleWheel = (e) => {
-    if (isWheelingRef.current) return;
-    isWheelingRef.current = true;
-    setTimeout(() => {
-      isWheelingRef.current = false;
-    }, 180);
-
-    const delta = e.deltaY;
-    if (Math.abs(delta) < 6) return;
-
-    if (delta > 0) {
-      // Scroll down: hide first number quote, show next number quote below
-      setStartIndex((prev) => {
-        const next = Math.min(prev + 1, maxIndex);
-        if (scrollAreaRef.current) {
-          scrollAreaRef.current.scrollTo({ top: next * CARD_STEP, behavior: 'smooth' });
-        }
-        return next;
-      });
-    } else {
-      // Scroll up: hide last number quote, restore previous quote above
-      setStartIndex((prev) => {
-        const next = Math.max(prev - 1, 0);
-        if (scrollAreaRef.current) {
-          scrollAreaRef.current.scrollTo({ top: next * CARD_STEP, behavior: 'smooth' });
-        }
-        return next;
-      });
-    }
-  };
-
-  // Listen for keyboard ArrowDown / ArrowUp
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-        e.preventDefault();
-        setStartIndex((prev) => {
-          const next = Math.min(prev + 1, maxIndex);
-          if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollTo({ top: next * CARD_STEP, behavior: 'smooth' });
-          }
-          return next;
-        });
-      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-        e.preventDefault();
-        setStartIndex((prev) => {
-          const next = Math.max(prev - 1, 0);
-          if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollTo({ top: next * CARD_STEP, behavior: 'smooth' });
-          }
-          return next;
-        });
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [maxIndex]);
-
-  // Keep startIndex in sync if user manually drags the scrollbar
-  const handleNativeScroll = () => {
-    if (!scrollAreaRef.current || isWheelingRef.current) return;
-    const currentTop = scrollAreaRef.current.scrollTop;
-    const computedIndex = Math.round(currentTop / CARD_STEP);
-    const clamped = Math.max(0, Math.min(computedIndex, maxIndex));
-    if (clamped !== startIndex) {
-      setStartIndex(clamped);
-    }
-  };
-
   return (
-    <div className="quotes-content-wrapper" onWheel={handleWheel}>
+    <div className="quotes-content-wrapper">
       {/* Subtitle centered above the quotes stage */}
       <h2 className="quotes-main-subtitle">
         &quot;Every small step brings you closer to your goal. Complete the missing piece and keep moving forward.&quot;
       </h2>
 
-      {/* Main stage with fixed background goal illustration & scrollable quotes cards */}
+      {/* Main stage with background goal illustration & fully displayed quotes cards */}
       <div className="quotes-stage-wrapper">
-        {/* Fixed 3D Goal Illustration: NEVER scrolls, always fully displayed in the center */}
+        {/* Background 3D Goal Illustration */}
         <div className="quotes-fixed-bg-illustration" aria-hidden="true">
           <img
             src="/images/motivational-quotes.jpg"
@@ -274,35 +179,25 @@ const MotivationalQuotesView = () => {
           />
         </div>
 
-        {/* Scrollable list of quotes that scrolls up and down over the fixed image */}
-        <div
-          className="quotes-scroll-area"
-          ref={scrollAreaRef}
-          onScroll={handleNativeScroll}
-          tabIndex={0}
-          role="region"
-          aria-label="Motivational quotes list"
-        >
-          {/* Staggered list of 15 quotes (alternating left / right) */}
-          <div className="quotes-staggered-list">
-            {quotes.map((item, index) => {
-              const isRight = index % 2 === 1;
-              return (
-                <div
-                  key={`quote-${item.id}`}
-                  className={`quote-pill-card ${isRight ? 'quote-card-right' : 'quote-card-left'}`}
-                >
-                  <span className="quote-number">{item.number}</span>
-                  <div className="quote-text-content">
-                    <p className="quote-body">&ldquo;{item.quote}&rdquo;</p>
-                    {item.speaker && (
-                      <span className="quote-speaker">{item.speaker}</span>
-                    )}
-                  </div>
+        {/* Staggered list of 15 quotes (alternating left / right) - fully displayed */}
+        <div className="quotes-staggered-list">
+          {quotes.map((item, index) => {
+            const isRight = index % 2 === 1;
+            return (
+              <div
+                key={`quote-${item.id}`}
+                className={`quote-pill-card ${isRight ? 'quote-card-right' : 'quote-card-left'}`}
+              >
+                <span className="quote-number">{item.number}</span>
+                <div className="quote-text-content">
+                  <p className="quote-body">&ldquo;{item.quote}&rdquo;</p>
+                  {item.speaker && (
+                    <span className="quote-speaker">{item.speaker}</span>
+                  )}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
