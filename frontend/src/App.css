@@ -1714,8 +1714,7 @@
 .student-dashboard-page.scrollable-page {
   height: auto;
   min-height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: visible;
 }
 
 .student-dashboard-main.todo-view-main {
@@ -3921,7 +3920,7 @@
 /* Left capsule: Sticky in the vertical middle of viewport while page scrolls down */
 .student-icon-capsule.quotes-capsule {
   position: sticky;
-  top: 50%;
+  top: 50vh;
   transform: translateY(-50%);
   align-self: flex-start;
   flex-shrink: 0;
@@ -3972,7 +3971,7 @@
 /* 3D Goal Illustration: sticky in the center behind the quotes as user scrolls down */
 .quotes-fixed-bg-illustration {
   position: sticky;
-  top: 50%;
+  top: 50vh;
   transform: translateY(-50%);
   width: 480px;
   max-width: 85%;
