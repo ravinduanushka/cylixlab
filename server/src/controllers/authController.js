@@ -30,6 +30,7 @@ const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        gender: user.gender,
         studentName: user.studentName,
       },
     });
@@ -87,6 +88,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        gender: user.gender,
         studentName: user.studentName,
       },
     });
@@ -179,6 +181,7 @@ const googleLogin = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        gender: user.gender,
         studentName: user.studentName,
       },
     });

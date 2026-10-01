@@ -52,9 +52,18 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
 
+      const userObj = response.data?.user;
+      const userRole = userObj?.role || targetRole;
+
       setMessage(response.data?.message || 'Login successful! Redirecting...');
       setTimeout(() => {
-        navigate('/');
+        if (userRole === 'parent') {
+          navigate('/parent-dashboard');
+        } else if (userRole === 'student') {
+          navigate('/student-dashboard');
+        } else {
+          navigate('/');
+        }
       }, 1200);
     } catch (err) {
       setError(
@@ -89,9 +98,18 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
 
+      const loggedUser = response.data?.user;
+      const loggedRole = loggedUser?.role || localStorage.getItem('lastRegisteredRole');
+
       setMessage('Login successful! Redirecting...');
       setTimeout(() => {
-        navigate('/');
+        if (loggedRole === 'parent') {
+          navigate('/parent-dashboard');
+        } else if (loggedRole === 'student') {
+          navigate('/student-dashboard');
+        } else {
+          navigate('/');
+        }
       }, 1200);
     } catch (err) {
       setError(
