@@ -1555,6 +1555,17 @@
   display: inline-block;
 }
 
+/* Parent Dashboard Specific Customizations (4 Features) */
+.student-icon-capsule.parent-capsule {
+  min-height: 250px;
+  gap: 16px;
+  padding: 14px 6px;
+}
+
+.student-features-list.parent-features-list {
+  gap: 16px;
+}
+
 /* Slower, smooth cascade down animation */
 @keyframes cascadeDownSlowly {
   0% {
