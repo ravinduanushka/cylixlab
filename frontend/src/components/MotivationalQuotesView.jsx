@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 // Default quotes fallback loaded from motivational quotes .txt
 const DEFAULT_QUOTES = [
