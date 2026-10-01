@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import Footer from './Footer';
-import LearningPathDetailView from './LearningPathDetailView';
-import AssignmentDetailView from './AssignmentDetailView';
 import OnlineChatbox from './OnlineChatbox';
+import MotivationalQuotesView from './MotivationalQuotesView';
 import AnalyseProgressView from './AnalyseProgressView';
 
 // Vector Icons
@@ -12,10 +11,10 @@ const IconUser = ({ color = '#ffffff' }) => (
   </svg>
 );
 
-const IconLearning = ({ color = '#ffffff', size = 26 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
-    <circle cx="12" cy="4.5" r="2.5" />
-    <path d="M12 8.5c-3.3 0-6.2 1.4-7.5 3.6V19.5c2-1 4.5-1.5 7.5-1.5s5.5.5 7.5 1.5v-7.4C18.2 9.9 15.3 8.5 12 8.5z" />
+const IconQuotes = ({ color = '#ffffff', size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 12c0 3.866-3.582 7-8 7-1.12 0-2.19-.2-3.15-.57L4 19.5l1.3-3.25C4.5 15.02 4 13.58 4 12c0-3.866 3.582-7 8-7s8 3.134 8 7z" />
+    <path d="M9 10.5h2.5M8 13.5h4" strokeWidth="1.8" />
   </svg>
 );
 
@@ -40,7 +39,7 @@ const IconProgress = ({ color = '#ffffff', size = 24 }) => (
   </svg>
 );
 
-// 4 Parent Features matching user specification
+// 4 Parent Features: Personal Details, Motivational Quotes, Online Chatbox, Analyze Progress
 const parentFeatures = [
   {
     id: 'personal',
@@ -48,9 +47,9 @@ const parentFeatures = [
     icon: <IconUser />,
   },
   {
-    id: 'learning',
-    title: 'Learning & Assignment',
-    icon: <IconLearning />,
+    id: 'quotes',
+    title: 'Motivational Quotes',
+    icon: <IconQuotes />,
   },
   {
     id: 'chat',
@@ -66,11 +65,9 @@ const parentFeatures = [
 
 const ParentDashboard = ({ initialView = 'dashboard' }) => {
   const [currentView, setCurrentView] = useState(initialView);
-  const [activeLearningPath, setActiveLearningPath] = useState(null);
-  const [activeAssignment, setActiveAssignment] = useState(null);
   const [userData, setUserData] = useState({
-    name: 'User',
-    email: '123@gmail.com',
+    name: 'Kamal',
+    email: 'kamal@gmail.com',
     gender: 'Male',
     studentName: 'Student',
   });
@@ -140,10 +137,10 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
   };
 
   const salutation = getSalutation();
-  const displayName = userData.name ? userData.name.toLowerCase() : 'user';
+  const displayName = userData.name ? userData.name.toLowerCase() : 'kamal';
 
   return (
-    <div className={`student-dashboard-page parent-dashboard-page ${(currentView === 'progress' || activeAssignment) ? 'scrollable-page' : ''}`}>
+    <div className={`student-dashboard-page parent-dashboard-page ${(currentView === 'progress' || currentView === 'quotes') ? 'scrollable-page' : ''}`}>
       {/* 1. UNIFIED HEADER */}
       <header className="student-dashboard-header">
         <div className="learning-header-pattern" aria-hidden="true">
@@ -156,9 +153,9 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
         </div>
         <h1 className="learning-header-title">
           {currentView === 'personal'
-            ? `Hello ${salutation} ${userData.name || 'User'} , See your details`
-            : currentView === 'learning'
-            ? 'Learning & Assignments'
+            ? `Hello ${salutation} ${userData.name || 'Kamal'} , See your details`
+            : currentView === 'quotes'
+            ? 'Motivational Quotes'
             : currentView === 'chat'
             ? 'Online Chatbox'
             : currentView === 'progress'
@@ -169,15 +166,13 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
       </header>
 
       {/* 2. MAIN CONTENT (SAME PAGE IN-PLACE SWITCH) */}
-      <main className={`student-dashboard-main ${currentView === 'learning' ? 'learning-view-main' : currentView === 'chat' ? 'chat-view-main' : currentView === 'progress' ? 'progress-view-main' : ''}`}>
+      <main className={`student-dashboard-main ${currentView === 'quotes' ? 'quotes-view-main' : currentView === 'chat' ? 'chat-view-main' : currentView === 'progress' ? 'progress-view-main' : ''}`}>
         {/* Back to Parent Dashboard button when in a subview */}
-        {(currentView === 'personal' || currentView === 'chat' || currentView === 'progress' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
+        {(currentView === 'personal' || currentView === 'quotes' || currentView === 'chat' || currentView === 'progress') && (
           <button
             className="dashboard-back-link-below"
             onClick={() => {
               setCurrentView('dashboard');
-              setActiveLearningPath(null);
-              setActiveAssignment(null);
             }}
             aria-label="Back to Parent Dashboard"
           >
@@ -188,235 +183,184 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
           </button>
         )}
 
-        {/* Learning view title centered above */}
-        {currentView === 'learning' && !activeLearningPath && !activeAssignment && (
-          <h2 className="learning-main-title">What your child is learning?</h2>
-        )}
-
-        {currentView === 'learning' && activeLearningPath ? (
-          <LearningPathDetailView
-            pathId={activeLearningPath}
-            onBack={() => setActiveLearningPath(null)}
-          />
-        ) : currentView === 'learning' && activeAssignment ? (
-          <AssignmentDetailView
-            assignmentId={activeAssignment}
-            onBack={() => setActiveAssignment(null)}
-          />
-        ) : (
-          <div className={`student-content-container parent-content-container ${currentView === 'learning' ? 'learning-content-container' : currentView === 'chat' ? 'chat-content-container' : currentView === 'progress' ? 'progress-content-container' : ''}`}>
-            {/* Left Icon Pill Capsule (4 slots for parent dashboard) */}
-            <aside className={`student-icon-capsule parent-capsule ${currentView === 'learning' ? 'learning-capsule' : currentView === 'chat' ? 'chat-capsule' : currentView === 'progress' ? 'progress-capsule' : ''}`} aria-label="Feature navigation icons">
-              {currentView === 'personal' ? (
-                // In Personal Details view: 1st slot active
+        <div className={`student-content-container parent-content-container ${currentView === 'quotes' ? 'quotes-content-container' : currentView === 'chat' ? 'chat-content-container' : currentView === 'progress' ? 'progress-content-container' : ''}`}>
+          {/* Left Icon Pill Capsule (4 slots for parent dashboard) */}
+          <aside className={`student-icon-capsule parent-capsule ${currentView === 'quotes' ? 'quotes-capsule' : currentView === 'chat' ? 'chat-capsule' : currentView === 'progress' ? 'progress-capsule' : ''}`} aria-label="Feature navigation icons">
+            {currentView === 'personal' ? (
+              // In Personal Details view: 1st slot active
+              <div
+                className="capsule-slot single-active-slot"
+                onClick={() => setCurrentView('dashboard')}
+                title="Click to go back to features"
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="capsule-icon-wrapper">
+                  <IconUser color="#ffffff" />
+                </div>
+              </div>
+            ) : currentView === 'quotes' ? (
+              // In Motivational Quotes view: 2nd slot active
+              <>
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
                 <div
-                  className="capsule-slot single-active-slot"
+                  className="capsule-slot single-active-slot quotes-active-slot"
                   onClick={() => setCurrentView('dashboard')}
                   title="Click to go back to features"
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="capsule-icon-wrapper">
-                    <IconUser color="#ffffff" />
+                    <IconQuotes color="#ffffff" size={26} />
                   </div>
                 </div>
-              ) : currentView === 'learning' ? (
-                // In Learning view: 2nd slot active
-                <>
-                  <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
-                  <div
-                    className="capsule-slot single-active-slot learning-active-slot"
-                    onClick={() => setCurrentView('dashboard')}
-                    title="Click to go back to features"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <div className="capsule-icon-wrapper">
-                      <IconLearning color="#ffffff" size={26} />
-                    </div>
-                  </div>
-                </>
-              ) : currentView === 'chat' ? (
-                // In Chat view: 3rd slot active
-                <>
-                  <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
-                  <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
-                  <div
-                    className="capsule-slot single-active-slot chat-active-slot"
-                    onClick={() => setCurrentView('dashboard')}
-                    title="Click to go back to features"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <div className="capsule-icon-wrapper">
-                      <IconChat color="#ffffff" size={26} />
-                    </div>
-                  </div>
-                </>
-              ) : currentView === 'progress' ? (
-                // In Progress view: 4th slot active
-                <>
-                  <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
-                  <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
-                  <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
-                  <div
-                    className="capsule-slot single-active-slot progress-active-slot"
-                    onClick={() => setCurrentView('dashboard')}
-                    title="Click to go back to features"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <div className="capsule-icon-wrapper">
-                      <IconProgress color="#ffffff" size={26} />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                // In Dashboard view: All 4 icons display and cycle
-                parentFeatures.map((item, index) => {
-                  const isPulsing = activeCycleIndex === index;
-                  return (
-                    <div
-                      key={item.id}
-                      className={`capsule-slot ${isPulsing ? 'pulse-active' : ''}`}
-                      onClick={() => {
-                        if (item.id === 'personal') setCurrentView('personal');
-                        else if (item.id === 'learning') setCurrentView('learning');
-                        else if (item.id === 'chat') setCurrentView('chat');
-                        else if (item.id === 'progress') setCurrentView('progress');
-                      }}
-                      title={`Click to open ${item.title}`}
-                    >
-                      <div className="capsule-icon-wrapper">
-                        {item.icon}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </aside>
-
-            {/* Center Blinking Directional Arrows (Only shown in dashboard view) */}
-            {currentView === 'dashboard' && (
-              <div className="blinking-arrows-wrapper" aria-hidden="true">
-                <div className="blinking-arrows-container">
-                  <span className="arrow-item arrow-1">
-                    <svg width="22" height="30" viewBox="0 0 20 28" fill="currentColor">
-                      <path d="M3 4 L17 14 L3 24 Z" />
-                    </svg>
-                  </span>
-                  <span className="arrow-item arrow-2">
-                    <svg width="22" height="30" viewBox="0 0 20 28" fill="currentColor">
-                      <path d="M3 4 L17 14 L3 24 Z" />
-                    </svg>
-                  </span>
-                  <span className="arrow-item arrow-3">
-                    <svg width="22" height="30" viewBox="0 0 20 28" fill="currentColor">
-                      <path d="M3 4 L17 14 L3 24 Z" />
-                    </svg>
-                  </span>
-                  <span className="arrow-item arrow-4">
-                    <svg width="22" height="30" viewBox="0 0 20 28" fill="currentColor">
-                      <path d="M3 4 L17 14 L3 24 Z" />
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Right Content Area: Personal Details Card OR 4 Feature Buttons */}
-            {currentView === 'personal' ? (
-              <div className="personal-details-card">
-                <div className="detail-row">
-                  <span className="detail-label">Full Name</span>
-                  <div className="detail-value-box">{userData.name || 'User'}</div>
-                </div>
-
-                <div className="detail-row">
-                  <span className="detail-label">Email</span>
-                  <div className="detail-value-box">{userData.email || '123@gmail.com'}</div>
-                </div>
-
-                <div className="detail-row">
-                  <span className="detail-label">Gender</span>
-                  <div className="detail-value-box">{userData.gender || 'Male'}</div>
-                </div>
-
-                <div className="detail-row">
-                  <span className="detail-label">Student Name</span>
-                  <div className="detail-value-box">{userData.studentName || 'Student'}</div>
-                </div>
-              </div>
-            ) : currentView === 'learning' ? (
-              <div className="learning-cards-row">
-                {/* Card 1: Learning Path */}
-                <div className="learning-card-box">
-                  <h3 className="learning-card-title">Learning Path</h3>
-                  <div className="learning-buttons-list">
-                    {['01', '02', '03', '04', '05'].map((num) => (
-                      <button
-                        key={`lp-${num}`}
-                        type="button"
-                        className="learning-action-red-btn"
-                        onClick={() => setActiveLearningPath(num)}
-                      >
-                        Learning Path {num}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Card 2: Assignment */}
-                <div className="learning-card-box">
-                  <h3 className="learning-card-title">Assignment</h3>
-                  <div className="learning-buttons-list">
-                    {['01', '02', '03', '04', '05'].map((num) => (
-                      <button
-                        key={`as-${num}`}
-                        type="button"
-                        className="learning-action-red-btn"
-                        onClick={() => setActiveAssignment(num)}
-                      >
-                        Assignment {num}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              </>
             ) : currentView === 'chat' ? (
-              <div className="chat-content-wrapper">
-                <h2 className="chat-main-subtitle">&quot;Connect directly with teachers and stay informed.&quot;</h2>
-                <OnlineChatbox />
-              </div>
+              // In Chat view: 3rd slot active
+              <>
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div
+                  className="capsule-slot single-active-slot chat-active-slot"
+                  onClick={() => setCurrentView('dashboard')}
+                  title="Click to go back to features"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="capsule-icon-wrapper">
+                    <IconChat color="#ffffff" size={26} />
+                  </div>
+                </div>
+              </>
             ) : currentView === 'progress' ? (
-              <AnalyseProgressView />
+              // In Progress view: 4th slot active
+              <>
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div className="capsule-slot" aria-hidden="true" style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+                <div
+                  className="capsule-slot single-active-slot progress-active-slot"
+                  onClick={() => setCurrentView('dashboard')}
+                  title="Click to go back to features"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="capsule-icon-wrapper">
+                    <IconProgress color="#ffffff" size={26} />
+                  </div>
+                </div>
+              </>
             ) : (
-              <div className="student-features-list parent-features-list">
-                {parentFeatures.map((feature, index) => {
-                  const isPulsing = activeCycleIndex === (index + 4);
-                  return (
-                    <button
-                      key={feature.id}
-                      className={`feature-action-btn ${isPulsing ? 'pulse-active' : ''}`}
-                      style={{
-                        animationDelay: `${0.22 * index}s`,
-                      }}
-                      onClick={() => {
-                        if (feature.id === 'personal') {
-                          setCurrentView('personal');
-                        } else if (feature.id === 'learning') {
-                          setCurrentView('learning');
-                        } else if (feature.id === 'chat') {
-                          setCurrentView('chat');
-                        } else if (feature.id === 'progress') {
-                          setCurrentView('progress');
-                        }
-                      }}
-                    >
-                      {feature.title}
-                    </button>
-                  );
-                })}
-              </div>
+              // In Dashboard view: All 4 icons display and cycle
+              parentFeatures.map((item, index) => {
+                const isPulsing = activeCycleIndex === index;
+                return (
+                  <div
+                    key={item.id}
+                    className={`capsule-slot ${isPulsing ? 'pulse-active' : ''}`}
+                    onClick={() => {
+                      if (item.id === 'personal') setCurrentView('personal');
+                      else if (item.id === 'quotes') setCurrentView('quotes');
+                      else if (item.id === 'chat') setCurrentView('chat');
+                      else if (item.id === 'progress') setCurrentView('progress');
+                    }}
+                    title={`Click to open ${item.title}`}
+                  >
+                    <div className="capsule-icon-wrapper">
+                      {item.icon}
+                    </div>
+                  </div>
+                );
+              })
             )}
-          </div>
-        )}
+          </aside>
+
+          {/* Center Blinking Directional Arrows (Only shown in dashboard view) */}
+          {currentView === 'dashboard' && (
+            <div className="blinking-arrows-wrapper" aria-hidden="true">
+              <div className="blinking-arrows-container">
+                <span className="arrow-item arrow-1">
+                  <svg width="22" height="30" viewBox="0 0 20 28" fill="currentColor">
+                    <path d="M3 4 L17 14 L3 24 Z" />
+                  </svg>
+                </span>
+                <span className="arrow-item arrow-2">
+                  <svg width="22" height="30" viewBox="0 0 20 28" fill="currentColor">
+                    <path d="M3 4 L17 14 L3 24 Z" />
+                  </svg>
+                </span>
+                <span className="arrow-item arrow-3">
+                  <svg width="22" height="30" viewBox="0 0 20 28" fill="currentColor">
+                    <path d="M3 4 L17 14 L3 24 Z" />
+                  </svg>
+                </span>
+                <span className="arrow-item arrow-4">
+                  <svg width="22" height="30" viewBox="0 0 20 28" fill="currentColor">
+                    <path d="M3 4 L17 14 L3 24 Z" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Right Content Area: Personal Details Card OR Quotes OR Chat OR Progress OR 4 Feature Buttons */}
+          {currentView === 'personal' ? (
+            <div className="personal-details-card">
+              <div className="detail-row">
+                <span className="detail-label">Parent Name</span>
+                <div className="detail-value-box">{userData.name || 'Kamal'}</div>
+              </div>
+
+              <div className="detail-row">
+                <span className="detail-label">Email</span>
+                <div className="detail-value-box">{userData.email || 'kamal@gmail.com'}</div>
+              </div>
+
+              <div className="detail-row">
+                <span className="detail-label">Gender</span>
+                <div className="detail-value-box">{userData.gender || 'Male'}</div>
+              </div>
+
+              <div className="detail-row">
+                <span className="detail-label">Student Name</span>
+                <div className="detail-value-box">{userData.studentName || 'Student'}</div>
+              </div>
+            </div>
+          ) : currentView === 'quotes' ? (
+            <MotivationalQuotesView />
+          ) : currentView === 'chat' ? (
+            <div className="chat-content-wrapper">
+              <h2 className="chat-main-subtitle">&quot;Ask questions, share updates, and collaborate instantly.&quot;</h2>
+              <OnlineChatbox />
+            </div>
+          ) : currentView === 'progress' ? (
+            <AnalyseProgressView />
+          ) : (
+            <div className="student-features-list parent-features-list">
+              {parentFeatures.map((feature, index) => {
+                const isPulsing = activeCycleIndex === (index + 4);
+                return (
+                  <button
+                    key={feature.id}
+                    className={`feature-action-btn ${isPulsing ? 'pulse-active' : ''}`}
+                    style={{
+                      animationDelay: `${0.22 * index}s`,
+                    }}
+                    onClick={() => {
+                      if (feature.id === 'personal') {
+                        setCurrentView('personal');
+                      } else if (feature.id === 'quotes') {
+                        setCurrentView('quotes');
+                      } else if (feature.id === 'chat') {
+                        setCurrentView('chat');
+                      } else if (feature.id === 'progress') {
+                        setCurrentView('progress');
+                      }
+                    }}
+                  >
+                    {feature.title}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </main>
 
       {/* 3. FOOTER */}
