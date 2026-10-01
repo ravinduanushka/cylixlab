@@ -237,7 +237,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
                 style={{ cursor: 'pointer' }}
               >
                 <div className="capsule-icon-wrapper">
-                  <IconUser color="#000000" />
+                  <IconUser color="#ffffff" />
                 </div>
               </div>
             ) : currentView === 'todo' ? (
