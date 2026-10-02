@@ -5123,3 +5123,618 @@
     margin-right: 0;
   }
 }
+
+
+/* =========================================================
+   ADMIN DASHBOARD STYLES (Admin Page)
+   ========================================================= */
+
+.admin-page-root {
+  min-height: 100vh;
+  height: auto;
+  width: 100%;
+  background-color: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Admin Header matching screenshot */
+.admin-page-header {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(135deg, #0248a3 0%, #032b77 100%);
+  padding: 20px 48px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.admin-header-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.admin-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-avatar-box {
+  width: 44px;
+  height: 44px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.admin-greeting-text {
+  font-family: 'Georgia', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #38bdf8;
+  letter-spacing: -0.2px;
+}
+
+.admin-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.admin-header-brand {
+  font-family: 'Poppins', sans-serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: #facc15;
+  letter-spacing: 0.2px;
+  line-height: 1.1;
+}
+
+.admin-header-title {
+  font-family: 'Georgia', serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Admin Main Content Container */
+.admin-main-content {
+  flex: 1;
+  width: 100%;
+  padding: 32px 20px 48px;
+  display: flex;
+  justify-content: center;
+}
+
+.admin-content-card {
+  width: 100%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 32px 42px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 38px;
+}
+
+/* Workflow Step Guidance Banner */
+.admin-workflow-guide {
+  background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 14px 22px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.admin-guide-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-guide-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #166534;
+}
+
+.admin-guide-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  color: #475569;
+}
+
+.admin-guide-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-guide-step-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+.admin-guide-step-chip.step-current {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+}
+
+.admin-guide-step-chip .step-num {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.admin-guide-step-chip.step-current .step-num {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.step-arrow {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+/* Section Headings */
+.admin-section-heading {
+  font-family: 'Georgia', serif;
+  font-size: 21px;
+  font-weight: 600;
+  color: #16a34a; /* vibrant green matching screenshot */
+  margin: 0 0 16px 0;
+}
+
+.admin-section-title-green {
+  font-family: 'Georgia', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #16a34a;
+  text-align: center;
+  margin: 0 0 16px 0;
+}
+
+/* TOP METRICS GRID (Registered people + Clock) */
+.admin-top-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: stretch;
+}
+
+/* Registered People Card */
+.admin-registered-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-registered-circles {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.admin-donut-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-donut-container {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.donut-bg {
+  fill: none;
+  stroke: #e2e8f0;
+  stroke-width: 14;
+}
+
+.donut-segment {
+  fill: none;
+  stroke-width: 14;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.admin-donut-pct {
+  position: absolute;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.admin-donut-label {
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Clock Card (No green background, clean auto-updating widget) */
+.admin-clock-card {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s ease;
+}
+
+.admin-clock-card:hover {
+  border-color: #cbd5e1;
+}
+
+.admin-analog-clock {
+  width: 82px;
+  height: 82px;
+  flex-shrink: 0;
+}
+
+.analog-clock-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.admin-digital-time-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-digital-time {
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.1;
+}
+
+.admin-digital-date {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+/* GRAPHS GRID */
+.admin-graphs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.admin-graph-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-barchart-wrapper {
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 6px;
+  padding: 10px 12px 28px 24px;
+}
+
+.admin-yaxis-label {
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  font-family: 'Georgia', serif;
+  font-size: 9px;
+  color: #334155;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.admin-chart-svg {
+  width: 100%;
+  height: auto;
+  max-height: 190px;
+}
+
+.admin-bar-group rect {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.admin-bar-group rect:hover {
+  opacity: 0.88;
+  filter: brightness(1.08);
+}
+
+.admin-xaxis-label {
+  text-align: center;
+  font-family: 'Georgia', serif;
+  font-size: 9.5px;
+  font-style: italic;
+  color: #334155;
+  margin-top: 4px;
+}
+
+/* UPLOAD SECTIONS (Add Learning Path & Add Assignment) */
+.admin-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 6px;
+}
+
+.admin-input-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.admin-input-label {
+  font-family: 'Georgia', serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #16a34a;
+  white-space: nowrap;
+}
+
+.admin-underline-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1.5px solid #16a34a;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #1e293b;
+  padding: 3px 6px;
+  background: transparent;
+  transition: border-bottom-color 0.2s ease;
+}
+
+.admin-underline-input:focus {
+  border-bottom-color: #15803d;
+  border-bottom-width: 2px;
+}
+
+.admin-underline-input::placeholder {
+  color: #16a34a;
+  opacity: 0.65;
+  font-style: italic;
+}
+
+/* Slate Teal Upload Card */
+.admin-upload-container {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.admin-upload-teal-bar {
+  background-color: #486d7a; /* slate teal matching screenshot */
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Folder Picker Button (clean, NO light green background as requested) */
+.admin-folder-btn {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  padding: 5px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.admin-folder-btn:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
+  transform: scale(1.05);
+}
+
+.admin-upload-teal-hint {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.85);
+  font-style: italic;
+}
+
+/* Dashed Dropzone */
+.admin-dropzone-box {
+  border: 1.8px dashed #cbd5e1;
+  border-radius: 8px;
+  margin: 12px 14px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  background-color: #fafbfc;
+  transition: all 0.25s ease;
+}
+
+.admin-dropzone-box:hover,
+.admin-dropzone-box.dropzone-active {
+  border-color: #2563eb;
+  background-color: #f0f7ff;
+}
+
+.admin-arrow-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-dropzone-text {
+  font-family: 'Georgia', serif;
+  font-size: 13.5px;
+  font-style: italic;
+  color: #475569;
+  margin: 0;
+  text-align: center;
+}
+
+/* File Selected Badge */
+.admin-file-selected-badge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #ffffff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 10px 18px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+
+.admin-file-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-filename {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.admin-filesize {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  color: #16a34a;
+}
+
+.admin-remove-file-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.15s ease;
+}
+
+.admin-remove-file-btn:hover {
+  color: #ef4444;
+}
+
+/* Submit Pill Button ("Click here" + "All set") */
+.admin-submit-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.admin-click-here-btn {
+  background-color: #d82b58; /* crimson pink/red matching screenshot */
+  color: #ffffff;
+  font-family: 'Georgia', serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 36px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(216, 43, 88, 0.28);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-click-here-btn:hover {
+  background-color: #be1844;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(216, 43, 88, 0.35);
+}
+
+.admin-click-here-btn:active {
+  transform: translateY(1px);
+}
+
+.admin-status-text {
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Responsive adjustments for Admin page */
+@media (max-width: 820px) {
+  .admin-top-metrics-grid,
+  .admin-graphs-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .admin-content-card {
+    padding: 24px 20px;
+  }
+
+  .admin-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .admin-header-right {
+    align-items: flex-start;
+  }
+}
