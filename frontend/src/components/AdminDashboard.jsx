@@ -182,29 +182,6 @@ const AdminDashboard = () => {
       <main className="admin-main-content">
         <div className="admin-content-card">
 
-          {/* Step Guidance Bar for Admin */}
-          <div className="admin-workflow-guide">
-            <div className="admin-guide-header">
-              <span className="admin-guide-title">Admin Upload Workflow</span>
-              <span className="admin-guide-subtitle">Follow these 3 easy steps to add course materials:</span>
-            </div>
-            <div className="admin-guide-steps">
-              <div className={`admin-guide-step-chip ${activeStep === 1 ? 'step-current' : ''}`}>
-                <span className="step-num">1</span>
-                <span className="step-text">Type Name</span>
-              </div>
-              <span className="step-arrow">→</span>
-              <div className={`admin-guide-step-chip ${activeStep === 2 ? 'step-current' : ''}`}>
-                <span className="step-num">2</span>
-                <span className="step-text">Upload PDF</span>
-              </div>
-              <span className="step-arrow">→</span>
-              <div className={`admin-guide-step-chip ${activeStep === 3 ? 'step-current' : ''}`}>
-                <span className="step-num">3</span>
-                <span className="step-text">Click &quot;Click here&quot;</span>
-              </div>
-            </div>
-          </div>
 
           {/* ROW 1: Registered people (left) & Live Clock / Time part (right) */}
           <section className="admin-top-metrics-grid">
