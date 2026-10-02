@@ -5276,10 +5276,11 @@
 
 /* TOP METRICS GRID (Registered people + Clock) */
 .admin-top-metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: stretch;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 24px;
 }
 
 /* Registered People Card */
@@ -5344,21 +5345,17 @@
   color: #0f172a;
 }
 
-/* Clock Card (No green background, clean auto-updating widget) */
+/* Clock Card (No gray border, clean auto-updating widget right-aligned under header) */
 .admin-clock-card {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   display: flex;
   align-items: center;
-  gap: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  transition: border-color 0.2s ease;
-}
-
-.admin-clock-card:hover {
-  border-color: #cbd5e1;
+  gap: 16px;
+  box-shadow: none;
+  margin-left: auto;
 }
 
 .admin-analog-clock {
