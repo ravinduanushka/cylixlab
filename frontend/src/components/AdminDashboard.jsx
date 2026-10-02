@@ -38,9 +38,6 @@ const AdminDashboard = () => {
   const [asgDragOver, setAsgDragOver] = useState(false);
   const asgFileInputRef = useRef(null);
 
-  // Active step highlight
-  const [activeStep, setActiveStep] = useState(1);
-
   // Update clock every second
   useEffect(() => {
     const timer = setInterval(() => {
@@ -98,7 +95,6 @@ const AdminDashboard = () => {
     const file = e.target.files?.[0];
     if (file) {
       setLpFile(file);
-      setActiveStep(3);
     }
   };
 
@@ -108,7 +104,6 @@ const AdminDashboard = () => {
     const file = e.dataTransfer.files?.[0];
     if (file) {
       setLpFile(file);
-      setActiveStep(3);
     }
   };
 
@@ -128,7 +123,6 @@ const AdminDashboard = () => {
     const file = e.target.files?.[0];
     if (file) {
       setAsgFile(file);
-      setActiveStep(3);
     }
   };
 
@@ -138,7 +132,6 @@ const AdminDashboard = () => {
     const file = e.dataTransfer.files?.[0];
     if (file) {
       setAsgFile(file);
-      setActiveStep(3);
     }
   };
 
