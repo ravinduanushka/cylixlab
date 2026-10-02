@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Footer from './Footer';
 import OnlineChatbox from './OnlineChatbox';
 import MotivationalQuotesView from './MotivationalQuotesView';
-import AnalyseProgressView from './AnalyseProgressView';
+import ParentStudentProgressView from './ParentStudentProgressView';
 
 // Vector Icons
 const IconUser = ({ color = '#ffffff' }) => (
@@ -159,7 +159,7 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
             : currentView === 'chat'
             ? 'Online Chatbox'
             : currentView === 'progress'
-            ? 'Analyse Progress'
+            ? 'Student Progress'
             : `welcome back , ${salutation} ${displayName} !`}
         </h1>
         <span className="learning-header-logo">CylixLab</span>
@@ -330,7 +330,7 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
               <OnlineChatbox />
             </div>
           ) : currentView === 'progress' ? (
-            <AnalyseProgressView />
+            <ParentStudentProgressView onBack={() => setCurrentView('dashboard')} />
           ) : (
             <div className="student-features-list parent-features-list">
               {parentFeatures.map((feature, index) => {

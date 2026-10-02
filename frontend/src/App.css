@@ -1582,14 +1582,15 @@
 .personal-details-card {
   background-color: #2f80ed;
   border-radius: 20px;
-  padding: 38px 42px;
-  width: 480px;
+  padding: 38px 36px;
+  width: 500px;
   max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 22px;
   box-shadow: 0 10px 30px rgba(47, 128, 237, 0.35);
   animation: fadeInDetailsCard 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  box-sizing: border-box;
 }
 
 @keyframes fadeInDetailsCard {
@@ -1607,32 +1608,39 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
+  width: 100%;
 }
 
 .detail-label {
   font-family: 'Georgia', 'Merriweather', serif;
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 600;
   color: #ffffff;
   letter-spacing: 0.3px;
-  min-width: 120px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .detail-value-box {
   background-color: #ffffff;
   border-radius: 8px;
-  padding: 10px 20px;
+  padding: 10px 16px;
   font-family: 'Georgia', 'Merriweather', 'Poppins', serif;
   font-size: 19px;
   font-weight: 700;
   color: #000000;
   text-align: center;
-  flex: 1;
+  width: 270px;
+  min-width: 270px;
   max-width: 270px;
-  min-width: 210px;
+  flex-shrink: 0;
+  box-sizing: border-box;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .detail-value-box:hover {
@@ -4566,5 +4574,552 @@
 
   .ap-feedback-text-wrap {
     font-size: 16px;
+  }
+}
+
+/* =========================================================
+   PARENT DASHBOARD: STUDENT PROGRESS VIEW (MATCHING USER MODEL)
+   ========================================================= */
+
+.psp-page-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 20px 60px;
+  min-height: calc(100vh - 84px - 105px);
+  box-sizing: border-box;
+}
+
+.psp-main-content {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.psp-back-btn {
+  position: static !important;
+  align-self: flex-start;
+  margin-bottom: 4px;
+}
+
+.psp-student-name-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.psp-student-name-heading {
+  font-family: 'Georgia', 'Merriweather', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+/* SECTION 1: Top Grid */
+.psp-top-grid {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 36px;
+  width: 100%;
+}
+
+.psp-card {
+  box-sizing: border-box;
+}
+
+/* Left: Assignment Marks Bar Chart */
+.psp-barchart-card {
+  flex: 1.1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.psp-card-title {
+  font-family: 'Georgia', 'Merriweather', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #000000;
+  text-align: center;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.2px;
+}
+
+.psp-barchart-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  position: relative;
+}
+
+.psp-yaxis-label {
+  font-family: 'Georgia', 'Merriweather', serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  transform: rotate(-90deg);
+  margin-right: -10px;
+  user-select: none;
+}
+
+.psp-barchart-plot {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-bottom: 2px solid #cbd5e1;
+  border-left: 2px solid #cbd5e1;
+  margin-left: 28px;
+}
+
+.psp-yaxis-ticks {
+  position: absolute;
+  left: -28px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.psp-tick-number {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748b;
+  line-height: 1;
+}
+
+.psp-grid-lines {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.psp-grid-line {
+  width: 100%;
+  height: 1px;
+  background-color: #f1f5f9;
+}
+
+.psp-bars-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 10px;
+}
+
+.psp-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 44px;
+  height: 100%;
+  cursor: pointer;
+  position: relative;
+}
+
+.psp-bar-slot {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.psp-bar-bar {
+  width: 26px;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+  min-height: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.psp-bar-bar:hover {
+  transform: scaleY(1.03);
+}
+
+.psp-bar-score-tag {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1e3a8a;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1px 4px;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.psp-bar-x-label {
+  position: absolute;
+  bottom: -24px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  color: #2563eb;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.psp-xaxis-label {
+  font-family: 'Georgia', 'Merriweather', serif;
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+  margin-top: 32px;
+  font-weight: 600;
+}
+
+/* Right: Finished Works & pass/no/notyet side-by-side */
+.psp-finished-and-status-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.psp-grey-box {
+  background-color: #d1d5db;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.psp-finished-box {
+  width: 210px;
+}
+
+.psp-status-box {
+  width: 155px;
+}
+
+.psp-grey-box-title {
+  font-family: 'Georgia', 'Merriweather', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+}
+
+.psp-grey-box-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.psp-fw-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.psp-fw-name {
+  font-family: 'Georgia', 'Merriweather', 'Poppins', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.psp-checkbox-square {
+  width: 22px;
+  height: 22px;
+  background-color: #ffffff;
+  border: 1.5px solid #94a3b8;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.psp-checkbox-square.is-checked {
+  border-color: #2563eb;
+  background-color: #ffffff;
+}
+
+.psp-check-svg {
+  width: 16px;
+  height: 16px;
+}
+
+.psp-status-row {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.psp-status-rect {
+  height: 28px;
+  width: 100%;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.psp-status-rect:hover {
+  transform: scaleX(1.02);
+}
+
+/* SECTION 2: Middle Row */
+.psp-middle-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 36px;
+  width: 100%;
+}
+
+.psp-cycle-card {
+  flex: 1.1;
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 20px;
+}
+
+.psp-cycle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.psp-cycle-title {
+  font-family: 'Georgia', 'Merriweather', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.psp-donut-container {
+  width: 160px;
+  height: 160px;
+  flex-shrink: 0;
+  position: relative;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
+}
+
+.psp-donut-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.psp-donut-segment:hover {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+}
+
+/* Right of Middle: Legend + Note Pill */
+.psp-legend-and-note-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.psp-legend-table {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-right: 50px;
+}
+
+.psp-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.psp-legend-text {
+  font-family: 'Georgia', 'Merriweather', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #000000;
+  text-align: right;
+  min-width: 65px;
+}
+
+.psp-legend-square {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.psp-square-pass {
+  background-color: #4ade80;
+}
+
+.psp-square-fail {
+  background-color: #ef4444;
+}
+
+.psp-square-notyet {
+  background-color: #2b5c8f;
+}
+
+.psp-yellow-note-pill {
+  background-color: #fef9c3;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 24px;
+  padding: 12px 28px;
+  font-family: 'Georgia', 'Merriweather', serif;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #000000;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  max-width: 440px;
+  line-height: 1.45;
+  box-sizing: border-box;
+}
+
+/* SECTION 3: Bottom Green Card */
+.psp-green-card {
+  background-color: #559416;
+  border-radius: 12px;
+  padding: 22px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #000000;
+  box-shadow: 0 4px 14px rgba(85, 148, 22, 0.25);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.psp-green-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.psp-green-asterisk {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: #000000;
+  flex-shrink: 0;
+}
+
+.psp-green-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #000000;
+  margin: 0;
+}
+
+.psp-green-text strong {
+  color: #000000;
+}
+
+/* SECTION 4: Dev Simulation Toolbar */
+.psp-dev-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px dashed #cbd5e1;
+  margin-top: 8px;
+}
+
+.psp-dev-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.psp-dev-btn {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.psp-dev-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.psp-dev-btn-reset {
+  background-color: #64748b;
+}
+
+.psp-dev-btn-reset:hover {
+  background-color: #475569;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .psp-top-grid,
+  .psp-middle-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .psp-barchart-card,
+  .psp-finished-and-status-row,
+  .psp-cycle-card,
+  .psp-legend-and-note-card {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .psp-legend-table {
+    margin-right: 0;
   }
 }
