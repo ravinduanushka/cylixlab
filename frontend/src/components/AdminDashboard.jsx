@@ -164,12 +164,12 @@ const AdminDashboard = () => {
           <div className="admin-user-badge">
             <div className="admin-avatar-box">
               <img
-                src="/admin.png"
+                src="/images/admin.jpeg"
                 alt="Admin Anushka"
                 className="admin-avatar-img"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = '/images/admin.jpeg';
+                  e.target.src = '/admin.png';
                 }}
               />
             </div>
