@@ -5133,7 +5133,7 @@
   min-height: 100vh;
   height: auto;
   width: 100%;
-  background-color: #f1f5f9;
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -5147,7 +5147,7 @@
   background: linear-gradient(135deg, #0248a3 0%, #032b77 100%);
   padding: 20px 48px;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  box-shadow: none;
   z-index: 10;
 }
 
@@ -5210,11 +5210,12 @@
   line-height: 1.2;
 }
 
-/* Admin Main Content Container */
+/* Admin Main Content Container - Seamless White */
 .admin-main-content {
   flex: 1;
   width: 100%;
-  padding: 32px 20px 48px;
+  background-color: #ffffff;
+  padding: 36px 24px 60px;
   display: flex;
   justify-content: center;
 }
@@ -5222,94 +5223,14 @@
 .admin-content-card {
   width: 100%;
   max-width: 900px;
-  background-color: #ffffff;
-  border-radius: 6px;
-  padding: 32px 42px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 38px;
-}
-
-/* Workflow Step Guidance Banner */
-.admin-workflow-guide {
-  background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
-  border: 1px solid #bbf7d0;
-  border-radius: 10px;
-  padding: 14px 22px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.admin-guide-header {
-  display: flex;
-  flex-direction: column;
-}
-
-.admin-guide-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #166534;
-}
-
-.admin-guide-subtitle {
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  color: #475569;
-}
-
-.admin-guide-steps {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.admin-guide-step-chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #334155;
-  transition: all 0.2s ease;
-}
-
-.admin-guide-step-chip.step-current {
-  background-color: #16a34a;
-  border-color: #16a34a;
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
-}
-
-.admin-guide-step-chip .step-num {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10.5px;
-  font-weight: 700;
-}
-
-.admin-guide-step-chip.step-current .step-num {
-  background-color: rgba(255, 255, 255, 0.25);
-}
-
-.step-arrow {
-  color: #94a3b8;
-  font-weight: 700;
 }
 
 /* Section Headings */
