@@ -457,10 +457,7 @@ const AdminDashboard = () => {
                 className="admin-underline-input"
                 placeholder="type here"
                 value={lpName}
-                onChange={(e) => {
-                  setLpName(e.target.value);
-                  if (e.target.value.trim()) setActiveStep(2);
-                }}
+                onChange={(e) => setLpName(e.target.value)}
               />
             </div>
 
@@ -570,10 +567,7 @@ const AdminDashboard = () => {
                 className="admin-underline-input"
                 placeholder="type here"
                 value={asgName}
-                onChange={(e) => {
-                  setAsgName(e.target.value);
-                  if (e.target.value.trim()) setActiveStep(2);
-                }}
+                onChange={(e) => setAsgName(e.target.value)}
               />
             </div>
 
