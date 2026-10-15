@@ -12,19 +12,41 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Admin account is dedicated and cannot be registered publicly.' });
     }
 
-    const userExists = await User.findOne({ email: trimmedEmail });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+    if (!trimmedEmail || !password) {
+      return res.status(400).json({ message: 'Email and password are required.' });
+    }
+
+    const targetRole = role || 'student';
+
+    // 1. Rule: Only one account allowed per role for a given email
+    const existingUserWithRole = await User.findOne({ email: trimmedEmail, role: targetRole });
+    if (existingUserWithRole) {
+      return res.status(400).json({
+        message: `An account for ${targetRole} with this email already exists.`
+      });
+    }
+
+    // 2. Rule: Student and Parent can share the same email, but password MUST be different
+    const existingAccountsWithSameEmail = await User.find({ email: trimmedEmail });
+    if (existingAccountsWithSameEmail.length > 0) {
+      for (const account of existingAccountsWithSameEmail) {
+        const isSamePassword = await account.matchPassword(password);
+        if (isSamePassword) {
+          return res.status(400).json({
+            message: 'This email is already in use by another account. Password must be different from that account.'
+          });
+        }
+      }
     }
 
     const user = await User.create({
       name,
-      email,
+      email: trimmedEmail,
       password,
       gender,
-      age: role === 'student' && age ? Number(age) : undefined,
-      studentName: role === 'parent' ? studentName : undefined,
-      role: role || 'student',
+      age: targetRole === 'student' && age ? Number(age) : undefined,
+      studentName: targetRole === 'parent' ? studentName : undefined,
+      role: targetRole,
       isVerified: true,
     });
 
