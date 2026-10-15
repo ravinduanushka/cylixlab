@@ -137,7 +137,7 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
   };
 
   const salutation = getSalutation();
-  const displayName = userData.name ? userData.name.toLowerCase() : 'kamal';
+  const displayName = userData.name ? userData.name.trim().split(/\s+/)[0].toLowerCase() : 'kamal';
 
   return (
     <div className={`student-dashboard-page parent-dashboard-page ${(currentView === 'progress' || currentView === 'quotes') ? 'scrollable-page' : ''}`}>
@@ -330,7 +330,7 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
               <OnlineChatbox role="parent" />
             </div>
           ) : currentView === 'progress' ? (
-            <ParentStudentProgressView onBack={() => setCurrentView('dashboard')} />
+            <ParentStudentProgressView onBack={() => setCurrentView('dashboard')} studentName={userData.studentName} />
           ) : (
             <div className="student-features-list parent-features-list">
               {parentFeatures.map((feature, index) => {

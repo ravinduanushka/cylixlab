@@ -162,6 +162,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
     };
   }, [currentView]);
 
+  const studentFirstName = (userData.name || 'user').trim().split(/\s+/)[0].toLowerCase();
+
   return (
     <div className={`student-dashboard-page ${(currentView === 'todo' || currentView === 'progress' || currentView === 'quotes' || activeAssignment) ? 'scrollable-page' : ''}`}>
       {/* 1. UNIFIED HEADER FOR ALL STUDENT DASHBOARD PAGES */}
@@ -187,7 +189,7 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
             ? 'Motivational Quotes'
             : currentView === 'progress'
             ? 'Analyse Progress'
-            : `welcome back , ${userData.name ? userData.name.toLowerCase() : 'user'} !`}
+            : `welcome back , ${studentFirstName} !`}
         </h1>
         <span className="learning-header-logo">CylixLab</span>
       </header>
