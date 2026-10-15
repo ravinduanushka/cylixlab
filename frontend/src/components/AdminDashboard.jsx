@@ -233,8 +233,28 @@ const AdminDashboard = () => {
             <span className="admin-greeting-text">Hellow Anushka</span>
           </div>
 
-          {/* Right: CylixLab Logo + Admin Page Title */}
+          {/* Right: CylixLab Logo + Admin Page Title + Logout Button */}
           <div className="admin-header-right">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="admin-logout-header-btn"
+              title="Logout from Admin"
+              style={{
+                background: 'rgba(255, 255, 255, 0.16)',
+                border: '1px solid rgba(255, 255, 255, 0.35)',
+                color: '#ffffff',
+                padding: '5px 14px',
+                borderRadius: '16px',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginRight: '14px',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              Logout
+            </button>
             <span className="admin-header-brand">CylixLab</span>
             <h1 className="admin-header-title">Admin Page</h1>
           </div>
@@ -264,10 +284,10 @@ const AdminDashboard = () => {
                         className="donut-segment"
                         stroke="#94a3b8"
                         strokeDasharray="238.76"
-                        strokeDashoffset={238.76 * (1 - 0.24)}
+                        strokeDashoffset={238.76 * (1 - (userStats.studentPct || 24) / 100)}
                       />
                     </svg>
-                    <span className="admin-donut-pct">24%</span>
+                    <span className="admin-donut-pct">{userStats.studentPct || 24}%</span>
                   </div>
                   <span className="admin-donut-label">Students</span>
                 </div>
@@ -284,10 +304,10 @@ const AdminDashboard = () => {
                         className="donut-segment"
                         stroke="#0284c7"
                         strokeDasharray="238.76"
-                        strokeDashoffset={238.76 * (1 - 0.22)}
+                        strokeDashoffset={238.76 * (1 - (userStats.parentPct || 22) / 100)}
                       />
                     </svg>
-                    <span className="admin-donut-pct">22%</span>
+                    <span className="admin-donut-pct">{userStats.parentPct || 22}%</span>
                   </div>
                   <span className="admin-donut-label">Parents</span>
                 </div>
