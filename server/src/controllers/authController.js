@@ -6,7 +6,13 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password, role, gender, age, studentName } = req.body;
 
-    const userExists = await User.findOne({ email });
+    const trimmedEmail = (email || '').trim().toLowerCase();
+    const adminEmail = (process.env.ADMIN_EMAIL || 'ravinduanushka248@gmail.com').trim().toLowerCase();
+    if (trimmedEmail === adminEmail) {
+      return res.status(400).json({ message: 'Admin account is dedicated and cannot be registered publicly.' });
+    }
+
+    const userExists = await User.findOne({ email: trimmedEmail });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -60,7 +66,53 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
 
-    const user = await User.findOne({ email });
+    const trimmedEmail = (email || '').trim().toLowerCase();
+    const adminEmail = (process.env.ADMIN_EMAIL || 'ravinduanushka248@gmail.com').trim().toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'adminratemaths';
+
+    // 1. Dedicated Admin Authentication (from .env)
+    if (trimmedEmail === adminEmail && password === adminPassword) {
+      let adminId = 'admin_anushka_cylixlab';
+      try {
+        let adminUser = await User.findOne({ email: adminEmail });
+        if (!adminUser) {
+          adminUser = await User.create({
+            name: 'Anushka',
+            email: adminEmail,
+            password: adminPassword,
+            role: 'admin',
+            gender: 'Male',
+            isVerified: true,
+          });
+        }
+        if (adminUser) {
+          adminId = adminUser._id;
+        }
+      } catch (dbErr) {
+        // Continue even if DB takes time
+      }
+
+      const token = jwt.sign(
+        { id: adminId, role: 'admin', email: adminEmail },
+        process.env.JWT_SECRET || 'cylixlab_default_jwt_secret',
+        { expiresIn: '7d' }
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: 'Admin login successful!',
+        token,
+        user: {
+          id: adminId,
+          name: 'Anushka',
+          email: adminEmail,
+          role: 'admin',
+          gender: 'Male',
+        },
+      });
+    }
+
+    const user = await User.findOne({ email: trimmedEmail });
     if (!user) {
       return res.status(400).json({ message: 'Invalid Credentials' });
     }
