@@ -241,7 +241,7 @@ const AdminDashboard = () => {
         </div>
 
         <div className="admin-header-content">
-          {/* Left: User Avatar Photo + Greeting */}
+          {/* Left: User Avatar Photo + Greeting + Red Logout Button */}
           <div className="admin-user-badge">
             <div className="admin-avatar-box">
               <img
@@ -254,31 +254,21 @@ const AdminDashboard = () => {
                 }}
               />
             </div>
-            <span className="admin-greeting-text">Hellow Anushka</span>
+            <div className="admin-user-info-col">
+              <span className="admin-greeting-text">Hellow Anushka</span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="admin-logout-red-btn"
+                title="Logout from Admin"
+              >
+                Logout
+              </button>
+            </div>
           </div>
 
-          {/* Right: CylixLab Logo + Admin Page Title + Logout Button */}
+          {/* Right: CylixLab Logo + Admin Page Title */}
           <div className="admin-header-right">
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="admin-logout-header-btn"
-              title="Logout from Admin"
-              style={{
-                background: 'rgba(255, 255, 255, 0.16)',
-                border: '1px solid rgba(255, 255, 255, 0.35)',
-                color: '#ffffff',
-                padding: '5px 14px',
-                borderRadius: '16px',
-                fontSize: '12px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                marginRight: '14px',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              Logout
-            </button>
             <span className="admin-header-brand">CylixLab</span>
             <h1 className="admin-header-title">Admin Page</h1>
           </div>
