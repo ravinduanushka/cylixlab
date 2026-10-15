@@ -8,7 +8,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import StudentDashboard from './components/StudentDashboard';
 import ParentDashboard from './components/ParentDashboard';
-import ParentStudentProgressView from './components/ParentStudentProgressView';
+import ParentStudentProgressView from './components/ParentStudentProgressView'; 
 import AdminDashboard from './components/AdminDashboard';
 import './App.css';
 

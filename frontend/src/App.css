@@ -1322,7 +1322,47 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   z-index: 2;
   text-align: center;
-  padding: 0 120px;
+  padding: 0 170px;
+}
+
+.student-dashboard-header .dashboard-header-home-btn,
+.dashboard-header-home-btn {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 9999px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.student-dashboard-header .dashboard-header-home-btn:hover,
+.dashboard-header-home-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  transform: translateY(-50%) translateX(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.dashboard-header-home-btn svg {
+  transition: transform 0.22s ease;
+}
+
+.dashboard-header-home-btn:hover svg {
+  transform: translateX(-2px);
 }
 
 .student-dashboard-header .learning-header-logo,
