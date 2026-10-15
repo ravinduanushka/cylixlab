@@ -82,18 +82,31 @@ const Register = () => {
 
       const response = await axios.post('/api/auth/register', payload);
 
-      localStorage.setItem('lastRegisteredEmail', formData.email);
-      localStorage.setItem('lastRegisteredName', formData.name);
-      localStorage.setItem('lastRegisteredRole', role);
-      localStorage.setItem('lastRegisteredGender', formData.gender);
-      if (formData.age) {
-        localStorage.setItem('lastRegisteredAge', formData.age);
-      }
-      if (formData.studentName) {
-        localStorage.setItem('lastRegisteredStudentName', formData.studentName);
-      }
+      const registeredUser = response.data?.user || {
+        name: formData.name,
+        email: formData.email,
+        role: role,
+        gender: formData.gender,
+        age: formData.age,
+        studentName: formData.studentName,
+      };
+
       if (response.data?.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+
+      if (role === 'student') {
+        localStorage.setItem('student_user', JSON.stringify(registeredUser));
+        localStorage.setItem('student_name', registeredUser.name);
+        localStorage.setItem('student_email', registeredUser.email);
+        if (registeredUser.gender) localStorage.setItem('student_gender', registeredUser.gender);
+        if (registeredUser.age) localStorage.setItem('student_age', String(registeredUser.age));
+      } else if (role === 'parent') {
+        localStorage.setItem('parent_user', JSON.stringify(registeredUser));
+        localStorage.setItem('parent_name', registeredUser.name);
+        localStorage.setItem('parent_email', registeredUser.email);
+        if (registeredUser.gender) localStorage.setItem('parent_gender', registeredUser.gender);
+        if (registeredUser.studentName) localStorage.setItem('parent_student_name', registeredUser.studentName);
       }
 
       setMessage(response.data?.message || 'Registration successful! You can now log in.');
