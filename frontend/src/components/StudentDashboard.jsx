@@ -213,7 +213,17 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
 
       {/* 2. MAIN CONTENT (SAME PAGE IN-PLACE SWITCH) */}
       <main className={`student-dashboard-main ${currentView === 'todo' ? 'todo-view-main' : currentView === 'learning' ? 'learning-view-main' : currentView === 'chat' ? 'chat-view-main' : currentView === 'quotes' ? 'quotes-view-main' : currentView === 'progress' ? 'progress-view-main' : ''}`}>
-        {/* Back to Student Dashboard below header in black color */}
+        {/* On main Student Dashboard page only (Image 4): Back to Home button under the header on the left side */}
+        {currentView === 'dashboard' && (
+          <Link to="/" className="dashboard-back-link-below" aria-label="Back to Home">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            <span>Back to Home</span>
+          </Link>
+        )}
+
+        {/* Back to Student Dashboard below header on subpages (Image 3) */}
         {(currentView === 'personal' || currentView === 'todo' || currentView === 'chat' || currentView === 'quotes' || currentView === 'progress' || (currentView === 'learning' && !activeLearningPath && !activeAssignment)) && (
           <button
             className="dashboard-back-link-below"
