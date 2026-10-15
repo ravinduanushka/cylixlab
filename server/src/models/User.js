@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true, lowercase: true },
+    email: { type: String, required: true, lowercase: true, trim: true },
     password: { 
       type: String, 
       required: function () {
@@ -32,6 +32,9 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Allow student and parent to share the same email, but ensure only one account per role per email
+userSchema.index({ email: 1, role: 1 }, { unique: true });
 
 userSchema.pre('save', async function () {
   if (!this.isModified('password') || !this.password) {
