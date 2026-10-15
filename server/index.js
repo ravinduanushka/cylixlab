@@ -17,7 +17,8 @@ app.use(express.json());
 
 // 4. API Routes
 app.use('/api/auth', require('./src/routes/authRoutes'));
-
+app.use('/api/chat', require('./src/routes/chatRoutes'));
+app.use('/api/courses', require('./src/routes/courseRoutes'));
 
 app.get('/', (req, res) => {
   res.send('CylixLab Backend API is Running Successfully!');

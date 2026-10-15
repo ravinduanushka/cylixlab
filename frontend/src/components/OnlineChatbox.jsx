@@ -1,17 +1,31 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import axios from 'axios';
 
-// Knowledge base responses for AI learning, programming, and general knowledge
-const getBotResponse = (query) => {
+// Client-side fallback responses for AI learning, programming, and general knowledge
+const getBotResponse = (query, role = 'student') => {
   const q = query.toLowerCase().trim();
 
   // Greetings
-  if (/^(hi|hello|hey|good morning|good afternoon|good evening)/i.test(q)) {
-    return 'Hello! 👋 How can I help you with your studies today? You can ask me about AI concepts, programming, or general knowledge!';
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening|ආයුබෝවන්)/i.test(q)) {
+    return role === 'parent'
+      ? 'Hello! 👋 How can I assist you with your child’s educational journey in CylixLab today?'
+      : 'Hello! 👋 How can I help you with your studies today? You can ask me about AI concepts, programming, or general knowledge!';
   }
 
-  // Who are you / what is this
+  // Who are you
   if (q.includes('who are you') || q.includes('what can you do')) {
-    return 'I am the CylixLab Student Knowledge Assistant! I help you learn AI concepts, understand programming, answer general knowledge questions, and guide your studies.';
+    return role === 'parent'
+      ? 'I am the CylixLab Parent Advisor AI! I assist parents in tracking student progress, understanding course roadmaps, managing study schedules, and supporting learning.'
+      : 'I am the CylixLab Student Knowledge Assistant AI! I help you learn AI concepts, understand programming, answer study questions, and guide your assignments.';
+  }
+
+  // Parent specific questions
+  if (role === 'parent' && (q.includes('progress') || q.includes('analyze') || q.includes('score') || q.includes('marks'))) {
+    return 'You can analyze your child’s progress in real-time in the "Analyze Progress" tab. It shows completed MCQs, study streak, accuracy scores, and areas where they might need more practice!';
+  }
+
+  if (role === 'parent' && (q.includes('time') || q.includes('schedule') || q.includes('routine'))) {
+    return 'A consistent 45-60 minute focused study routine with 10-minute breaks works best for young learners. You can also view the student To-Do list to verify daily goals!';
   }
 
   // AI & Machine Learning Questions
@@ -55,9 +69,6 @@ const getBotResponse = (query) => {
   if (q.includes('gravity') || q.includes('gravitational')) {
     return 'Gravity is a fundamental force of nature that attracts two bodies toward each other. On Earth, gravitational acceleration is approximately 9.8 m/s².';
   }
-  if (q.includes('speed of light')) {
-    return 'The speed of light in a vacuum is approximately 299,792,458 meters per second (roughly 300,000 km/s).';
-  }
   if (q.includes('photosynthesis')) {
     return 'Photosynthesis is the process by which green plants and organisms use sunlight, water, and carbon dioxide to create oxygen and energy in the form of sugar.';
   }
@@ -79,12 +90,36 @@ const getBotResponse = (query) => {
   return `That's a great question regarding "${query}". Here is a helpful insight: Always break complex concepts into small, manageable parts. If you are learning this for your assignment or exams, focus on the core principles, practice hands-on problems, and review the relevant Learning Path modules in CylixLab!`;
 };
 
-const OnlineChatbox = () => {
+const OnlineChatbox = ({ role: propRole }) => {
+  // Determine effective user role ('student' or 'parent')
+  const effectiveRole = useMemo(() => {
+    if (propRole) return propRole;
+    try {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.role) return parsed.role;
+      }
+      const lastRole = localStorage.getItem('lastRegisteredRole');
+      if (lastRole) return lastRole;
+    } catch {
+      // fallback
+    }
+    return 'student';
+  }, [propRole]);
+
+  const initialGreeting = useMemo(() => {
+    if (effectiveRole === 'parent') {
+      return 'Hello! 👋 Ask me any questions about supporting your child\'s learning, study schedules, or platform features.';
+    }
+    return 'Hello! Ask me any questions about AI learning, programming, or general knowledge.';
+  }, [effectiveRole]);
+
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: 'bot',
-      text: 'Hello! Ask me any questions about AI learning, programming, or general knowledge.',
+      text: initialGreeting,
       time: 'Just now',
     },
   ]);
@@ -102,33 +137,93 @@ const OnlineChatbox = () => {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
     const trimmed = inputText.trim();
-    if (!trimmed) return;
+    if (!trimmed || isTyping) return;
+
+    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const userMsg = {
       id: Date.now(),
       sender: 'user',
       text: trimmed,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      time: currentTime,
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInputText('');
     setIsTyping(true);
 
-    // Simulate smart AI response delay
-    setTimeout(() => {
+    try {
+      // Prepare previous conversation history for context
+      const historyContext = updatedMessages.slice(-6).map((m) => ({
+        sender: m.sender,
+        text: m.text,
+      }));
+
+      // Send to backend /api/chat with fallback
+      let replyText = '';
+      try {
+        const response = await axios.post(
+          '/api/chat',
+          {
+            message: trimmed,
+            role: effectiveRole,
+            history: historyContext,
+          },
+          { timeout: 15000 }
+        );
+
+        if (response.data && response.data.reply) {
+          replyText = response.data.reply;
+        }
+      } catch (err) {
+        // Direct fallback to port 5000 if relative path failed
+        try {
+          const directResponse = await axios.post(
+            'http://localhost:5000/api/chat',
+            {
+              message: trimmed,
+              role: effectiveRole,
+              history: historyContext,
+            },
+            { timeout: 15000 }
+          );
+          if (directResponse.data && directResponse.data.reply) {
+            replyText = directResponse.data.reply;
+          }
+        } catch (directErr) {
+          console.warn('Backend chat not reachable, using smart fallback', directErr.message || err.message);
+        }
+      }
+
+      // If backend didn't return text (e.g. server offline or initial setup), use smart local fallback
+      if (!replyText) {
+        replyText = getBotResponse(trimmed, effectiveRole);
+      }
+
       const botReply = {
         id: Date.now() + 1,
         sender: 'bot',
-        text: getBotResponse(trimmed),
+        text: replyText,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
+
       setMessages((prev) => [...prev, botReply]);
+    } catch (globalErr) {
+      console.error('Chat error:', globalErr);
+      const errorReply = {
+        id: Date.now() + 1,
+        sender: 'bot',
+        text: getBotResponse(trimmed, effectiveRole),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages((prev) => [...prev, errorReply]);
+    } finally {
       setIsTyping(false);
-    }, 700);
+    }
   };
 
   return (
@@ -170,11 +265,13 @@ const OnlineChatbox = () => {
           placeholder="Type here ......."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
+          disabled={isTyping}
           aria-label="Type your message"
         />
         <button
           type="submit"
           className="chat-send-btn"
+          disabled={isTyping || !inputText.trim()}
           aria-label="Send message"
         >
           {/* Triangular play/send icon matching screenshot */}
