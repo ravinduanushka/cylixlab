@@ -135,13 +135,27 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email: trimmedEmail });
-    if (!user) {
+    // 2. Regular User Authentication (Parent or Student sharing email with different passwords)
+    let candidateUsers = await User.find({ email: trimmedEmail });
+    if (!candidateUsers || candidateUsers.length === 0) {
       return res.status(400).json({ message: 'Invalid Credentials' });
     }
 
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
+    // If role was explicitly provided in request body, prioritize matching role
+    if (req.body.role) {
+      candidateUsers.sort((a, b) => (a.role === req.body.role ? -1 : b.role === req.body.role ? 1 : 0));
+    }
+
+    let user = null;
+    for (const candidate of candidateUsers) {
+      const isMatch = await candidate.matchPassword(password);
+      if (isMatch) {
+        user = candidate;
+        break;
+      }
+    }
+
+    if (!user) {
       return res.status(400).json({ message: 'Invalid Credentials' });
     }
 
@@ -150,7 +164,7 @@ const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id },
+      { id: user._id, role: user.role, email: user.email },
       process.env.JWT_SECRET || 'cylixlab_default_jwt_secret',
       { expiresIn: '7d' }
     );
@@ -207,14 +221,17 @@ const googleLogin = async (req, res) => {
     }
 
     userEmail = userEmail.toLowerCase().trim();
+    const targetRole = role || 'student';
 
-    // Check if user already exists
+    // Check if user already exists for this role with this email or googleId
     let user = await User.findOne({
-      $or: [
-        { email: userEmail },
-        ...(userGoogleId ? [{ googleId: userGoogleId }] : []),
-      ],
+      email: userEmail,
+      role: targetRole,
     });
+
+    if (!user && userGoogleId) {
+      user = await User.findOne({ googleId: userGoogleId, role: targetRole });
+    }
 
     let isNewUser = false;
 
@@ -226,15 +243,15 @@ const googleLogin = async (req, res) => {
         await user.save();
       }
     } else {
-      // First time: Register new user with Google
+      // First time: Register new user with Google for targetRole
       isNewUser = true;
       user = await User.create({
         name: userName || userEmail.split('@')[0],
         email: userEmail,
         googleId: userGoogleId,
         authProvider: 'google',
-        role: role || 'student',
-        studentName: role === 'parent' ? studentName : undefined,
+        role: targetRole,
+        studentName: targetRole === 'parent' ? studentName : undefined,
         isVerified: true,
       });
     }
