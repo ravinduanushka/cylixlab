@@ -134,12 +134,19 @@ const Login = () => {
       if (response.data?.user) {
         const u = response.data.user;
         localStorage.setItem('user', JSON.stringify(u));
-        if (u.name) localStorage.setItem('lastRegisteredName', u.name);
-        if (u.email) localStorage.setItem('lastRegisteredEmail', u.email);
-        if (u.role) localStorage.setItem('lastRegisteredRole', u.role);
-        if (u.gender) localStorage.setItem('lastRegisteredGender', u.gender);
-        if (u.age) localStorage.setItem('lastRegisteredAge', String(u.age));
-        if (u.studentName) localStorage.setItem('lastRegisteredStudentName', u.studentName);
+        if (u.role === 'student') {
+          localStorage.setItem('student_user', JSON.stringify(u));
+          localStorage.setItem('student_name', u.name);
+          localStorage.setItem('student_email', u.email);
+          if (u.gender) localStorage.setItem('student_gender', u.gender);
+          if (u.age) localStorage.setItem('student_age', String(u.age));
+        } else if (u.role === 'parent') {
+          localStorage.setItem('parent_user', JSON.stringify(u));
+          localStorage.setItem('parent_name', u.name);
+          localStorage.setItem('parent_email', u.email);
+          if (u.gender) localStorage.setItem('parent_gender', u.gender);
+          if (u.studentName) localStorage.setItem('parent_student_name', u.studentName);
+        }
       }
 
       const loggedUser = response.data?.user;

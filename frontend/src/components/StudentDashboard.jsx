@@ -113,28 +113,41 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
 
   useEffect(() => {
     try {
+      let student = null;
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const parsed = JSON.parse(storedUser);
-        setUserData((prev) => ({
-          name: parsed.name || prev.name,
-          age: parsed.age || localStorage.getItem('lastRegisteredAge') || prev.age,
-          email: parsed.email || prev.email,
-          gender: parsed.gender || localStorage.getItem('lastRegisteredGender') || prev.gender,
-        }));
+        if (parsed.role === 'student') {
+          student = parsed;
+        }
+      }
+
+      if (!student) {
+        const storedStudentUser = localStorage.getItem('student_user');
+        if (storedStudentUser) {
+          student = JSON.parse(storedStudentUser);
+        }
+      }
+
+      if (student && student.role === 'student') {
+        setUserData({
+          name: student.name || 'Student',
+          age: student.age ? String(student.age) : (localStorage.getItem('student_age') || '15'),
+          email: student.email || localStorage.getItem('student_email') || 'student@cylixlab.com',
+          gender: student.gender || localStorage.getItem('student_gender') || 'male',
+        });
       } else {
-        const lastRegName = localStorage.getItem('lastRegisteredName');
-        const lastRegEmail = localStorage.getItem('lastRegisteredEmail');
-        const lastRegAge = localStorage.getItem('lastRegisteredAge');
-        const lastRegGender = localStorage.getItem('lastRegisteredGender');
-        if (lastRegName || lastRegEmail || lastRegAge || lastRegGender) {
-          setUserData((prev) => ({
-            ...prev,
-            name: lastRegName || prev.name,
-            email: lastRegEmail || prev.email,
-            age: lastRegAge || prev.age,
-            gender: lastRegGender || prev.gender,
-          }));
+        const lastStudentName = localStorage.getItem('student_name');
+        const lastStudentEmail = localStorage.getItem('student_email');
+        const lastStudentAge = localStorage.getItem('student_age');
+        const lastStudentGender = localStorage.getItem('student_gender');
+        if (lastStudentName) {
+          setUserData({
+            name: lastStudentName,
+            email: lastStudentEmail || 'student@cylixlab.com',
+            age: lastStudentAge || '15',
+            gender: lastStudentGender || 'male',
+          });
         }
       }
     } catch {
@@ -172,14 +185,6 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
     <div className={`student-dashboard-page ${(currentView === 'todo' || currentView === 'progress' || currentView === 'quotes' || activeAssignment) ? 'scrollable-page' : ''}`}>
       {/* 1. UNIFIED HEADER FOR ALL STUDENT DASHBOARD PAGES */}
       <header className="student-dashboard-header">
-        {/* Left: Back to Home Page button */}
-        <Link to="/" className="dashboard-header-home-btn" aria-label="Back to Home Page">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          <span>Back to Home</span>
-        </Link>
-
         <div className="learning-header-pattern" aria-hidden="true">
           <svg viewBox="0 0 380 90" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M120 -20 L250 110 M170 -20 L300 110 M220 -20 L350 110" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5" />
