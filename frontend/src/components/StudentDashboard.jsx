@@ -117,18 +117,22 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
         const parsed = JSON.parse(storedUser);
         setUserData((prev) => ({
           name: parsed.name || prev.name,
-          age: parsed.age || prev.age,
+          age: parsed.age || localStorage.getItem('lastRegisteredAge') || prev.age,
           email: parsed.email || prev.email,
-          gender: parsed.gender || prev.gender,
+          gender: parsed.gender || localStorage.getItem('lastRegisteredGender') || prev.gender,
         }));
       } else {
         const lastRegName = localStorage.getItem('lastRegisteredName');
         const lastRegEmail = localStorage.getItem('lastRegisteredEmail');
-        if (lastRegName || lastRegEmail) {
+        const lastRegAge = localStorage.getItem('lastRegisteredAge');
+        const lastRegGender = localStorage.getItem('lastRegisteredGender');
+        if (lastRegName || lastRegEmail || lastRegAge || lastRegGender) {
           setUserData((prev) => ({
             ...prev,
             name: lastRegName || prev.name,
             email: lastRegEmail || prev.email,
+            age: lastRegAge || prev.age,
+            gender: lastRegGender || prev.gender,
           }));
         }
       }
