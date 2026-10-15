@@ -82,6 +82,8 @@ const Login = () => {
           navigate('/parent-dashboard');
         } else if (userRole === 'student') {
           navigate('/student-dashboard');
+        } else if (userRole === 'admin') {
+          navigate('/admin-dashboard');
         } else {
           navigate('/');
         }
@@ -128,6 +130,8 @@ const Login = () => {
           navigate('/parent-dashboard');
         } else if (loggedRole === 'student') {
           navigate('/student-dashboard');
+        } else if (loggedRole === 'admin') {
+          navigate('/admin-dashboard');
         } else {
           navigate('/');
         }
