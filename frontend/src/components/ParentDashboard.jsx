@@ -327,7 +327,7 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
           ) : currentView === 'chat' ? (
             <div className="chat-content-wrapper">
               <h2 className="chat-main-subtitle">&quot;Ask questions, share updates, and collaborate instantly.&quot;</h2>
-              <OnlineChatbox />
+              <OnlineChatbox role="parent" />
             </div>
           ) : currentView === 'progress' ? (
             <ParentStudentProgressView onBack={() => setCurrentView('dashboard')} />
