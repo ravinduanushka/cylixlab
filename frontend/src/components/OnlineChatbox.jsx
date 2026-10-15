@@ -3,91 +3,59 @@ import axios from 'axios';
 
 // Client-side fallback responses for AI learning, programming, and general knowledge
 const getBotResponse = (query, role = 'student') => {
-  const q = query.toLowerCase().trim();
+  const trimmed = query.trim();
+  const q = trimmed.toLowerCase();
+
+  // 1. Direct Math Solver (e.g. 1+2, 1+3, 12*5, 100/4)
+  const mathMatch = trimmed.match(/(-?\d+(?:\.\d+)?)\s*([\+\-\*\/xX\^])\s*(-?\d+(?:\.\d+)?)/);
+  if (mathMatch) {
+    const num1 = parseFloat(mathMatch[1]);
+    const op = mathMatch[2];
+    const num2 = parseFloat(mathMatch[3]);
+    let result = null;
+    if (op === '+') result = num1 + num2;
+    else if (op === '-') result = num1 - num2;
+    else if (op === '*' || op === 'x' || op === 'X') result = num1 * num2;
+    else if (op === '/') result = num2 !== 0 ? num1 / num2 : 'undefined';
+    else if (op === '^') result = Math.pow(num1, num2);
+    if (result !== null) return `${num1} ${op} ${num2} = ${result}`;
+  }
 
   // Greetings
   if (/^(hi|hello|hey|good morning|good afternoon|good evening|ආයුබෝවන්)/i.test(q)) {
     return role === 'parent'
-      ? 'Hello! 👋 How can I assist you with your child’s educational journey in CylixLab today?'
-      : 'Hello! 👋 How can I help you with your studies today? You can ask me about AI concepts, programming, or general knowledge!';
+      ? 'Hello! 👋 How can I assist you with your child’s educational journey today?'
+      : 'Hello! 👋 How can I help you with your studies, maths, or programming today?';
   }
 
   // Who are you
   if (q.includes('who are you') || q.includes('what can you do')) {
     return role === 'parent'
-      ? 'I am the CylixLab Parent Advisor AI! I assist parents in tracking student progress, understanding course roadmaps, managing study schedules, and supporting learning.'
-      : 'I am the CylixLab Student Knowledge Assistant AI! I help you learn AI concepts, understand programming, answer study questions, and guide your assignments.';
+      ? 'I am the CylixLab Parent Advisor AI, here to assist with student progress and guidance.'
+      : 'I am the CylixLab Student Assistant AI! Ask me any questions on maths, coding, English, or AI.';
   }
 
-  // Parent specific questions
-  if (role === 'parent' && (q.includes('progress') || q.includes('analyze') || q.includes('score') || q.includes('marks'))) {
-    return 'You can analyze your child’s progress in real-time in the "Analyze Progress" tab. It shows completed MCQs, study streak, accuracy scores, and areas where they might need more practice!';
-  }
-
-  if (role === 'parent' && (q.includes('time') || q.includes('schedule') || q.includes('routine'))) {
-    return 'A consistent 45-60 minute focused study routine with 10-minute breaks works best for young learners. You can also view the student To-Do list to verify daily goals!';
-  }
-
-  // AI & Machine Learning Questions
+  // AI & Machine Learning
   if (q.includes('what is ai') || q.includes('artificial intelligence')) {
-    return 'Artificial Intelligence (AI) is the simulation of human intelligence by machines and computer systems. Key branches include Machine Learning, Natural Language Processing (NLP), Computer Vision, and Robotics.';
+    return 'Artificial Intelligence (AI) enables computers to perform smart tasks like learning, reasoning, and problem-solving.';
   }
   if (q.includes('machine learning') || q.includes('what is ml')) {
-    return 'Machine Learning (ML) is a subfield of AI where algorithms learn patterns from data and improve their performance over time without being explicitly programmed for every specific rule.';
+    return 'Machine Learning is a subset of AI where systems learn patterns from data to make predictions automatically.';
   }
-  if (q.includes('deep learning') || q.includes('neural network')) {
-    return 'Deep Learning uses Artificial Neural Networks with multiple layers (hence "deep") to model complex patterns in large datasets, inspired by the biological neurons in the human brain.';
-  }
-  if (q.includes('nlp') || q.includes('natural language')) {
-    return 'Natural Language Processing (NLP) enables computers to understand, interpret, and generate human language. Examples include translation tools, voice assistants, and chatbots.';
-  }
-  if (q.includes('computer vision')) {
-    return 'Computer Vision is an AI field enabling computers to derive meaningful information from digital images, videos, and visual inputs, used in facial recognition, self-driving cars, and medical imaging.';
+  if (q.includes('deep learning')) {
+    return 'Deep Learning uses multi-layered artificial neural networks modeled after the human brain.';
   }
 
-  // Programming & Coding Questions
-  if (q.includes('javascript') || q.includes('js')) {
-    return 'JavaScript is the most popular programming language of the web. It powers interactive frontend experiences (like this chatbox!) and can also run on servers using Node.js.';
-  }
+  // Programming
   if (q.includes('python')) {
-    return 'Python is a high-level, easy-to-read programming language widely used in AI, data science, machine learning, web backend development, and automation.';
+    return 'Python is an easy-to-read programming language widely used in AI, data science, and automation.';
   }
-  if (q.includes('react')) {
-    return 'React is a popular JavaScript library created by Meta for building modern user interfaces using reusable components and a fast virtual DOM.';
-  }
-  if (q.includes('html') || q.includes('css')) {
-    return 'HTML (HyperText Markup Language) provides the structure and content of web pages, while CSS (Cascading Style Sheets) styles the layout, colors, typography, and responsive design.';
-  }
-  if (q.includes('backend') || q.includes('server') || q.includes('database')) {
-    return 'The backend is the server-side part of an application that handles business logic, databases, authentication, and APIs, communicating with the frontend interface.';
+  if (q.includes('javascript') || q.includes('js')) {
+    return 'JavaScript is the core programming language for web interactivity and application logic.';
   }
 
-  // General Knowledge & Science Questions
-  if (q.includes('solar system') || q.includes('planet')) {
-    return 'Our Solar System consists of the Sun and 8 planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune, along with dwarf planets like Pluto and numerous asteroids and comets.';
-  }
-  if (q.includes('gravity') || q.includes('gravitational')) {
-    return 'Gravity is a fundamental force of nature that attracts two bodies toward each other. On Earth, gravitational acceleration is approximately 9.8 m/s².';
-  }
-  if (q.includes('photosynthesis')) {
-    return 'Photosynthesis is the process by which green plants and organisms use sunlight, water, and carbon dioxide to create oxygen and energy in the form of sugar.';
-  }
-
-  // CylixLab platform questions
-  if (q.includes('assignment') || q.includes('learning path') || q.includes('todo') || q.includes('cylixlab')) {
-    return 'In CylixLab, you can access guided Learning Paths with PDF resources, practice 30-question MCQ assignments with a 30-minute timer, and track your daily tasks in your To-Do list!';
-  }
-
-  // Thank you / Farewell
-  if (q.includes('thank') || q.includes('thanks')) {
-    return "You're very welcome! Keep asking questions and never stop learning! 😊";
-  }
-  if (q.includes('bye') || q.includes('goodbye')) {
-    return 'Goodbye! Have a productive study session, and feel free to return whenever you need help!';
-  }
-
-  // General helpful intelligent fallback
-  return `That's a great question regarding "${query}". Here is a helpful insight: Always break complex concepts into small, manageable parts. If you are learning this for your assignment or exams, focus on the core principles, practice hands-on problems, and review the relevant Learning Path modules in CylixLab!`;
+  // Short intelligent fallback
+  return `Answer for "${trimmed}": Please make sure the backend server is running (npm run dev) to get live Groq AI answers.`;
 };
 
 const OnlineChatbox = ({ role: propRole }) => {
