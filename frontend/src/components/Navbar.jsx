@@ -46,6 +46,14 @@ const Navbar = () => {
 
   const dashboardInfo = getDashboardInfo();
 
+  const scrollToSection = (e, sectionId) => {
+    e.preventDefault();
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <header className="navbar-container">
       <div className="navbar-content">
@@ -53,10 +61,35 @@ const Navbar = () => {
           <Link to="/">CylixLab</Link>
         </div>
         <nav className="navbar-links">
-          <a href="/#home" className="nav-link active">Home</a>
-          <a href="/#plan" className="nav-link">Plan</a>
-          <a href="/#features" className="nav-link">Features</a>
-          {dashboardInfo ? (
+          <a
+            href="#home"
+            className="nav-link active"
+            onClick={(e) => scrollToSection(e, 'home')}
+          >
+            Home
+          </a>
+          <a
+            href="#plan"
+            className="nav-link"
+            onClick={(e) => scrollToSection(e, 'plan')}
+          >
+            Plan
+          </a>
+          <a
+            href="#features"
+            className="nav-link"
+            onClick={(e) => scrollToSection(e, 'features')}
+          >
+            Features
+          </a>
+          <a
+            href="#about"
+            className="nav-link"
+            onClick={(e) => scrollToSection(e, 'about')}
+          >
+            About us
+          </a>
+          {dashboardInfo && (
             <>
               <Link to={dashboardInfo.to} className="nav-link">
                 {dashboardInfo.label}
@@ -76,10 +109,6 @@ const Navbar = () => {
                 Logout
               </button>
             </>
-          ) : (
-            <Link to="/login" className="nav-link">
-              Login
-            </Link>
           )}
         </nav>
       </div>
