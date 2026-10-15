@@ -142,6 +142,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         role: user.role,
         gender: user.gender,
+        age: user.age,
         studentName: user.studentName,
       },
     });
