@@ -86,8 +86,14 @@ const Register = () => {
       localStorage.setItem('lastRegisteredName', formData.name);
       localStorage.setItem('lastRegisteredRole', role);
       localStorage.setItem('lastRegisteredGender', formData.gender);
+      if (formData.age) {
+        localStorage.setItem('lastRegisteredAge', formData.age);
+      }
       if (formData.studentName) {
         localStorage.setItem('lastRegisteredStudentName', formData.studentName);
+      }
+      if (response.data?.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
       }
 
       setMessage(response.data?.message || 'Registration successful! You can now log in.');
