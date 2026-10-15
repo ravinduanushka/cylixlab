@@ -169,6 +169,18 @@ const AdminDashboard = () => {
       setLpStatus('Please type name and select a PDF file first');
       return;
     }
+    try {
+      const existing = JSON.parse(localStorage.getItem('cylixlab_learning_paths') || '[]');
+      existing.push({
+        id: Date.now(),
+        name: lpName.trim() || 'New Learning Path',
+        fileName: lpFile ? lpFile.name : 'document.pdf',
+        date: new Date().toLocaleDateString(),
+      });
+      localStorage.setItem('cylixlab_learning_paths', JSON.stringify(existing));
+    } catch {
+      // fallback
+    }
     setLpStatus(`✓ Learning Path "${lpName || 'New Path'}" uploaded successfully!`);
     setTimeout(() => {
       setLpStatus('All set');
@@ -196,6 +208,18 @@ const AdminDashboard = () => {
     if (!asgName.trim() && !asgFile) {
       setAsgStatus('Please type name and select a PDF file first');
       return;
+    }
+    try {
+      const existing = JSON.parse(localStorage.getItem('cylixlab_assignments') || '[]');
+      existing.push({
+        id: Date.now(),
+        name: asgName.trim() || 'New Assignment',
+        fileName: asgFile ? asgFile.name : 'assignment.pdf',
+        date: new Date().toLocaleDateString(),
+      });
+      localStorage.setItem('cylixlab_assignments', JSON.stringify(existing));
+    } catch {
+      // fallback
     }
     setAsgStatus(`✓ Assignment "${asgName || 'New Assignment'}" saved for MCQ generation!`);
     setTimeout(() => {
