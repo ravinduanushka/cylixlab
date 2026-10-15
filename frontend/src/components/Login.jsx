@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { GoogleIcon } from './Icons';
@@ -13,6 +13,27 @@ const Login = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
+
+  // If already logged in, automatically navigate to the correct dashboard
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        const user = JSON.parse(userStr);
+        const role = user.role || localStorage.getItem('lastRegisteredRole');
+        if (role === 'parent') {
+          navigate('/parent-dashboard', { replace: true });
+        } else if (role === 'admin') {
+          navigate('/admin-dashboard', { replace: true });
+        } else if (role === 'student') {
+          navigate('/student-dashboard', { replace: true });
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
