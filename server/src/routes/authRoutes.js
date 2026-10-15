@@ -6,6 +6,7 @@ const {
   loginUser,
   googleLogin,
   getUserProfile,
+  getAdminStats,
 } = require('../controllers/authController');
 const { protect } = require('../middlewares/authMiddleware');
 
@@ -14,5 +15,6 @@ router.get('/verify-email', verifyEmail);
 router.post('/login', loginUser);
 router.post('/google', googleLogin);
 router.get('/profile', protect, getUserProfile);
+router.get('/stats', getAdminStats);
 
 module.exports = router;
