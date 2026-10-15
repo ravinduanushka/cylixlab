@@ -153,7 +153,9 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
 
       {/* Student Name Title */}
       <div className="psp-student-name-row">
-        <h2 className="psp-student-name-heading">Student Name - {studentName || 'Student'}</h2>
+        <h2 className="psp-student-name-heading">
+          Student Name - {studentName ? (studentName.charAt(0).toUpperCase() + studentName.slice(1)) : 'Student'}
+        </h2>
       </div>
 
       {/* SECTION 1: Top Row -> Left: Bar Chart | Right: Finished Works & pass/no/notyet */}
