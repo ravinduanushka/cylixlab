@@ -147,6 +147,14 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
     <div className={`student-dashboard-page parent-dashboard-page ${(currentView === 'progress' || currentView === 'quotes') ? 'scrollable-page' : ''}`}>
       {/* 1. UNIFIED HEADER */}
       <header className="student-dashboard-header">
+        {/* Left: Back to Home Page button */}
+        <Link to="/" className="dashboard-header-home-btn" aria-label="Back to Home Page">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          <span>Back to Home</span>
+        </Link>
+
         <div className="learning-header-pattern" aria-hidden="true">
           <svg viewBox="0 0 380 90" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M120 -20 L250 110 M170 -20 L300 110 M220 -20 L350 110" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5" />
