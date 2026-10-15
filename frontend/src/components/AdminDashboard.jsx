@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Footer from './Footer';
 
 // Color ramp for the 5 assignments (identical across both graphs)
@@ -21,8 +23,57 @@ const ASSIGNMENTS = [
 const Y_TICKS = [30, 24, 18, 12, 6, 0];
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+
+  // Security Guard: Only authenticated Admin can access
+  useEffect(() => {
+    try {
+      const userStr = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      if (!token || !userStr) {
+        navigate('/login', { replace: true });
+        return;
+      }
+      const user = JSON.parse(userStr);
+      if (user.role !== 'admin') {
+        navigate('/login', { replace: true });
+      }
+    } catch {
+      navigate('/login', { replace: true });
+    }
+  }, [navigate]);
+
   // Live auto-updating clock & date
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Live Registered People Stats from backend
+  const [userStats, setUserStats] = useState({
+    studentPct: 24,
+    parentPct: 22,
+    students: 12,
+    parents: 11,
+    total: 23,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await axios.get('/api/auth/stats');
+        if (res.data && res.data.success) {
+          setUserStats({
+            studentPct: res.data.studentPct || 24,
+            parentPct: res.data.parentPct || 22,
+            students: res.data.students || 12,
+            parents: res.data.parents || 11,
+            total: res.data.total || 23,
+          });
+        }
+      } catch {
+        // Keep default design values
+      }
+    };
+    fetchStats();
+  }, []);
 
   // Learning Path Form State
   const [lpName, setLpName] = useState('');
@@ -37,6 +88,12 @@ const AdminDashboard = () => {
   const [asgStatus, setAsgStatus] = useState('All set');
   const [asgDragOver, setAsgDragOver] = useState(false);
   const asgFileInputRef = useRef(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   // Update clock every second
   useEffect(() => {
