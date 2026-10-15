@@ -23,25 +23,34 @@ const DEFAULT_PROGRESS_DATA = {
   '05': { assignmentId: '05', completed: false, marks: 0 },  // Not yet -> Blue
 };
 
-const ParentStudentProgressView = ({ standalone = false, onBack = null }) => {
+const ParentStudentProgressView = ({ standalone = false, onBack = null, studentName: propStudentName = '' }) => {
   const navigate = useNavigate();
   const [assignmentsData, setAssignmentsData] = useState(DEFAULT_PROGRESS_DATA);
-  const [studentName, setStudentName] = useState('Student');
+  const [studentName, setStudentName] = useState(propStudentName || 'Student');
   const [selectedAsgId, setSelectedAsgId] = useState(null);
+
+  // Sync propStudentName if provided
+  useEffect(() => {
+    if (propStudentName) {
+      setStudentName(propStudentName);
+    }
+  }, [propStudentName]);
 
   // Load student name and any stored progress data
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        if (parsed.studentName) {
-          setStudentName(parsed.studentName);
-        }
-      } else {
-        const lastRegStudent = localStorage.getItem('lastRegisteredStudentName');
-        if (lastRegStudent) {
-          setStudentName(lastRegStudent);
+      if (!propStudentName) {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          if (parsed.studentName) {
+            setStudentName(parsed.studentName);
+          }
+        } else {
+          const lastRegStudent = localStorage.getItem('lastRegisteredStudentName');
+          if (lastRegStudent) {
+            setStudentName(lastRegStudent);
+          }
         }
       }
 
@@ -52,7 +61,7 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null }) => {
     } catch {
       // fallback
     }
-  }, []);
+  }, [propStudentName]);
 
   const handleBack = () => {
     if (onBack) {
