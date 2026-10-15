@@ -137,7 +137,10 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
   };
 
   const salutation = getSalutation();
-  const displayName = userData.name ? userData.name.trim().split(/\s+/)[0].toLowerCase() : 'kamal';
+  const rawParentFirstName = (userData.name || 'Kamal').trim().split(/\s+/)[0];
+  const displayName = rawParentFirstName
+    ? rawParentFirstName.charAt(0).toUpperCase() + rawParentFirstName.slice(1).toLowerCase()
+    : 'Kamal';
 
   return (
     <div className={`student-dashboard-page parent-dashboard-page ${(currentView === 'progress' || currentView === 'quotes') ? 'scrollable-page' : ''}`}>

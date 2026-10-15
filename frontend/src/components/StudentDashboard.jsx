@@ -162,7 +162,10 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
     };
   }, [currentView]);
 
-  const studentFirstName = (userData.name || 'user').trim().split(/\s+/)[0].toLowerCase();
+  const rawFirstName = (userData.name || 'User').trim().split(/\s+/)[0];
+  const studentFirstName = rawFirstName
+    ? rawFirstName.charAt(0).toUpperCase() + rawFirstName.slice(1).toLowerCase()
+    : 'User';
 
   return (
     <div className={`student-dashboard-page ${(currentView === 'todo' || currentView === 'progress' || currentView === 'quotes' || activeAssignment) ? 'scrollable-page' : ''}`}>
