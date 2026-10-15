@@ -17,6 +17,7 @@ exports.handleChatMessage = async (req, res) => {
     const trimmedMessage = message.trim();
 
     // Check for API Keys
+    const grokKey = process.env.GROK_API_KEY || process.env.XAI_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     const openAiKey = process.env.OPENAI_API_KEY;
 
@@ -36,17 +37,95 @@ Keep explanations concise, encouraging, and clear.
 If asked in Sinhala, reply in natural, friendly Sinhala.
 If asked in English, reply in clear, engaging English.`;
 
-    // 1. If Gemini API key is available
+    // 1. If Grok (xAI) API key is available
+    if (grokKey && grokKey !== 'your_grok_api_key_here') {
+      try {
+        const formattedHistory = (history || [])
+          .filter((h) => h && h.text && (h.sender === 'user' || h.sender === 'bot'))
+          .slice(-8)
+          .map((h) => ({
+            role: h.sender === 'user' ? 'user' : 'assistant',
+            content: h.text,
+          }));
+
+        // Try grok-2-latest or grok-beta
+        const response = await fetch('https://api.x.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${grokKey}`,
+          },
+          body: JSON.stringify({
+            model: 'grok-2-latest',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...formattedHistory,
+              { role: 'user', content: trimmedMessage },
+            ],
+            temperature: 0.7,
+            max_tokens: 800,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const reply = data.choices?.[0]?.message?.content;
+          if (reply) {
+            return res.status(200).json({
+              success: true,
+              reply,
+              provider: 'grok',
+            });
+          }
+        } else {
+          // If grok-2-latest is not available, try grok-beta fallback
+          const fallbackResp = await fetch('https://api.x.ai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${grokKey}`,
+            },
+            body: JSON.stringify({
+              model: 'grok-beta',
+              messages: [
+                { role: 'system', content: systemPrompt },
+                ...formattedHistory,
+                { role: 'user', content: trimmedMessage },
+              ],
+              temperature: 0.7,
+              max_tokens: 800,
+            }),
+          });
+
+          if (fallbackResp.ok) {
+            const data = await fallbackResp.json();
+            const reply = data.choices?.[0]?.message?.content;
+            if (reply) {
+              return res.status(200).json({
+                success: true,
+                reply,
+                provider: 'grok',
+              });
+            }
+          } else {
+            const errText = await response.text();
+            console.error('Grok API Error:', response.status, errText);
+          }
+        }
+      } catch (grokError) {
+        console.error('Grok API Error:', grokError.message);
+      }
+    }
+
+    // 2. If Gemini API key is available
     if (geminiKey && geminiKey !== 'your_gemini_api_key_here') {
       try {
         const genAI = new GoogleGenerativeAI(geminiKey);
-        // Use gemini-1.5-flash for fast responses
         const model = genAI.getGenerativeModel({
           model: 'gemini-1.5-flash',
           systemInstruction: systemPrompt,
         });
 
-        // Format history for Gemini chat if present
         let chatSession;
         if (Array.isArray(history) && history.length > 0) {
           const formattedHistory = history
@@ -74,11 +153,10 @@ If asked in English, reply in clear, engaging English.`;
         });
       } catch (geminiError) {
         console.error('Gemini API Error:', geminiError.message);
-        // If Gemini quota/model error, fallback to other providers or rule-based
       }
     }
 
-    // 2. If OpenAI API key is available as fallback/alternative
+    // 3. If OpenAI API key is available
     if (openAiKey && openAiKey !== 'your_openai_api_key_here') {
       try {
         const formattedHistory = (history || [])
@@ -123,18 +201,23 @@ If asked in English, reply in clear, engaging English.`;
       }
     }
 
-    // 3. Fallback when API key is not configured or during initial setup
+    // 4. Fallback when API key is not configured or during initial setup
     const educationalFallback = getIntelligentFallback(trimmedMessage, role);
 
-    const keyNotice = (!geminiKey || geminiKey === 'your_gemini_api_key_here') && (!openAiKey || openAiKey === 'your_openai_api_key_here')
-      ? '\n\n💡 (Note: Live AI API key is not configured yet in server/.env. Add your GEMINI_API_KEY to enable live Gemini AI answers.)'
+    const hasAnyKey =
+      (grokKey && grokKey !== 'your_grok_api_key_here') ||
+      (geminiKey && geminiKey !== 'your_gemini_api_key_here') ||
+      (openAiKey && openAiKey !== 'your_openai_api_key_here');
+
+    const keyNotice = !hasAnyKey
+      ? '\n\n💡 (Note: Grok API key is not configured yet in server/.env. Add your GROK_API_KEY to enable live Grok AI answers.)'
       : '';
 
     return res.status(200).json({
       success: true,
       reply: educationalFallback + keyNotice,
       provider: 'fallback',
-      requiresApiKey: !geminiKey && !openAiKey,
+      requiresApiKey: !hasAnyKey,
     });
   } catch (error) {
     console.error('Chat error:', error);
