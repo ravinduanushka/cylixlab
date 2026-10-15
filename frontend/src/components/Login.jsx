@@ -70,7 +70,14 @@ const Login = () => {
         localStorage.setItem('token', response.data.token);
       }
       if (response.data?.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        const u = response.data.user;
+        localStorage.setItem('user', JSON.stringify(u));
+        if (u.name) localStorage.setItem('lastRegisteredName', u.name);
+        if (u.email) localStorage.setItem('lastRegisteredEmail', u.email);
+        if (u.role) localStorage.setItem('lastRegisteredRole', u.role);
+        if (u.gender) localStorage.setItem('lastRegisteredGender', u.gender);
+        if (u.age) localStorage.setItem('lastRegisteredAge', String(u.age));
+        if (u.studentName) localStorage.setItem('lastRegisteredStudentName', u.studentName);
       }
 
       const userObj = response.data?.user;
@@ -118,7 +125,14 @@ const Login = () => {
         localStorage.setItem('token', response.data.token);
       }
       if (response.data?.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        const u = response.data.user;
+        localStorage.setItem('user', JSON.stringify(u));
+        if (u.name) localStorage.setItem('lastRegisteredName', u.name);
+        if (u.email) localStorage.setItem('lastRegisteredEmail', u.email);
+        if (u.role) localStorage.setItem('lastRegisteredRole', u.role);
+        if (u.gender) localStorage.setItem('lastRegisteredGender', u.gender);
+        if (u.age) localStorage.setItem('lastRegisteredAge', String(u.age));
+        if (u.studentName) localStorage.setItem('lastRegisteredStudentName', u.studentName);
       }
 
       const loggedUser = response.data?.user;
