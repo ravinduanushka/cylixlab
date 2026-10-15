@@ -76,28 +76,41 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
 
   useEffect(() => {
     try {
+      let parent = null;
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const parsed = JSON.parse(storedUser);
-        setUserData((prev) => ({
-          name: parsed.name || prev.name,
-          email: parsed.email || prev.email,
-          gender: parsed.gender || localStorage.getItem('lastRegisteredGender') || prev.gender,
-          studentName: parsed.studentName || localStorage.getItem('lastRegisteredStudentName') || prev.studentName,
-        }));
+        if (parsed.role === 'parent') {
+          parent = parsed;
+        }
+      }
+
+      if (!parent) {
+        const storedParentUser = localStorage.getItem('parent_user');
+        if (storedParentUser) {
+          parent = JSON.parse(storedParentUser);
+        }
+      }
+
+      if (parent && parent.role === 'parent') {
+        setUserData({
+          name: parent.name || 'Parent',
+          email: parent.email || localStorage.getItem('parent_email') || 'parent@cylixlab.com',
+          gender: parent.gender || localStorage.getItem('parent_gender') || 'Male',
+          studentName: parent.studentName || localStorage.getItem('parent_student_name') || 'Student',
+        });
       } else {
-        const lastRegName = localStorage.getItem('lastRegisteredName');
-        const lastRegEmail = localStorage.getItem('lastRegisteredEmail');
-        const lastRegGender = localStorage.getItem('lastRegisteredGender');
-        const lastRegStudent = localStorage.getItem('lastRegisteredStudentName');
-        if (lastRegName || lastRegEmail || lastRegGender || lastRegStudent) {
-          setUserData((prev) => ({
-            ...prev,
-            name: lastRegName || prev.name,
-            email: lastRegEmail || prev.email,
-            gender: lastRegGender || prev.gender,
-            studentName: lastRegStudent || prev.studentName,
-          }));
+        const lastParentName = localStorage.getItem('parent_name');
+        const lastParentEmail = localStorage.getItem('parent_email');
+        const lastParentGender = localStorage.getItem('parent_gender');
+        const lastParentStudent = localStorage.getItem('parent_student_name');
+        if (lastParentName) {
+          setUserData({
+            name: lastParentName,
+            email: lastParentEmail || 'parent@cylixlab.com',
+            gender: lastParentGender || 'Male',
+            studentName: lastParentStudent || 'Student',
+          });
         }
       }
     } catch {
@@ -147,14 +160,6 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
     <div className={`student-dashboard-page parent-dashboard-page ${(currentView === 'progress' || currentView === 'quotes') ? 'scrollable-page' : ''}`}>
       {/* 1. UNIFIED HEADER */}
       <header className="student-dashboard-header">
-        {/* Left: Back to Home Page button */}
-        <Link to="/" className="dashboard-header-home-btn" aria-label="Back to Home Page">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          <span>Back to Home</span>
-        </Link>
-
         <div className="learning-header-pattern" aria-hidden="true">
           <svg viewBox="0 0 380 90" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M120 -20 L250 110 M170 -20 L300 110 M220 -20 L350 110" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5" />
@@ -179,6 +184,16 @@ const ParentDashboard = ({ initialView = 'dashboard' }) => {
 
       {/* 2. MAIN CONTENT (SAME PAGE IN-PLACE SWITCH) */}
       <main className={`student-dashboard-main ${currentView === 'quotes' ? 'quotes-view-main' : currentView === 'chat' ? 'chat-view-main' : currentView === 'progress' ? 'progress-view-main' : ''}`}>
+        {/* On main Parent Dashboard page only (Image 5): Back to Home button under the header on the left side */}
+        {currentView === 'dashboard' && (
+          <Link to="/" className="dashboard-back-link-below" aria-label="Back to Home">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            <span>Back to Home</span>
+          </Link>
+        )}
+
         {/* Back to Parent Dashboard button when in a subview */}
         {(currentView === 'personal' || currentView === 'quotes' || currentView === 'chat' || currentView === 'progress') && (
           <button
