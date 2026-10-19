@@ -121,26 +121,57 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
     }));
   };
 
+  const [correctCount, setCorrectCount] = useState(0);
+
   const questionsList = Array.isArray(questions) && questions.length > 0 ? questions : [];
   const totalQuestions = questionsList.length || 30;
   const answeredCount = Object.values(selectedAnswers).filter(Boolean).length;
 
+  // Calculate correct answers count based on actual question keys
+  const getCorrectAnswersCount = () => {
+    let count = 0;
+    questionsList.forEach((q, idx) => {
+      const qId = q.id || idx + 1;
+      const userSelected = selectedAnswers[qId];
+      if (userSelected !== undefined && userSelected !== null) {
+        let expected = q.correctAnswer;
+        if (typeof expected === 'string') {
+          const map = { A: 1, B: 2, C: 3, D: 4, a: 1, b: 2, c: 3, d: 4 };
+          expected = map[expected.trim()] || Number(expected);
+        }
+        if (Number(userSelected) === Number(expected)) {
+          count++;
+        }
+      }
+    });
+    return count;
+  };
+
   const handleSubmit = () => {
+    const score = getCorrectAnswersCount();
+    setCorrectCount(score);
     setIsSubmitted(true);
     setShowSubmitModal(true);
     try {
       const stored = localStorage.getItem('cylixlab_assignments_data');
       const progressData = stored ? JSON.parse(stored) : {};
-      progressData[assignmentId] = {
-        assignmentId,
+      const record = {
+        assignmentId: safeAsgId,
         completed: true,
-        marks: answeredCount,
+        marks: score, // ONLY CORRECT ANSWERS COUNT!
         total: totalQuestions,
         answeredCount,
+        correctCount: score,
         submittedAt: new Date().toISOString(),
       };
+      progressData[safeAsgId] = record;
+      progressData[assignmentId] = record;
       localStorage.setItem('cylixlab_assignments_data', JSON.stringify(progressData));
-      window.dispatchEvent(new CustomEvent('cylixlab_assignment_updated', { detail: { assignmentId, marks: answeredCount } }));
+      window.dispatchEvent(
+        new CustomEvent('cylixlab_assignment_updated', {
+          detail: { assignmentId: safeAsgId, marks: score },
+        })
+      );
     } catch (e) {
       console.error('Error saving assignment progress:', e);
     }
