@@ -3934,6 +3934,42 @@
   height: 17px;
 }
 
+/* Review Mode & Answer Indicators */
+.as-review-tag {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.as-review-correct {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.as-review-wrong {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.as-option-row.as-option-correct-highlight {
+  background-color: #ecfdf5 !important;
+  border-color: #10b981 !important;
+}
+
+.as-option-row.as-option-wrong-highlight {
+  background-color: #fef2f2 !important;
+  border-color: #ef4444 !important;
+}
+
+.as-option-circle.correct-circle {
+  background-color: #10b981 !important;
+}
+
 /* Submission action bar */
 .as-submission-bar {
   display: flex;
@@ -4042,6 +4078,54 @@
   font-weight: 700;
   color: #111827;
   margin: 0 0 12px;
+}
+
+.as-modal-score-card {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 10px 24px;
+  margin: 4px 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.as-modal-score-digits {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.as-modal-score-num {
+  font-family: 'Poppins', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #15803d;
+  line-height: 1.1;
+}
+
+.as-modal-score-slash {
+  font-size: 22px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.as-modal-score-den {
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.as-modal-score-tag {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #166534;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
 }
 
 .as-modal-body {
