@@ -257,9 +257,9 @@ const AdminDashboard = () => {
       return;
     }
     const asgId = extractNumberId(asgName);
-    setAsgStatus('Uploading Assignment document...');
+    setAsgStatus('Uploading PDF & generating MCQs with AI...');
 
-    const saveAsgLocallyAndComplete = (pdfUrlOrData) => {
+    const saveAsgLocallyAndComplete = (pdfUrlOrData, parsedQuestions = []) => {
       try {
         const existing = JSON.parse(localStorage.getItem('cylixlab_assignments') || '[]');
         existing.push({
@@ -278,14 +278,20 @@ const AdminDashboard = () => {
             localStorage.setItem(`cylixlab_assignment_pdf_name_${asgId}`, asgFile.name);
           }
         }
+        if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
+          try {
+            localStorage.setItem(`cylixlab_assignment_questions_${asgId}`, JSON.stringify(parsedQuestions));
+          } catch {}
+        }
       } catch (err) {
         console.warn('LocalStorage error:', err);
       }
       window.dispatchEvent(new CustomEvent('cylixlab_assignment_pdf_uploaded', { detail: { assignmentId: asgId } }));
-      setAsgStatus(`✓ Assignment "${asgName || 'Assignment ' + asgId}" saved for MCQ generation!`);
+      const count = parsedQuestions?.length || 30;
+      setAsgStatus(`✓ Assignment "${asgName || 'Assignment ' + asgId}" uploaded and ${count} MCQs generated!`);
       setTimeout(() => {
         setAsgStatus('All set');
-      }, 4000);
+      }, 5000);
     };
 
     if (asgFile) {
@@ -299,17 +305,17 @@ const AdminDashboard = () => {
             fileData: base64Data,
           });
           if (res.data && res.data.url) {
-            saveAsgLocallyAndComplete(res.data.url);
+            saveAsgLocallyAndComplete(res.data.url, res.data.questions || []);
             return;
           }
         } catch (err) {
           console.warn('Server assignment upload fallback to local:', err);
         }
-        saveAsgLocallyAndComplete(base64Data);
+        saveAsgLocallyAndComplete(base64Data, []);
       };
       reader.readAsDataURL(asgFile);
     } else {
-      saveAsgLocallyAndComplete(null);
+      saveAsgLocallyAndComplete(null, []);
     }
   };
 

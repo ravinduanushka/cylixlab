@@ -3748,13 +3748,70 @@
   margin: 0 0 6px 0;
 }
 
-/* 30 Questions */
+/* PDF Toggle Bar & Loading state */
+.as-pdf-toggle-bar {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 20px auto;
+}
+
+.as-pdf-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.as-pdf-toggle-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.as-loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  gap: 14px;
+  color: #4b5563;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+}
+
+.as-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #0056d6;
+  border-radius: 50%;
+  animation: asSpin 0.8s linear infinite;
+}
+
+@keyframes asSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* MCQ Questions List */
 .as-questions-list {
   display: flex;
   flex-direction: column;
   gap: 28px;
   width: 100%;
-  max-width: 520px;
+  max-width: 680px;
   margin: 0 auto;
 }
 
@@ -3776,11 +3833,21 @@
   margin-bottom: 8px;
 }
 
+.as-question-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.55;
+  margin: 4px 0 12px 2px;
+  text-align: left;
+}
+
 .as-mcq-box {
   background-color: #d1d5db;
   border-radius: 6px;
   width: 100%;
-  padding: 16px 24px;
+  padding: 16px 20px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -3792,33 +3859,59 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.18s ease;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.18s ease;
   user-select: none;
+  gap: 12px;
 }
 
 .as-option-row:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 86, 214, 0.3);
 }
 
 .as-option-row.as-option-selected {
-  background-color: rgba(37, 99, 235, 0.08);
+  background-color: #ffffff;
+  border-color: #0056d6;
+  box-shadow: 0 2px 8px rgba(0, 86, 214, 0.14);
+}
+
+.as-option-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  text-align: left;
 }
 
 .as-option-number {
   font-family: 'Poppins', sans-serif;
-  font-size: 19px;
-  font-weight: 600;
-  color: #000000;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  min-width: 22px;
+  line-height: 1.4;
+}
+
+.as-option-label-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  color: #1e293b;
+  line-height: 1.45;
+  word-break: break-word;
 }
 
 .as-option-circle {
-  width: 30px;
-  height: 30px;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background-color: #60a5fa;
+  background-color: #93c5fd;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3828,7 +3921,7 @@
 
 .as-option-circle:hover {
   transform: scale(1.08);
-  background-color: #3b82f6;
+  background-color: #60a5fa;
 }
 
 .as-option-circle.checked {
@@ -3837,8 +3930,8 @@
 }
 
 .as-check-icon {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
 }
 
 /* Submission action bar */
@@ -3847,7 +3940,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 520px;
+  max-width: 680px;
   margin-top: 36px;
   padding: 16px 20px;
   background-color: #ffffff;
