@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import axios from 'axios';
+import PdfCanvasViewer from './PdfCanvasViewer';
 
 const LEARNING_PATH_META = {
   '01': {
@@ -25,16 +26,6 @@ const LEARNING_PATH_META = {
   },
 };
 
-const getCleanPdfUrl = (url, page = 1, zoom = 100) => {
-  if (!url) return '';
-  const base = url.split('#')[0];
-  // #toolbar=0 hides Edge/Chrome toolbar (drawing, pen, rotate, summarize)
-  // #navpanes=0 hides the left thumbnails pane
-  // #scrollbar=1 keeps smooth scrolling throughout document
-  // #view=FitH fits width to screen
-  return `${base}#page=${page}&zoom=${zoom}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`;
-};
-
 const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   const safePathId = String(pathId).padStart(2, '0');
   const meta = LEARNING_PATH_META[safePathId] || {
@@ -54,6 +45,7 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(12);
   const [zoomLevel, setZoomLevel] = useState(100);
+  const [targetPage, setTargetPage] = useState(null);
 
   // PDF URL state: loads from localStorage or backend
   const [pdfUrl, setPdfUrl] = useState(() => {
@@ -70,6 +62,7 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
     setIsRunning(true);
     setCurrentPage(1);
     setZoomLevel(100);
+    setTargetPage(null);
   }, [safePathId]);
 
   useEffect(() => {
@@ -160,25 +153,26 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
   const seconds = String(secondsLeft % 60).padStart(2, '0');
 
-  // Zoom handlers
+  // Zoom handlers for smooth zoom
   const handleZoomIn = () => {
-    setZoomLevel((prev) => Math.min(220, prev + 15));
+    setZoomLevel((prev) => Math.min(200, prev + 15));
   };
 
   const handleZoomOut = () => {
-    setZoomLevel((prev) => Math.max(60, prev - 15));
+    setZoomLevel((prev) => Math.max(65, prev - 15));
   };
 
   const handlePrevPage = () => {
-    setCurrentPage((prev) => Math.max(1, prev - 1));
+    const prev = Math.max(1, currentPage - 1);
+    setCurrentPage(prev);
+    setTargetPage(prev);
   };
 
   const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+    const next = Math.min(totalPages, currentPage + 1);
+    setCurrentPage(next);
+    setTargetPage(next);
   };
-
-  const cleanPdfUrlNormal = getCleanPdfUrl(pdfUrl, 1, 100);
-  const cleanPdfUrlFullscreen = getCleanPdfUrl(pdfUrl, currentPage, zoomLevel);
 
   return (
     <div className="lp-detail-container">
@@ -231,11 +225,12 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
           </svg>
         </button>
 
-        {cleanPdfUrlNormal ? (
-          <iframe
-            src={cleanPdfUrlNormal}
-            title={`PDF document for ${meta.title}`}
-            className="lp-pdf-iframe"
+        {pdfUrl ? (
+          <PdfCanvasViewer
+            url={pdfUrl}
+            zoomLevel={100}
+            isSmall={true}
+            onTotalPages={(total) => setTotalPages(total)}
           />
         ) : (
           <div className="lp-pdf-placeholder">
@@ -337,12 +332,14 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
 
             {/* Main Fullscreen PDF Canvas (Takes 100% of remaining screen with full scroll) */}
             <div className="lp-fullscreen-canvas">
-              {cleanPdfUrlFullscreen ? (
-                <iframe
-                  key={`pdf-${currentPage}-${zoomLevel}`}
-                  src={cleanPdfUrlFullscreen}
-                  title={`Full Display PDF - ${meta.title}`}
-                  className="lp-fullscreen-pdf-iframe"
+              {pdfUrl ? (
+                <PdfCanvasViewer
+                  url={pdfUrl}
+                  zoomLevel={zoomLevel}
+                  targetPage={targetPage}
+                  onPageChange={(p) => setCurrentPage(p)}
+                  onTotalPages={(total) => setTotalPages(total)}
+                  isSmall={false}
                 />
               ) : (
                 <div className="lp-pdf-placeholder fullscreen-placeholder">
