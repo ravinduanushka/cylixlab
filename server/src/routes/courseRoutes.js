@@ -6,9 +6,19 @@ const {
   getCourseById,
   updateCourse,
   deleteCourse,
+  uploadLearningPathPdf,
+  getLearningPathPdf,
+  uploadAssignmentPdf,
+  getAssignmentPdf,
 } = require('../controllers/courseController');
 
 const { protect, authorize } = require('../middlewares/authMiddleware');
+
+// PDF upload & view routes for Learning Paths and Assignments
+router.post('/learning-path-pdf', uploadLearningPathPdf);
+router.get('/learning-path-pdf/:pathId', getLearningPathPdf);
+router.post('/assignment-pdf', uploadAssignmentPdf);
+router.get('/assignment-pdf/:assignmentId', getAssignmentPdf);
 
 router.get('/', getCourses);
 router.get('/:id', getCourseById);
