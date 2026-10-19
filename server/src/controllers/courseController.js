@@ -59,6 +59,8 @@ const updateCourse = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server Error', error: error.message });
   }
+};
+
 const deleteCourse = async (req, res) => {
   try {
     const course = await Course.findByIdAndDelete(req.params.id);
