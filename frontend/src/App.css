@@ -3170,20 +3170,52 @@
   max-width: 680px;
 }
 
-/* PDF Display Box (grey container matching screenshot) */
+/* PDF Display Box (grey rounded container matching screenshot Image 2) */
 .lp-pdf-display-box {
   background-color: #d1d5db;
-  border-radius: 6px;
-  width: 440px;
+  border-radius: 14px;
+  width: 460px;
   max-width: 100%;
-  height: 480px;
-  min-height: 480px;
+  height: 520px;
+  min-height: 520px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
   overflow: hidden;
   position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Large corner expand/fullscreen icon in top-right of display place (Image 2) */
+.lp-expand-corner-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 25;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lp-expand-corner-btn:hover {
+  background: #ffffff;
+  color: #0284c7;
+  transform: scale(1.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.lp-expand-corner-btn:active {
+  transform: scale(0.96);
 }
 
 .lp-pdf-placeholder {
@@ -3196,16 +3228,115 @@
 
 .lp-pdf-placeholder-text {
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   color: #000000;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
+  user-select: none;
 }
 
 .lp-pdf-iframe {
   width: 100%;
   height: 100%;
   border: none;
+  background: #ffffff;
+}
+
+/* =========================================================
+   FULL DISPLAY MODAL (Image 3 - Fullscreen Scrollable PDF)
+   ========================================================= */
+
+.lp-fullscreen-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  animation: lpModalFadeIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes lpModalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.lp-fullscreen-display-container {
+  width: 95vw;
+  height: 94vh;
+  max-width: 1440px;
+  background-color: #d1d5db;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Large corner close button in full display mode */
+.lp-fullscreen-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  z-index: 100;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.75);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition: all 0.22s ease;
+}
+
+.lp-fullscreen-close-btn:hover {
+  background: #e11d48;
+  border-color: #ffffff;
+  transform: scale(1.12);
+  box-shadow: 0 8px 24px rgba(225, 29, 72, 0.45);
+}
+
+.lp-fullscreen-close-btn:active {
+  transform: scale(0.95);
+}
+
+.lp-fullscreen-pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+  flex: 1;
+}
+
+.fullscreen-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #d1d5db;
+}
+
+.fullscreen-placeholder .lp-pdf-placeholder-text {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
 }
 
 /* Responsive adjustments for Detail View */
@@ -3213,8 +3344,16 @@
   .lp-pdf-display-box {
     width: 100%;
     max-width: 360px;
-    height: 400px;
-    min-height: 400px;
+    height: 420px;
+    min-height: 420px;
+  }
+  .lp-fullscreen-display-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+  .lp-fullscreen-modal-overlay {
+    padding: 0;
   }
 }
 
