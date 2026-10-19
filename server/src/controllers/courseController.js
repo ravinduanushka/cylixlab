@@ -59,6 +59,16 @@ const updateCourse = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server Error', error: error.message });
   }
+const deleteCourse = async (req, res) => {
+  try {
+    const course = await Course.findByIdAndDelete(req.params.id);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
+    }
+    res.status(200).json({ success: true, message: 'Course deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
 };
 
 const fs = require('fs');
