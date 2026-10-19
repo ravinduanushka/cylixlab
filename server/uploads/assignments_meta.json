@@ -2,339 +2,369 @@
   "01": {
     "assignmentId": "01",
     "fileName": "CylixLab_Module01_MCQ_Assessment.pdf",
-    "url": "/uploads/assignment_01.pdf?t=1792445879066",
+    "url": "/uploads/assignment_01.pdf?t=1792446387358",
     "questions": [
       {
         "id": 1,
-        "question": "Question 01: Select the most appropriate option based on the study assignment.",
+        "label": "Question 01",
+        "question": "A hospital has five years of patient records, each labelled “readmitted within 30 days: yes / no”. It wants to predict readmission risk for newly discharged patients. Which learning setup fits?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Unsupervised clustering of patients",
+          "Supervised binary classification",
+          "Reinforcement learning with a reward for each discharge",
+          "Dimensionality reduction with PCA"
         ],
-        "correctAnswer": 1
+        "correctAnswer": 2
       },
       {
         "id": 2,
-        "question": "Question 02: Select the most appropriate option based on the study assignment.",
+        "label": "Question 02",
+        "question": "A real-estate startup wants to predict the sale price in dollars of a home from its area, number of bedrooms and neighbourhood. Which formulation and loss are most appropriate?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
-        ],
-        "correctAnswer": 2
-      },
-      {
-        "id": 3,
-        "question": "Question 03: Select the most appropriate option based on the study assignment.",
-        "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
-        ],
-        "correctAnswer": 3
-      },
-      {
-        "id": 4,
-        "question": "Question 04: Select the most appropriate option based on the study assignment.",
-        "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Binary classification trained with cross-entropy",
+          "Clustering evaluated with the silhouette score",
+          "Classification evaluated with accuracy",
+          "Regression trained with Mean Squared Error (or MAE)"
         ],
         "correctAnswer": 4
       },
       {
-        "id": 5,
-        "question": "Question 05: Select the most appropriate option based on the study assignment.",
+        "id": 3,
+        "label": "Question 03",
+        "question": "A model reaches 99% training accuracy but only 72% validation accuracy, and 5-fold cross-validation confirms the gap. What is the best next step?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Reduce variance: add regularization, get more data, or simplify the model",
+          "Increase model complexity so it fits even better",
+          "Train longer with a higher learning rate",
+          "Keep checking the test set until the score rises"
         ],
         "correctAnswer": 1
       },
       {
-        "id": 6,
-        "question": "Question 06: Select the most appropriate option based on the study assignment.",
+        "id": 4,
+        "label": "Question 04",
+        "question": "A data scientist fits a plain linear regression to data that is clearly curved. Training R² = 0.41 and validation R² = 0.40. How should this be diagnosed and fixed?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
-        ],
-        "correctAnswer": 2
-      },
-      {
-        "id": 7,
-        "question": "Question 07: Select the most appropriate option based on the study assignment.",
-        "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Overfitting: add stronger L2 regularization",
+          "Data leakage: re-split the dataset",
+          "Underfitting (high bias): add non-linear/polynomial features or a more flexible model",
+          "High variance: collect ten times more data and keep the same model"
         ],
         "correctAnswer": 3
       },
       {
-        "id": 8,
-        "question": "Question 08: Select the most appropriate option based on the study assignment.",
+        "id": 5,
+        "label": "Question 05",
+        "question": "A spam detector built with logistic regression outputs 0.82 for a new email, and the decision threshold is 0.5. What does this mean?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "82% of the words in the email are spam words",
+          "The model estimates an 82% probability the email is spam, so it is classified as spam",
+          "The model is 82% accurate overall",
+          "The email is classified as not spam because 0.82 exceeds the threshold"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 6,
+        "label": "Question 06",
+        "question": "A genomics team has 500 patients and 2,000 gene-expression features; they believe only about 20 genes matter. They want an interpretable model that automatically selects features. Which approach fits best?",
+        "options": [
+          "L1-regularized (Lasso) regression",
+          "L2-regularized (Ridge) regression",
+          "Ordinary least squares via the normal equation",
+          "k-NN with k = 1"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 7,
+        "label": "Question 07",
+        "question": "A k-NN loan-default model uses age (20–60) and annual income (20,000–200,000) as raw inputs. Predictions seem to ignore age completely. Why, and what is the fix?",
+        "options": [
+          "k-NN cannot handle numeric features; one-hot encode them",
+          "Age must be removed because it is highly correlated with income",
+          "k must be raised to about 1,000",
+          "Income dominates the Euclidean distance because of its scale; standardize the features"
         ],
         "correctAnswer": 4
       },
       {
-        "id": 9,
-        "question": "Question 09: Select the most appropriate option based on the study assignment.",
+        "id": 8,
+        "label": "Question 08",
+        "question": "An analyst standardizes the entire dataset (mean and std computed on all rows), then splits into train/test and reports 94% test accuracy. In production the model scores 85%. What is the most likely cause?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Underfitting caused by standardization",
+          "The test set was too large",
+          "Data leakage: test-set statistics influenced preprocessing, inflating the test score",
+          "The learning rate was too high"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 9,
+        "label": "Question 09",
+        "question": "A retailer has purchase histories for 200,000 customers but no labels. Marketing wants natural customer segments. Which approach is appropriate?",
+        "options": [
+          "Cluster the standardized features with k-means or hierarchical clustering",
+          "Train a logistic regression classifier",
+          "Fit a linear regression to predict spend",
+          "Train a decision tree to predict the segment name"
         ],
         "correctAnswer": 1
       },
       {
         "id": 10,
-        "question": "Question 10: Select the most appropriate option based on the study assignment.",
+        "label": "Question 10",
+        "question": "Running k-means for k = 1 to 6 gives these inertia (within-cluster SSE) values: 1000, 520, 280, 250, 238, 230. Using the elbow method, which k is best?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "k = 2",
+          "k = 3",
+          "k = 5",
+          "k = 6"
         ],
         "correctAnswer": 2
       },
       {
         "id": 11,
-        "question": "Question 11: Select the most appropriate option based on the study assignment.",
+        "label": "Question 11",
+        "question": "crescents in half. Which algorithm is better suited?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "K-means with a much larger k",
+          "PCA projected to one dimension",
+          "DBSCAN",
+          "Gaussian mixture model with k = 2"
         ],
         "correctAnswer": 3
       },
       {
         "id": 12,
-        "question": "Question 12: Select the most appropriate option based on the study assignment.",
+        "label": "Question 12",
+        "question": "explain a cumulative 95% of the variance. What is the sensible conclusion?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Delete 45 of the original sensors permanently",
+          "The 5 components are exactly the 5 most important original sensors",
+          "PCA must be rerun with labels to be valid",
+          "Project onto 5 components, keeping about 95% of the information in 90% fewer dimensions"
         ],
         "correctAnswer": 4
       },
       {
         "id": 13,
-        "question": "Question 13: Select the most appropriate option based on the study assignment.",
+        "label": "Question 13",
+        "question": "For one data point, the mean distance to the other points in its own cluster is a = 2, and the mean distance to the nearest other cluster is b = 6. What is its silhouette value and meaning?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
-        ],
-        "correctAnswer": 1
-      },
-      {
-        "id": 14,
-        "question": "Question 14: Select the most appropriate option based on the study assignment.",
-        "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "≈ 0.33: ambiguous",
+          "≈ 0.67: well matched to its own cluster",
+          "3.00: extremely well clustered",
+          "−0.67: probably in the wrong cluster"
         ],
         "correctAnswer": 2
       },
       {
-        "id": 15,
-        "question": "Question 15: Select the most appropriate option based on the study assignment.",
+        "id": 14,
+        "label": "Question 14",
+        "question": "inertia each time. What is the recommended remedy?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Use k-means++ initialization and several restarts (n_init), keeping the run with the lowest inertia",
+          "Switch to a supervised classifier",
+          "Raise the learning rate",
+          "Skip standardization to make results stable"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 15,
+        "label": "Question 15",
+        "question": "A network trains normally with learning rate 0.001. After changing it to 1.0, the loss reads 2.3, 8.7, 54.1, then NaN. What is the problem and the fix?",
+        "options": [
+          "The model is underfitting; add more layers",
+          "The batch size is too large; use batch size 1",
+          "The learning rate is too large and training diverges; lower it (and consider warm-up or gradient clipping)",
+          "The model is overfitting; add dropout"
         ],
         "correctAnswer": 3
       },
       {
         "id": 16,
-        "question": "Question 16: Select the most appropriate option based on the study assignment.",
+        "label": "Question 16",
+        "question": "For L(w) = w² the gradient is 2w. Starting at w = 4 with learning rate η = 0.1, what is w after one gradient-descent step?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "3.6",
+          "3.8",
+          "4.8",
+          "3.2"
         ],
         "correctAnswer": 4
       },
       {
         "id": 17,
-        "question": "Question 17: Select the most appropriate option based on the study assignment.",
+        "label": "Question 17",
+        "question": "strategy is the practical choice?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
-        ],
-        "correctAnswer": 1
-      },
-      {
-        "id": 18,
-        "question": "Question 18: Select the most appropriate option based on the study assignment.",
-        "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Full-batch gradient descent",
+          "Mini-batch stochastic gradient descent",
+          "Solving the normal equation",
+          "Computing one exact gradient on the whole dataset each step, but with Adam"
         ],
         "correctAnswer": 2
       },
       {
-        "id": 19,
-        "question": "Question 19: Select the most appropriate option based on the study assignment.",
+        "id": 18,
+        "label": "Question 18",
+        "question": "Training oscillates across the steep walls of a long, narrow valley in the loss surface and moves slowly along the valley floor. Which change addresses this directly?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Add momentum (or switch to Adam)",
+          "Decrease the number of epochs",
+          "Remove the bias terms",
+          "Use a constant, much larger learning rate"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 19,
+        "label": "Question 19",
+        "question": "A language model has embeddings for very rare words that receive tiny, infrequent gradients, and plain SGD with one global learning rate trains them very slowly. Which property of Adam helps most?",
+        "options": [
+          "Using the full dataset for each update",
+          "Forcing all weights to have the same step length",
+          "Per-parameter step sizes from the second-moment estimate vt (bigger steps for small, rare gradients)",
+          "Removing the need for any learning rate"
         ],
         "correctAnswer": 3
       },
       {
         "id": 20,
-        "question": "Question 20: Select the most appropriate option based on the study assignment.",
+        "label": "Question 20",
+        "question": "In Adam, at step t = 1 with m0 = 0, β1 = 0.9 and gradient g1 = 10, what is the bias-corrected first moment m̂1?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "1",
+          "0.1",
+          "9",
+          "10"
         ],
         "correctAnswer": 4
       },
       {
         "id": 21,
-        "question": "Question 21: Select the most appropriate option based on the study assignment.",
+        "label": "Question 21",
+        "question": "At the first Adam step the gradient is g = 2. With η = 0.001, β1 = 0.9, β2 = 0.999 and ε negligible, by roughly how much does the parameter change?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "About 0.001 (decreasing it by η)",
+          "About 0.002",
+          "About 0.0005",
+          "About 0.004"
         ],
         "correctAnswer": 1
       },
       {
         "id": 22,
-        "question": "Question 22: Select the most appropriate option based on the study assignment.",
+        "label": "Question 22",
+        "question": "A team trains with Adam and an L2 penalty added to the loss, but it generalizes worse than expected. A practitioner suggests a change to the optimizer. Which is best?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Remove all regularization",
+          "Switch to AdamW, which decouples weight decay from the adaptive gradient update",
+          "Set β2 to 0",
+          "Replace the loss with accuracy"
         ],
         "correctAnswer": 2
       },
       {
         "id": 23,
-        "question": "Question 23: Select the most appropriate option based on the study assignment.",
+        "label": "Question 23",
+        "question": "A classifier on 200 samples gives TP = 40, FP = 10, FN = 20, TN = 130. What are its precision and recall?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Precision ≈ 0.67, Recall = 0.80",
+          "Precision = 0.85, Recall = 0.85",
+          "Precision = 0.80, Recall ≈ 0.67",
+          "Precision = 0.80, Recall = 0.80"
         ],
         "correctAnswer": 3
       },
       {
         "id": 24,
-        "question": "Question 24: Select the most appropriate option based on the study assignment.",
+        "label": "Question 24",
+        "question": "A cancer-screening test is reviewed. Missing a real case could be fatal, while a false alarm only leads to a follow-up test. Which metric/adjustment should be prioritized?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Precision; raise the decision threshold",
+          "Accuracy; leave the threshold at 0.5",
+          "Specificity only",
+          "Recall (sensitivity); lower the decision threshold"
         ],
         "correctAnswer": 4
       },
       {
         "id": 25,
-        "question": "Question 25: Select the most appropriate option based on the study assignment.",
+        "label": "Question 25",
+        "question": "legitimate email is much worse than letting some spam through. Which approach follows?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
-        ],
-        "correctAnswer": 1
-      },
-      {
-        "id": 26,
-        "question": "Question 26: Select the most appropriate option based on the study assignment.",
-        "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Optimize recall and lower the threshold",
+          "Optimize precision and raise the decision threshold",
+          "Use accuracy at the default threshold",
+          "Maximize the number of predicted positives"
         ],
         "correctAnswer": 2
       },
       {
-        "id": 27,
-        "question": "Question 27: Select the most appropriate option based on the study assignment.",
+        "id": 26,
+        "label": "Question 26",
+        "question": "Only 1% of transactions are fraud. A model predicts “not fraud” for everything and reports 99% accuracy. Which statement exposes the real problem?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Its recall for fraud is 0%, so it catches no fraud at all",
+          "99% accuracy proves the model is excellent",
+          "Its specificity of 100% shows it works well",
+          "Its F1 score must therefore be about 0.99"
         ],
-        "correctAnswer": 3
+        "correctAnswer": 1
       },
       {
-        "id": 28,
-        "question": "Question 28: Select the most appropriate option based on the study assignment.",
+        "id": 27,
+        "label": "Question 27",
+        "question": "A model has precision = 0.90 and recall = 0.50. What is its F1 score?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "0.70",
+          "0.45",
+          "0.50",
+          "≈ 0.64"
         ],
         "correctAnswer": 4
       },
       {
-        "id": 29,
-        "question": "Question 29: Select the most appropriate option based on the study assignment.",
+        "id": 28,
+        "label": "Question 28",
+        "question": "A binary classifier achieves a ROC-AUC of 0.50 on a validation set. What does this indicate?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "It is correct half of the time but otherwise useful",
+          "It is a perfect classifier",
+          "Its ranking ability is no better than random guessing",
+          "Its precision and recall are both exactly 0.5"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 29,
+        "label": "Question 29",
+        "question": "A rare-disease model (0.1% positives) shows ROC-AUC = 0.97, yet at 80% recall its precision is only about 4%. Which evaluation view gives the more honest picture for this class imbalance?",
+        "options": [
+          "The Precision–Recall curve / Average Precision",
+          "The ROC curve alone",
+          "Training accuracy",
+          "The mean of TPR and FPR"
         ],
         "correctAnswer": 1
       },
       {
         "id": 30,
-        "question": "Question 30: Select the most appropriate option based on the study assignment.",
+        "label": "Question 30",
+        "question": "A fraud model’s threshold is lowered from 0.5 to 0.2. What is the typical effect?",
         "options": [
-          "Statement or solution option A",
-          "Statement or solution option B",
-          "Statement or solution option C",
-          "Statement or solution option D"
+          "Precision and recall both increase",
+          "Recall and FPR increase; precision usually decreases",
+          "Recall decreases and precision increases",
+          "Nothing changes because AUC is fixed"
         ],
         "correctAnswer": 2
       }
     ],
-    "updatedAt": "2026-10-19T21:37:59.066Z"
+    "updatedAt": "2026-10-19T21:46:27.358Z"
   }
 }

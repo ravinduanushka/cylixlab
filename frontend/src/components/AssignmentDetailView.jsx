@@ -29,6 +29,9 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
         if (isMounted && res.data && res.data.exists) {
           if (Array.isArray(res.data.questions) && res.data.questions.length > 0) {
             setQuestions(res.data.questions);
+            try {
+              localStorage.setItem(`cylixlab_assignment_questions_${safeAsgId}`, JSON.stringify(res.data.questions));
+            } catch {}
             setLoadingQuestions(false);
             return;
           }
