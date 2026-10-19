@@ -9,11 +9,18 @@ const authRoutes = require('./src/routes/authRoutes');
 const chatRoutes = require('./src/routes/chatRoutes');
 const courseRoutes = require('./src/routes/courseRoutes');
 
+const path = require('path');
+
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Static uploads directory for PDFs and assets
+const uploadsPath = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadsPath));
 
 // API Routes
 app.use('/api/auth', authRoutes);
