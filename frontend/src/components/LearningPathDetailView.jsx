@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const LEARNING_PATH_META = {
   '01': {
@@ -24,8 +25,9 @@ const LEARNING_PATH_META = {
 };
 
 const LearningPathDetailView = ({ pathId = '01', onBack }) => {
-  const meta = LEARNING_PATH_META[pathId] || {
-    title: `Learning Path ${pathId}`,
+  const safePathId = String(pathId).padStart(2, '0');
+  const meta = LEARNING_PATH_META[safePathId] || {
+    title: `Learning Path ${safePathId}`,
     description: 'Master essential concepts step by step through guided, hands-on modules. Complete interactive challenges and build real-world skills at your own pace.',
   };
 
@@ -34,10 +36,13 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   const [secondsLeft, setSecondsLeft] = useState(INITIAL_SECONDS);
   const [isRunning, setIsRunning] = useState(true);
 
-  // Check if admin pushed a PDF URL into localStorage for this path
+  // Full display (fullscreen modal) state
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // PDF URL state: loads from localStorage or backend
   const [pdfUrl, setPdfUrl] = useState(() => {
     try {
-      return localStorage.getItem(`cylixlab_learning_pdf_${pathId}`) || null;
+      return localStorage.getItem(`cylixlab_learning_pdf_${safePathId}`) || null;
     } catch {
       return null;
     }
@@ -45,10 +50,9 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
 
   // Countdown timer effect
   useEffect(() => {
-    // Reset timer when pathId changes
     setSecondsLeft(INITIAL_SECONDS);
     setIsRunning(true);
-  }, [pathId]);
+  }, [safePathId]);
 
   useEffect(() => {
     if (!isRunning || secondsLeft <= 0) return;
@@ -65,6 +69,66 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
 
     return () => clearInterval(interval);
   }, [isRunning, secondsLeft]);
+
+  // Load and sync PDF from server or localStorage
+  useEffect(() => {
+    let isMounted = true;
+
+    // Check local storage
+    try {
+      const local = localStorage.getItem(`cylixlab_learning_pdf_${safePathId}`);
+      if (local) {
+        setPdfUrl(local);
+      }
+    } catch {}
+
+    // Fetch from backend API to ensure cross-browser sync (Chrome, Edge, etc.)
+    const fetchServerPdf = async () => {
+      try {
+        const res = await axios.get(`/api/courses/learning-path-pdf/${safePathId}`);
+        if (isMounted && res.data && res.data.exists && res.data.url) {
+          setPdfUrl(res.data.url);
+          try {
+            localStorage.setItem(`cylixlab_learning_pdf_${safePathId}`, res.data.url);
+          } catch {}
+        }
+      } catch (err) {
+        // Fallback to local
+      }
+    };
+
+    fetchServerPdf();
+
+    // Listen to upload event from admin
+    const handlePdfUploaded = (e) => {
+      if (e.detail && String(e.detail.pathId).padStart(2, '0') === safePathId) {
+        fetchServerPdf();
+        try {
+          const updated = localStorage.getItem(`cylixlab_learning_pdf_${safePathId}`);
+          if (updated) setPdfUrl(updated);
+        } catch {}
+      }
+    };
+
+    window.addEventListener('cylixlab_pdf_uploaded', handlePdfUploaded);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('cylixlab_pdf_uploaded', handlePdfUploaded);
+    };
+  }, [safePathId]);
+
+  // Close full display on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsFullscreen(false);
+      }
+    };
+    if (isFullscreen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
 
   // Format mm : ss
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
@@ -108,8 +172,21 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
         {meta.description}
       </p>
 
-      {/* PDF Display Box (Blank for now, ready for Admin PDF push) */}
+      {/* PDF Display Box (grey container matching Image 2 with large expand icon in corner) */}
       <div className="lp-pdf-display-box">
+        {/* Large icon in the corner to trigger full display */}
+        <button
+          type="button"
+          className="lp-expand-corner-btn"
+          onClick={() => setIsFullscreen(true)}
+          title="Click to view full display and scroll whole PDF"
+          aria-label="Click to view full display and scroll whole PDF"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        </button>
+
         {pdfUrl ? (
           <iframe
             src={pdfUrl}
@@ -122,6 +199,47 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
           </div>
         )}
       </div>
+
+      {/* FULL DISPLAY OVERLAY (Image 3 Style with whole scrollable PDF and corner close icon) */}
+      {isFullscreen && (
+        <div
+          className="lp-fullscreen-modal-overlay"
+          onClick={() => setIsFullscreen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="lp-fullscreen-display-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Large Corner Exit/Close Icon */}
+            <button
+              type="button"
+              className="lp-fullscreen-close-btn"
+              onClick={() => setIsFullscreen(false)}
+              title="Exit Full Display"
+              aria-label="Exit Full Display"
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            {pdfUrl ? (
+              <iframe
+                src={pdfUrl}
+                title={`Full Display PDF - ${meta.title}`}
+                className="lp-fullscreen-pdf-iframe"
+              />
+            ) : (
+              <div className="lp-pdf-placeholder fullscreen-placeholder">
+                <span className="lp-pdf-placeholder-text">pdf display</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
