@@ -175,12 +175,18 @@ const uploadAssignmentPdf = async (req, res) => {
     const targetPath = path.join(uploadDir, targetFile);
     fs.writeFileSync(targetPath, buffer);
 
-    // 1. Read text from PDF using pdf-parse
+    // 1. Read text from PDF using pdf-parse (support v2 and v1)
     let pdfText = '';
     try {
-      const pdfParse = require('pdf-parse');
-      const parsed = await pdfParse(buffer);
-      pdfText = (parsed && parsed.text) ? parsed.text.trim() : '';
+      const pdfParseModule = require('pdf-parse');
+      if (pdfParseModule.PDFParse) {
+        const parser = new pdfParseModule.PDFParse({ data: buffer });
+        const parsed = await parser.getText();
+        pdfText = (parsed && parsed.text) ? parsed.text.trim() : '';
+      } else if (typeof pdfParseModule === 'function') {
+        const parsed = await pdfParseModule(buffer);
+        pdfText = (parsed && parsed.text) ? parsed.text.trim() : '';
+      }
     } catch (parseErr) {
       console.warn('pdf-parse reading error:', parseErr.message);
     }
@@ -191,50 +197,76 @@ const uploadAssignmentPdf = async (req, res) => {
     const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
     if (pdfText && pdfText.length > 30) {
-      const aiPrompt = `You are an expert educational exam parser.
-Read the following text extracted from an assignment/quiz PDF:
+      const aiPrompt = `You are an expert educational exam and quiz question generator.
+Analyze the following course material extracted from an assignment PDF:
 """
-${pdfText.slice(0, 15000)}
+${pdfText.slice(0, 14000)}
 """
 
-CRITICAL TASK:
-Extract or generate up to 30 multiple choice questions (MCQs) directly based on the content above.
-Return a STRICT valid JSON array of objects with this EXACT structure (NO markdown code blocks, NO preamble):
-[
-  {
-    "id": 1,
-    "question": "Question text here?",
-    "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-    "correctAnswer": 1
-  }
-]
-- "options" MUST contain exactly 4 choices as strings.
-- "correctAnswer" should be the 1-based index (1, 2, 3, or 4) of the correct choice.
-Output ONLY the raw JSON array.`;
+CRITICAL INSTRUCTIONS:
+1. Extract or generate up to 30 multiple choice questions (MCQs) directly testing the concepts in the text.
+2. Return ONLY a valid JSON array of objects. Do not include markdown code block backticks, do not include introductory or concluding words.
+3. Every question object must have this exact format:
+{
+  "id": 1,
+  "label": "Question 01",
+  "question": "What is the primary role of...",
+  "options": [
+    "First choice statement",
+    "Second choice statement",
+    "Third choice statement",
+    "Fourth choice statement"
+  ],
+  "correctAnswer": 1
+}
+Output STRICT JSON array only:`;
 
-      // Try Groq first if available
+      // Try Groq models first
       if (groqKey && groqKey !== 'your_grok_api_key_here') {
-        try {
-          const aiRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${groqKey}`,
-            },
-            body: JSON.stringify({
-              model: 'llama-3.3-70b-versatile',
-              messages: [{ role: 'user', content: aiPrompt }],
-              temperature: 0.2,
-            }),
-          });
-          if (aiRes.ok) {
-            const aiData = await aiRes.json();
-            const rawContent = aiData.choices?.[0]?.message?.content?.trim() || '';
-            const cleanedJson = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
-            extractedQuestions = JSON.parse(cleanedJson);
+        const candidateModels = [
+          'openai/gpt-oss-120b',
+          'openai/gpt-oss-20b',
+          'qwen/qwen3.8-27b',
+          'llama-3.3-70b-versatile',
+        ];
+
+        for (const model of candidateModels) {
+          try {
+            const aiRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${groqKey}`,
+              },
+              body: JSON.stringify({
+                model,
+                messages: [{ role: 'user', content: aiPrompt }],
+                temperature: 0.2,
+              }),
+            });
+
+            if (aiRes.ok) {
+              const aiData = await aiRes.json();
+              const rawContent = aiData.choices?.[0]?.message?.content?.trim() || '';
+              const match = rawContent.match(/\[\s*\{[\s\S]*\}\s*\]/);
+              const jsonStr = match ? match[0] : rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
+              const parsed = JSON.parse(jsonStr);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                extractedQuestions = parsed.map((item, idx) => ({
+                  id: item.id || idx + 1,
+                  label: item.label || `Question ${String(idx + 1).padStart(2, '0')}`,
+                  question: item.question || `Question ${idx + 1}`,
+                  options: Array.isArray(item.options) && item.options.length >= 4
+                    ? item.options.slice(0, 4)
+                    : ['Option A', 'Option B', 'Option C', 'Option D'],
+                  correctAnswer: Number(item.correctAnswer) || 1,
+                }));
+                break;
+              }
+            }
+          } catch (groqErr) {
+            console.warn(`Groq (${model}) MCQ extraction attempt failed:`, groqErr.message);
           }
-        } catch (groqErr) {
-          console.warn('Groq MCQ extraction failed:', groqErr.message);
         }
       }
 
@@ -246,8 +278,20 @@ Output ONLY the raw JSON array.`;
           const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
           const result = await model.generateContent(aiPrompt);
           const raw = result.response.text();
-          const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
-          extractedQuestions = JSON.parse(cleaned);
+          const match = raw.match(/\[\s*\{[\s\S]*\}\s*\]/);
+          const jsonStr = match ? match[0] : raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+          const parsed = JSON.parse(jsonStr);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            extractedQuestions = parsed.map((item, idx) => ({
+              id: item.id || idx + 1,
+              label: item.label || `Question ${String(idx + 1).padStart(2, '0')}`,
+              question: item.question || `Question ${idx + 1}`,
+              options: Array.isArray(item.options) && item.options.length >= 4
+                ? item.options.slice(0, 4)
+                : ['Option A', 'Option B', 'Option C', 'Option D'],
+              correctAnswer: Number(item.correctAnswer) || 1,
+            }));
+          }
         } catch (geminiErr) {
           console.warn('Gemini MCQ extraction failed:', geminiErr.message);
         }
