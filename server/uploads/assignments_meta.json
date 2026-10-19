@@ -366,5 +366,373 @@
       }
     ],
     "updatedAt": "2026-10-19T21:46:27.358Z"
+  },
+  "02": {
+    "assignmentId": "02",
+    "fileName": "CylixLab_Module02_MCQ_Assessment.pdf",
+    "url": "/uploads/assignment_02.pdf?t=1792447672471",
+    "questions": [
+      {
+        "id": 1,
+        "label": "Question 01",
+        "question": "A 5-layer MLP is built from dense layers that all use the identity (linear) activation. What is the consequence for the model?",
+        "options": [
+          "It becomes slower to train but can still represent non-linear functions",
+          "All gradients become exactly zero",
+          "The whole network is equivalent to a single linear transformation, so depth adds no representational power",
+          "Its outputs are restricted to the range [0, 1]"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 2,
+        "label": "Question 02",
+        "question": "How many trainable parameters (weights and biases) does a dense MLP with layer sizes 100 → 50 → 10 have?",
+        "options": [
+          "5,560",
+          "5,500",
+          "5,050",
+          "5,610"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 3,
+        "label": "Question 03",
+        "question": "A dense layer receives a vector of 4 inputs and has 3 neurons. Using the convention z = W a + b with column vectors, what is the shape of W?",
+        "options": [
+          "4 × 3",
+          "3 × 3",
+          "12 × 1",
+          "3 × 4"
+        ],
+        "correctAnswer": 4
+      },
+      {
+        "id": 4,
+        "label": "Question 04",
+        "question": "Which statement correctly describes the Universal Approximation Theorem?",
+        "options": [
+          "Any MLP can be trained to zero error with gradient descent",
+          "A one-hidden-layer network with enough neurons and a non-linear activation can approximate any continuous function on a compact domain, but training is not guaranteed to find the weights",
+          "Deep networks are never necessary because one layer is always sufficient in practice",
+          "It requires linear activations to hold"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 5,
+        "label": "Question 05",
+        "question": "All weights of a hidden layer are initialized to the same constant (for example 0.5). What is the main problem?",
+        "options": [
+          "The gradients explode in the first step",
+          "Only the bias terms can be learned",
+          "The loss becomes negative",
+          "Symmetry: every neuron computes the same output and receives the same gradient, so they never become different"
+        ],
+        "correctAnswer": 4
+      },
+      {
+        "id": 6,
+        "label": "Question 06",
+        "question": "What does backpropagation actually compute?",
+        "options": [
+          "The optimal weights directly, in one step",
+          "The gradient of the loss with respect to every parameter, efficiently, by applying the chain rule backwards and reusing intermediate values",
+          "The best learning rate for each layer",
+          "The global minimum of the loss"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 7,
+        "label": "Question 07",
+        "question": "A single neuron computes a = w·x with w = 2, x = 3, and the loss is L = (a − y)² with target y = 4. What is ∂L/∂w?",
+        "options": [
+          "4",
+          "6",
+          "12",
+          "24"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 8,
+        "label": "Question 08",
+        "question": "A 3-class network uses softmax and cross-entropy. The predicted probabilities are [0.7, 0.2, 0.1] and the true class is the second one (one-hot [0, 1, 0]). What is ∂L/∂z, the gradient with respect to the logits?",
+        "options": [
+          "[0.7, −0.8, 0.1]",
+          "[0.7, 0.8, 0.1]",
+          "[−0.7, 0.8, −0.1]",
+          "[0, 1, 0]"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 9,
+        "label": "Question 09",
+        "question": "A 10-layer network uses sigmoid activations everywhere. Ignoring the weights, what is the upper bound on the product of the activation derivatives that scale the gradient reaching layer 1?",
+        "options": [
+          "About 2.5 (10 × 0.25)",
+          "About 0.025",
+          "About 10−6 (0.2510 ≈ 9.5×10−7)",
+          "Exactly 1"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 10,
+        "label": "Question 10",
+        "question": "just before. What is the most direct mitigation?",
+        "options": [
+          "Replace tanh by sigmoid in the recurrent layer",
+          "Gradient clipping (rescale gradients whose norm exceeds a threshold)",
+          "Remove the bias terms",
+          "Increase the learning rate"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 11,
+        "label": "Question 11",
+        "question": "For the ReLU activation, what are the derivatives at z = −2 and z = 3, respectively?",
+        "options": [
+          "0 and 1",
+          "−2 and 3",
+          "1 and 1",
+          "0 and 3"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 12,
+        "label": "Question 12",
+        "question": "What are σ(0) and σ′(0) for the sigmoid function?",
+        "options": [
+          "0.5 and 0.5",
+          "0 and 1",
+          "1 and 0.25",
+          "0.5 and 0.25"
+        ],
+        "correctAnswer": 4
+      },
+      {
+        "id": 13,
+        "label": "Question 13",
+        "question": "After a large learning-rate update, about 40% of the hidden ReLU units output exactly 0 for every training example and never recover. What is this called, and what helps?",
+        "options": [
+          "Overfitting; add more ReLU layers",
+          "Dying ReLU; use Leaky ReLU/GELU, a lower learning rate or He initialization",
+          "Saturation; switch to sigmoid activations",
+          "Exploding gradients; remove normalization"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 14,
+        "label": "Question 14",
+        "question": "An image-tagging model must predict independently whether each photo contains cat, dog or car (any combination is possible). Which output layer is appropriate?",
+        "options": [
+          "Three output units with one softmax",
+          "A single ReLU unit",
+          "Three output units, each with its own sigmoid",
+          "Three tanh units whose outputs are summed"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 15,
+        "label": "Question 15",
+        "question": "Adding the same constant (for example 100) to every logit before applying softmax changes the output probabilities how, and why does this matter in implementations?",
+        "options": [
+          "It does not change them (shift invariance); implementations subtract max(z) to avoid overflow",
+          "It makes all probabilities equal",
+          "It converts them to one-hot vectors",
+          "It doubles the probability of the largest logit"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 16,
+        "label": "Question 16",
+        "question": "A 28×28 grayscale image passes through a convolution with a 5×5 kernel, stride 1 and padding 2. What is the output height and width?",
+        "options": [
+          "24",
+          "26",
+          "32",
+          "28"
+        ],
+        "correctAnswer": 4
+      },
+      {
+        "id": 17,
+        "label": "Question 17",
+        "question": "A convolutional layer has 128 filters of size 3×3 applied to an input with 64 channels, with one bias per filter. How many parameters does it have?",
+        "options": [
+          "73,856",
+          "73,728",
+          "1,152",
+          "147,712"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 18,
+        "label": "Question 18",
+        "question": "A feature map of size 12×12×32 goes through 2×2 max pooling with stride 2. What is the output shape and the number of trainable parameters in the pooling layer?",
+        "options": [
+          "6×6×32 and 64 parameters",
+          "12×12×16 and 0 parameters",
+          "6×6×32 and 0 parameters",
+          "6×6×64 and 0 parameters"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 19,
+        "label": "Question 19",
+        "question": "Why does a CNN need far fewer parameters than a fully-connected network on the same image?",
+        "options": [
+          "Because ReLU removes many weights",
+          "Weight sharing (the same small filter is reused at every position) combined with local connectivity",
+          "Because batch normalization prunes the network",
+          "Because pooling layers contain few weights"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 20,
+        "label": "Question 20",
+        "question": "A residual (skip) connection computes y = F(x) + x. What is its main benefit for very deep networks?",
+        "options": [
+          "It halves the number of parameters",
+          "It removes the need for activation functions",
+          "It replaces the convolution operation",
+          "The identity path lets gradients flow directly to earlier layers, making very deep networks trainable"
+        ],
+        "correctAnswer": 4
+      },
+      {
+        "id": 21,
+        "label": "Question 21",
+        "question": "Why does a vanilla RNN have difficulty learning dependencies across many time steps?",
+        "options": [
+          "It cannot process variable-length sequences",
+          "Backpropagation through time multiplies the gradient by Wh and tanh′ at every step, so it vanishes (or explodes) exponentially",
+          "It uses too many parameters",
+          "It has no hidden state"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 22,
+        "label": "Question 22",
+        "question": "In an LSTM, at some time step the forget gate is ≈ 1 and the input gate is ≈ 0. What happens to the cell state ct?",
+        "options": [
+          "ct ≈ ct−1: the memory is preserved unchanged",
+          "ct is reset to 0",
+          "ct is replaced by the new candidate",
+          "ct is multiplied by the output gate"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 23,
+        "label": "Question 23",
+        "question": "An LSTM layer takes an input of size d = 10 and has h = 20 hidden units (with biases). How many parameters does it have?",
+        "options": [
+          "620",
+          "1,860",
+          "2,400",
+          "2,480"
+        ],
+        "correctAnswer": 4
+      },
+      {
+        "id": 24,
+        "label": "Question 24",
+        "question": "Which RNN configuration fits sentiment classification of a whole movie review (a sequence of words in, one label out)?",
+        "options": [
+          "One-to-many: generate a sequence from a single vector",
+          "Many-to-many aligned: one output at every word",
+          "Many-to-one: classify from the final hidden state (or a pooled state)",
+          "One-to-one: a feed-forward network on a single word"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 25,
+        "label": "Question 25",
+        "question": "For which task is a bidirectional RNN not suitable?",
+        "options": [
+          "Named-entity recognition on complete sentences",
+          "Real-time next-word prediction, where future words are not yet available",
+          "Offline part-of-speech tagging",
+          "Classifying an already-complete review"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 26,
+        "label": "Question 26",
+        "question": "A 3-class softmax model outputs [0.659, 0.242, 0.099], and the true class is the first. What is the categorical cross-entropy loss?",
+        "options": [
+          "≈ 0.417",
+          "≈ 0.659",
+          "≈ 0.341",
+          "≈ 2.31"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 27,
+        "label": "Question 27",
+        "question": "error but does not let outliers dominate. Which is the best choice?",
+        "options": [
+          "Mean squared error",
+          "Binary cross-entropy",
+          "Huber (smooth L1) loss",
+          "Hinge loss"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 28,
+        "label": "Question 28",
+        "question": "Which pairing is correct for a 10-class, single-label image classifier?",
+        "options": [
+          "10 outputs with sigmoid and mean squared error",
+          "1 output with ReLU and binary cross-entropy",
+          "10 linear outputs with hinge loss on the raw one-hot vector",
+          "10 outputs with softmax and categorical cross-entropy"
+        ],
+        "correctAnswer": 4
+      },
+      {
+        "id": 29,
+        "label": "Question 29",
+        "question": "For a binary classifier, the true label is y = 1 but the model predicts p = 0.1. What is the binary cross-entropy of this sample?",
+        "options": [
+          "≈ 0.105",
+          "≈ 2.303",
+          "0.1",
+          "0.9"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 30,
+        "label": "Question 30",
+        "question": "that already ends with a softmax layer is passed to it. What is the consequence?",
+        "options": [
+          "Softmax is applied twice, giving squashed probabilities, weaker gradients and slower, poorer training",
+          "Training works faster and more stably",
+          "The loss becomes negative",
+          "Nothing; softmax is idempotent"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "updatedAt": "2026-10-19T22:07:52.471Z"
   }
 }
