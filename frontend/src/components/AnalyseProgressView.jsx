@@ -115,9 +115,11 @@ const AnalyseProgressView = () => {
               {/* 5 Vertical Bars */}
               <div className="ap-bars-group">
                 {ASSIGNMENTS_CONFIG.map((asg) => {
-                  const data = assignmentsData[asg.id];
+                  const data = assignmentsData[asg.id] || assignmentsData[String(parseInt(asg.id, 10))];
                   const isCompleted = !!data?.completed;
-                  const marks = isCompleted ? Math.min(Math.max(Number(data.marks || 0), 0), MAX_MARKS) : 0;
+                  const marks = isCompleted
+                    ? Math.min(Math.max(Number(data.correctCount !== undefined ? data.correctCount : (data.marks || 0)), 0), MAX_MARKS)
+                    : 0;
                   const barHeightPercent = isCompleted ? (marks / MAX_MARKS) * 100 : 0;
                   const isSelected = selectedAssignmentId === asg.id;
 

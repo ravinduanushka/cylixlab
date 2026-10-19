@@ -252,16 +252,29 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
                       </div>
                     )}
 
+                    {/* Review mode indicator */}
+                    {isSubmitted && (
+                      <div className={`as-review-tag ${selected === q.correctAnswer ? 'as-review-correct' : 'as-review-wrong'}`}>
+                        {selected === q.correctAnswer ? (
+                          <span>&#x2705; Correct Answer (+1 Mark)</span>
+                        ) : (
+                          <span>&#x274C; Incorrect &mdash; Correct Answer: Option {q.correctAnswer}</span>
+                        )}
+                      </div>
+                    )}
+
                     {/* Question Container with 4 Options and Circles */}
                     <div className="as-mcq-box">
                       {[1, 2, 3, 4].map((optNum) => {
                         const isChecked = selected === optNum;
                         const optionText = rawOptions[optNum - 1] || `Option ${optNum}`;
+                        const isCorrectOpt = isSubmitted && optNum === Number(q.correctAnswer);
+                        const isWrongSelected = isSubmitted && isChecked && optNum !== Number(q.correctAnswer);
 
                         return (
                           <div
                             key={`q-${qId}-opt-${optNum}`}
-                            className={`as-option-row ${isChecked ? 'as-option-selected' : ''}`}
+                            className={`as-option-row ${isChecked ? 'as-option-selected' : ''} ${isCorrectOpt ? 'as-option-correct-highlight' : ''} ${isWrongSelected ? 'as-option-wrong-highlight' : ''}`}
                             onClick={() => handleSelectOption(qId, optNum)}
                             role="button"
                             tabIndex={0}
@@ -277,7 +290,7 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
                               <span className="as-option-number">{optNum}.</span>
                               <span className="as-option-label-text">{optionText}</span>
                             </div>
-                            <div className={`as-option-circle ${isChecked ? 'checked' : ''}`}>
+                            <div className={`as-option-circle ${isChecked ? 'checked' : ''} ${isCorrectOpt ? 'correct-circle' : ''}`}>
                               {isChecked && (
                                 <svg className="as-check-icon" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                   <polyline points="20 6 9 17 4 12" />
@@ -351,11 +364,21 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
               &#x2705;
             </div>
             <h3 className="as-modal-title">Assignment {assignmentId} Submitted!</h3>
+            
+            <div className="as-modal-score-card">
+              <div className="as-modal-score-digits">
+                <span className="as-modal-score-num">{correctCount}</span>
+                <span className="as-modal-score-slash">/</span>
+                <span className="as-modal-score-den">{totalQuestions}</span>
+              </div>
+              <div className="as-modal-score-tag">Marks (Correct Answers Only)</div>
+            </div>
+
             <p className="as-modal-body">
               You answered <strong>{answeredCount}</strong> out of <strong>{totalQuestions}</strong> questions within the time duration.
             </p>
             <p className="as-modal-subbody">
-              Your responses have been recorded. When the administrator publishes the answer keys and assignment PDF, full results and grading will be displayed here.
+              Your score of <strong>{correctCount} marks</strong> has been recorded in your Progress Analysis Bar Chart.
             </p>
             <button
               type="button"
