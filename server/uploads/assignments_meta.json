@@ -1,0 +1,310 @@
+{
+  "01": {
+    "assignmentId": "01",
+    "fileName": "Assignment_01_AI_Foundations.pdf",
+    "url": "/uploads/assignment_01.pdf?t=1792445477239",
+    "questions": [
+      {
+        "id": 1,
+        "label": "Question 01",
+        "question": "Which of the following best describes the relationship between AI, ML, and DL?",
+        "options": [
+          "AI ⊂ ML ⊂ DL",
+          "DL ⊂ ML ⊂ AI",
+          "ML ⊂ AI ⊂ DL",
+          "AI, ML, and DL are completely independent fields"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 2,
+        "label": "Question 02",
+        "question": "In supervised learning, what is the primary goal?",
+        "options": [
+          "Discover hidden structure in the data",
+          "Learn a mapping from inputs x to output labels y",
+          "Generate new data samples",
+          "Maximize cumulative reward through interaction"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 3,
+        "label": "Question 03",
+        "question": "Which learning paradigm creates its own labels from the data itself?",
+        "options": [
+          "Semi‑supervised learning",
+          "Self‑supervised learning",
+          "Reinforcement learning",
+          "Unsupervised learning"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 4,
+        "label": "Question 04",
+        "question": "What is the most common source of misleading results in the standard ML workflow?",
+        "options": [
+          "Using a validation set that is larger than the training set",
+          "Skipping or reordering the data‑splitting step",
+          "Choosing a model with too many hyper‑parameters",
+          "Applying feature scaling before model selection"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 5,
+        "label": "Question 05",
+        "question": "A model that has very low training error but much higher validation error is suffering from:",
+        "options": [
+          "Underfitting (high bias)",
+          "Overfitting (high variance)",
+          "Data leakage",
+          "Incorrect loss function"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 6,
+        "label": "Question 06",
+        "question": "Which of the following statements about k‑fold cross‑validation is FALSE?",
+        "options": [
+          "Each observation is used for validation exactly once",
+          "Stratified folds are useful for imbalanced classification problems",
+          "The test set should be used repeatedly during the k folds",
+          "The reported performance is usually the mean ± standard deviation over the folds"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 7,
+        "label": "Question 07",
+        "question": "Data leakage can occur when:",
+        "options": [
+          "A scaler is fitted only on the training data",
+          "Random shuffling is applied to a time‑series before splitting",
+          "Cross‑validation is performed with stratified folds",
+          "Early stopping is used based on validation loss"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 8,
+        "label": "Question 08",
+        "question": "The closed‑form solution for linear regression (the normal equation) is:",
+        "options": [
+          "w = (XᵀX)⁻¹Xᵀy",
+          "w = XᵀXy",
+          "w = (XᵀX + λI)⁻¹Xᵀy",
+          "w = X⁻¹y"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": 9,
+        "label": "Question 09",
+        "question": "Which loss function is used to train logistic regression for binary classification?",
+        "options": [
+          "Mean Squared Error",
+          "Hinge loss",
+          "Binary cross‑entropy (log‑loss)",
+          "Kullback‑Leibler divergence"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 10,
+        "label": "Question 10",
+        "question": "L1 regularization (Lasso) primarily helps with:",
+        "options": [
+          "Reducing multicollinearity without affecting feature selection",
+          "Driving some coefficients exactly to zero",
+          "Ensuring all coefficients are small but non‑zero",
+          "Accelerating convergence of gradient descent"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 11,
+        "label": "Question 11",
+        "question": "Which supervised algorithm is most sensitive to the choice of distance metric and suffers from the curse of dimensionality?",
+        "options": [
+          "Decision Tree",
+          "k‑Nearest Neighbours",
+          "Support Vector Machine",
+          "Naive Bayes"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 12,
+        "label": "Question 12",
+        "question": "Random Forests improve over single Decision Trees mainly by:",
+        "options": [
+          "Using gradient descent to optimize splits",
+          "Averaging predictions over many bootstrapped trees",
+          "Applying a kernel trick to increase dimensionality",
+          "Training on the entire dataset without bootstrapping"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 13,
+        "label": "Question 13",
+        "question": "When would you prefer a Gradient Boosting model over a Random Forest?",
+        "options": [
+          "When you need the fastest training time on huge datasets",
+          "When you want a model that is easy to interpret without any post‑hoc tools",
+          "When you need top accuracy on tabular data and can tune hyper‑parameters",
+          "When you have only categorical features and no missing values"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 14,
+        "label": "Question 14",
+        "question": "In K‑means clustering, the silhouette score for a point is defined as s = (b − a) / max(a, b). What does a high positive silhouette score indicate?",
+        "options": [
+          "The point lies on the boundary between two clusters",
+          "The point is well matched to its own cluster and poorly matched to neighboring clusters",
+          "The point is likely an outlier",
+          "The clustering algorithm has converged to a local optimum"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 15,
+        "label": "Question 15",
+        "question": "Which method is most appropriate for choosing the number of clusters k in K‑means?",
+        "options": [
+          "Cross‑validation with stratified folds",
+          "Elbow method based on inertia",
+          "Grid search over learning rates",
+          "Applying PCA before clustering"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 16,
+        "label": "Question 16",
+        "question": "DBSCAN is particularly useful because it can:",
+        "options": [
+          "Require the number of clusters k to be known in advance",
+          "Detect clusters of arbitrary shape and identify noise points",
+          "Guarantee spherical clusters with equal variance",
+          "Produce soft probabilistic cluster assignments"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 17,
+        "label": "Question 17",
+        "question": "Before applying PCA, which preprocessing step is essential?",
+        "options": [
+          "One‑hot encoding of categorical variables",
+          "Standardizing each feature to zero mean and unit variance",
+          "Applying a non‑linear kernel transformation",
+          "Removing outliers using Isolation Forest"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 18,
+        "label": "Question 18",
+        "question": "Which of the following is a common pitfall when evaluating unsupervised clustering results?",
+        "options": [
+          "Using silhouette score on a test set that was never seen during training",
+          "Assuming internal metrics directly reflect business usefulness",
+          "Reporting accuracy against ground‑truth labels that do not exist",
+          "All of the above"
+        ],
+        "correctAnswer": 4
+      },
+      {
+        "id": 19,
+        "label": "Question 19",
+        "question": "In the context of gradient descent, what happens if the learning rate η is set to a value greater than 1 for the loss L(w)=w²?",
+        "options": [
+          "The algorithm converges faster to the optimum",
+          "The updates oscillate but still converge",
+          "The updates diverge and the parameter magnitude grows",
+          "The loss becomes negative"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 20,
+        "label": "Question 20",
+        "question": "Which variant of gradient descent typically provides the best trade‑off between convergence speed and noise for deep learning?",
+        "options": [
+          "Batch Gradient Descent",
+          "Stochastic Gradient Descent (SGD)",
+          "Mini‑batch Gradient Descent",
+          "Coordinate Descent"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 21,
+        "label": "Question 21",
+        "question": "Momentum in optimization helps primarily by:",
+        "options": [
+          "Adapting the learning rate for each parameter individually",
+          "Averaging past gradients to accelerate movement in consistent directions",
+          "Adding L2 regularization to the loss",
+          "Ensuring the gradient is always positive"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 22,
+        "label": "Question 22",
+        "question": "What is the purpose of bias correction in Adam?",
+        "options": [
+          "To prevent the optimizer from overshooting the minimum",
+          "To adjust the first and second moment estimates that are biased toward zero at early steps",
+          "To enforce sparsity in the parameter updates",
+          "To replace the need for a learning‑rate schedule"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": 23,
+        "label": "Question 23",
+        "question": "Which optimizer is recommended as the default choice for most transformer‑based models?",
+        "options": [
+          "SGD with momentum",
+          "RMSProp",
+          "AdamW",
+          "Adagrad"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 24,
+        "label": "Question 24",
+        "question": "When evaluating a binary classifier on an imbalanced dataset, which metric is most appropriate to prioritize the detection of the minority class?",
+        "options": [
+          "Accuracy",
+          "Precision",
+          "Recall",
+          "ROC‑AUC"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": 25,
+        "label": "Question 25",
+        "question": "The F1 score is defined as the harmonic mean of precision and recall. Which situation makes the F1 score especially useful?",
+        "options": [
+          "When precision and recall are equally important",
+          "When the dataset is perfectly balanced",
+          "When only the false positive rate matters",
+          "When you need to maximize ROC‑AUC"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "updatedAt": "2026-10-19T21:31:17.239Z"
+  }
+}
