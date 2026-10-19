@@ -25,14 +25,14 @@ const LEARNING_PATH_META = {
   },
 };
 
-const getCleanPdfUrl = (url) => {
+const getCleanPdfUrl = (url, page = 1, zoom = 100) => {
   if (!url) return '';
   const base = url.split('#')[0];
   // #toolbar=0 hides Edge/Chrome toolbar (drawing, pen, rotate, summarize)
   // #navpanes=0 hides the left thumbnails pane
   // #scrollbar=1 keeps smooth scrolling throughout document
   // #view=FitH fits width to screen
-  return `${base}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`;
+  return `${base}#page=${page}&zoom=${zoom}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`;
 };
 
 const LearningPathDetailView = ({ pathId = '01', onBack }) => {
@@ -50,6 +50,11 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   // Full display (portal to body) state
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // PDF Page & Zoom controls (Matching Image 1)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(12);
+  const [zoomLevel, setZoomLevel] = useState(100);
+
   // PDF URL state: loads from localStorage or backend
   const [pdfUrl, setPdfUrl] = useState(() => {
     try {
@@ -63,6 +68,8 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   useEffect(() => {
     setSecondsLeft(INITIAL_SECONDS);
     setIsRunning(true);
+    setCurrentPage(1);
+    setZoomLevel(100);
   }, [safePathId]);
 
   useEffect(() => {
@@ -97,6 +104,9 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
         const res = await axios.get(`/api/courses/learning-path-pdf/${safePathId}`);
         if (isMounted && res.data && res.data.exists && res.data.url) {
           setPdfUrl(res.data.url);
+          if (res.data.totalPages) {
+            setTotalPages(res.data.totalPages);
+          }
           try {
             localStorage.setItem(`cylixlab_learning_pdf_${safePathId}`, res.data.url);
           } catch {}
@@ -150,7 +160,25 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
   const seconds = String(secondsLeft % 60).padStart(2, '0');
 
-  const cleanPdfUrl = getCleanPdfUrl(pdfUrl);
+  // Zoom handlers
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(220, prev + 15));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(60, prev - 15));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(1, prev - 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+  };
+
+  const cleanPdfUrlNormal = getCleanPdfUrl(pdfUrl, 1, 100);
+  const cleanPdfUrlFullscreen = getCleanPdfUrl(pdfUrl, currentPage, zoomLevel);
 
   return (
     <div className="lp-detail-container">
@@ -203,9 +231,9 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
           </svg>
         </button>
 
-        {cleanPdfUrl ? (
+        {cleanPdfUrlNormal ? (
           <iframe
-            src={cleanPdfUrl}
+            src={cleanPdfUrlNormal}
             title={`PDF document for ${meta.title}`}
             className="lp-pdf-iframe"
           />
@@ -224,12 +252,74 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
             role="dialog"
             aria-modal="true"
           >
-            {/* Top Bar with Title and Close Button */}
+            {/* Top Bar: Left = Title Badge, Center = Image 1 Controls, Right = Close Button (Image 2) */}
             <div className="lp-fullscreen-topbar">
+              {/* LEFT: Title Badge */}
               <div className="lp-fullscreen-title-badge">
                 <span className="lp-fullscreen-title-text">{meta.title}</span>
               </div>
 
+              {/* CENTER: Image 1 Icons Display (1 / 12 | - +) */}
+              <div className="lp-header-center-controls">
+                {/* Page indicator with prev/next step */}
+                <div className="lp-page-stepper">
+                  <button
+                    type="button"
+                    className="lp-page-arrow-btn"
+                    onClick={handlePrevPage}
+                    disabled={currentPage <= 1}
+                    title="Previous page"
+                    aria-label="Previous page"
+                  >
+                    ◀
+                  </button>
+                  <span className="lp-page-current-badge">{currentPage}</span>
+                  <span className="lp-page-slash-total">/ {totalPages}</span>
+                  <button
+                    type="button"
+                    className="lp-page-arrow-btn"
+                    onClick={handleNextPage}
+                    disabled={currentPage >= totalPages}
+                    title="Next page"
+                    aria-label="Next page"
+                  >
+                    ▶
+                  </button>
+                </div>
+
+                {/* Vertical Divider Line */}
+                <div className="lp-controls-separator" aria-hidden="true" />
+
+                {/* Zoom Controls: - and + */}
+                <div className="lp-zoom-btn-group">
+                  <button
+                    type="button"
+                    className="lp-ctrl-icon-btn"
+                    onClick={handleZoomOut}
+                    title="Zoom Out (-)"
+                    aria-label="Zoom Out"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="lp-ctrl-icon-btn"
+                    onClick={handleZoomIn}
+                    title="Zoom In (+)"
+                    aria-label="Zoom In"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* RIGHT: Close Button (Image 2) */}
               <button
                 type="button"
                 className="lp-fullscreen-close-btn"
@@ -237,7 +327,7 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
                 title="Exit Full Display (Esc)"
                 aria-label="Exit Full Display"
               >
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
@@ -247,9 +337,10 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
 
             {/* Main Fullscreen PDF Canvas (Takes 100% of remaining screen with full scroll) */}
             <div className="lp-fullscreen-canvas">
-              {cleanPdfUrl ? (
+              {cleanPdfUrlFullscreen ? (
                 <iframe
-                  src={cleanPdfUrl}
+                  key={`pdf-${currentPage}-${zoomLevel}`}
+                  src={cleanPdfUrlFullscreen}
                   title={`Full Display PDF - ${meta.title}`}
                   className="lp-fullscreen-pdf-iframe"
                 />
