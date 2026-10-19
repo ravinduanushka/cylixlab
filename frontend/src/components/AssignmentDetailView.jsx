@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
+  const safeAsgId = String(assignmentId).padStart(2, '0');
+
   // 30 minutes countdown timer (30 * 60 = 1800 seconds)
   const INITIAL_SECONDS = 30 * 60;
   const [secondsLeft, setSecondsLeft] = useState(INITIAL_SECONDS);
@@ -10,15 +13,83 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
+
+  // Dynamic Questions list
+  const [questions, setQuestions] = useState([]);
 
   // Check if admin pushed an assignment PDF URL
-  const [pdfUrl] = useState(() => {
+  const [pdfUrl, setPdfUrl] = useState(() => {
     try {
-      return localStorage.getItem(`cylixlab_assignment_pdf_${assignmentId}`) || null;
+      return localStorage.getItem(`cylixlab_assignment_pdf_${safeAsgId}`) || null;
     } catch {
       return null;
     }
   });
+
+  // Fetch Assignment PDF & Parsed Questions from Backend
+  useEffect(() => {
+    let isMounted = true;
+    setLoadingQuestions(true);
+
+    const fetchAssignmentData = async () => {
+      try {
+        const res = await axios.get(`/api/courses/assignment-pdf/${safeAsgId}`);
+        if (isMounted && res.data && res.data.exists) {
+          if (res.data.url) {
+            setPdfUrl(res.data.url);
+          }
+          if (Array.isArray(res.data.questions) && res.data.questions.length > 0) {
+            setQuestions(res.data.questions);
+            setLoadingQuestions(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch assignment from server, checking local:', err);
+      }
+
+      // Check localStorage for offline questions if available
+      try {
+        const local = localStorage.getItem(`cylixlab_assignment_questions_${safeAsgId}`);
+        if (local && isMounted) {
+          const parsed = JSON.parse(local);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setQuestions(parsed);
+            setLoadingQuestions(false);
+            return;
+          }
+        }
+      } catch {}
+
+      // Fallback default 30 questions
+      if (isMounted) {
+        const defaultList = Array.from({ length: 30 }, (_, i) => {
+          const numStr = String(i + 1).padStart(2, '0');
+          return {
+            id: i + 1,
+            label: `Question ${numStr}`,
+            question: `Question ${numStr}: Select the most appropriate option based on the study assignment.`,
+            options: [
+              'Statement or solution option A',
+              'Statement or solution option B',
+              'Statement or solution option C',
+              'Statement or solution option D',
+            ],
+            correctAnswer: (i % 4) + 1,
+          };
+        });
+        setQuestions(defaultList);
+        setLoadingQuestions(false);
+      }
+    };
+
+    fetchAssignmentData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [safeAsgId]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -55,20 +126,11 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
     if (isSubmitted) return;
     setSelectedAnswers((prev) => ({
       ...prev,
-      [qNum]: prev[qNum] === optionIndex ? null : optionIndex, // toggle or select
+      [qNum]: prev[qNum] === optionIndex ? null : optionIndex,
     }));
   };
 
-  // Generate 30 questions
-  const totalQuestions = 30;
-  const questionsList = Array.from({ length: totalQuestions }, (_, i) => {
-    const numStr = String(i + 1).padStart(2, '0');
-    return {
-      id: i + 1,
-      label: `Question ${numStr}`,
-    };
-  });
-
+  const totalQuestions = questions.length || 30;
   const answeredCount = Object.values(selectedAnswers).filter(Boolean).length;
 
   const handleSubmit = () => {
