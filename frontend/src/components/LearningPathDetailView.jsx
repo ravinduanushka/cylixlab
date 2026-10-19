@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import axios from 'axios';
 
 const LEARNING_PATH_META = {
@@ -24,6 +25,16 @@ const LEARNING_PATH_META = {
   },
 };
 
+const getCleanPdfUrl = (url) => {
+  if (!url) return '';
+  const base = url.split('#')[0];
+  // #toolbar=0 hides Edge/Chrome toolbar (drawing, pen, rotate, summarize)
+  // #navpanes=0 hides the left thumbnails pane
+  // #scrollbar=1 keeps smooth scrolling throughout document
+  // #view=FitH fits width to screen
+  return `${base}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`;
+};
+
 const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   const safePathId = String(pathId).padStart(2, '0');
   const meta = LEARNING_PATH_META[safePathId] || {
@@ -36,7 +47,7 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   const [secondsLeft, setSecondsLeft] = useState(INITIAL_SECONDS);
   const [isRunning, setIsRunning] = useState(true);
 
-  // Full display (fullscreen modal) state
+  // Full display (portal to body) state
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // PDF URL state: loads from localStorage or backend
@@ -74,7 +85,6 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   useEffect(() => {
     let isMounted = true;
 
-    // Check local storage
     try {
       const local = localStorage.getItem(`cylixlab_learning_pdf_${safePathId}`);
       if (local) {
@@ -82,7 +92,6 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
       }
     } catch {}
 
-    // Fetch from backend API to ensure cross-browser sync (Chrome, Edge, etc.)
     const fetchServerPdf = async () => {
       try {
         const res = await axios.get(`/api/courses/learning-path-pdf/${safePathId}`);
@@ -99,7 +108,6 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
 
     fetchServerPdf();
 
-    // Listen to upload event from admin
     const handlePdfUploaded = (e) => {
       if (e.detail && String(e.detail.pathId).padStart(2, '0') === safePathId) {
         fetchServerPdf();
@@ -117,22 +125,32 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
     };
   }, [safePathId]);
 
-  // Close full display on Escape key
+  // Handle body scroll locking and Escape key for full display
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setIsFullscreen(false);
       }
     };
+
     if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
     }
-    return () => window.removeEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isFullscreen]);
 
   // Format mm : ss
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
   const seconds = String(secondsLeft % 60).padStart(2, '0');
+
+  const cleanPdfUrl = getCleanPdfUrl(pdfUrl);
 
   return (
     <div className="lp-detail-container">
@@ -153,12 +171,10 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
 
       {/* Learning Path Badge on left and Time Duration in the right side corner */}
       <div className="lp-header-badge-row">
-        {/* Active Learning Path Pill Badge */}
         <div className="lp-pill-badge">
           {meta.title}
         </div>
 
-        {/* Time Duration box in the right side corner */}
         <div className="lp-timer-box compact">
           <span className="lp-timer-title">Time Duration</span>
           <span className="lp-timer-digits" aria-live="polite">
@@ -172,9 +188,9 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
         {meta.description}
       </p>
 
-      {/* PDF Display Box (grey container matching Image 2 with large expand icon in corner) */}
+      {/* PDF Display Box (Normal View) */}
       <div className="lp-pdf-display-box">
-        {/* Large icon in the corner to trigger full display */}
+        {/* Large corner expand icon */}
         <button
           type="button"
           className="lp-expand-corner-btn"
@@ -182,14 +198,14 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
           title="Click to view full display and scroll whole PDF"
           aria-label="Click to view full display and scroll whole PDF"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
           </svg>
         </button>
 
-        {pdfUrl ? (
+        {cleanPdfUrl ? (
           <iframe
-            src={pdfUrl}
+            src={cleanPdfUrl}
             title={`PDF document for ${meta.title}`}
             className="lp-pdf-iframe"
           />
@@ -200,46 +216,52 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
         )}
       </div>
 
-      {/* FULL DISPLAY OVERLAY (Image 3 Style with whole scrollable PDF and corner close icon) */}
-      {isFullscreen && (
-        <div
-          className="lp-fullscreen-modal-overlay"
-          onClick={() => setIsFullscreen(false)}
-          role="dialog"
-          aria-modal="true"
-        >
+      {/* FULL DISPLAY OVERLAY (Rendered to document.body to cover 100% of the screen) */}
+      {isFullscreen &&
+        createPortal(
           <div
-            className="lp-fullscreen-display-container"
-            onClick={(e) => e.stopPropagation()}
+            className="lp-fullscreen-portal-overlay"
+            role="dialog"
+            aria-modal="true"
           >
-            {/* Large Corner Exit/Close Icon */}
-            <button
-              type="button"
-              className="lp-fullscreen-close-btn"
-              onClick={() => setIsFullscreen(false)}
-              title="Exit Full Display"
-              aria-label="Exit Full Display"
-            >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            {pdfUrl ? (
-              <iframe
-                src={pdfUrl}
-                title={`Full Display PDF - ${meta.title}`}
-                className="lp-fullscreen-pdf-iframe"
-              />
-            ) : (
-              <div className="lp-pdf-placeholder fullscreen-placeholder">
-                <span className="lp-pdf-placeholder-text">pdf display</span>
+            {/* Top Bar with Title and Close Button */}
+            <div className="lp-fullscreen-topbar">
+              <div className="lp-fullscreen-title-badge">
+                <span className="lp-fullscreen-title-text">{meta.title}</span>
               </div>
-            )}
-          </div>
-        </div>
-      )}
+
+              <button
+                type="button"
+                className="lp-fullscreen-close-btn"
+                onClick={() => setIsFullscreen(false)}
+                title="Exit Full Display (Esc)"
+                aria-label="Exit Full Display"
+              >
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+                <span className="lp-close-btn-label">Close</span>
+              </button>
+            </div>
+
+            {/* Main Fullscreen PDF Canvas (Takes 100% of remaining screen with full scroll) */}
+            <div className="lp-fullscreen-canvas">
+              {cleanPdfUrl ? (
+                <iframe
+                  src={cleanPdfUrl}
+                  title={`Full Display PDF - ${meta.title}`}
+                  className="lp-fullscreen-pdf-iframe"
+                />
+              ) : (
+                <div className="lp-pdf-placeholder fullscreen-placeholder">
+                  <span className="lp-pdf-placeholder-text">pdf display</span>
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
