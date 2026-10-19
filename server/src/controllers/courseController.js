@@ -136,11 +136,19 @@ const getLearningPathPdf = async (req, res) => {
     const targetPath = path.join(uploadDir, targetFile);
 
     if (fs.existsSync(targetPath)) {
+      let pageCount = 12;
+      try {
+        const content = fs.readFileSync(targetPath, 'latin1');
+        const matches = content.match(/\/Type\s*\/Page[^s]/g);
+        if (matches && matches.length > 0) pageCount = matches.length;
+      } catch {}
+
       return res.status(200).json({
         success: true,
         exists: true,
         url: meta[safePathId]?.url || `/uploads/${targetFile}`,
         fileName: meta[safePathId]?.fileName || targetFile,
+        totalPages: pageCount,
       });
     }
     return res.status(200).json({
