@@ -164,27 +164,74 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLpSubmit = () => {
+  const extractNumberId = (text) => {
+    if (!text) return '01';
+    const match = text.match(/\d+/);
+    return match ? match[0].padStart(2, '0') : '01';
+  };
+
+  const handleLpSubmit = async () => {
     if (!lpName.trim() && !lpFile) {
       setLpStatus('Please type name and select a PDF file first');
       return;
     }
-    try {
-      const existing = JSON.parse(localStorage.getItem('cylixlab_learning_paths') || '[]');
-      existing.push({
-        id: Date.now(),
-        name: lpName.trim() || 'New Learning Path',
-        fileName: lpFile ? lpFile.name : 'document.pdf',
-        date: new Date().toLocaleDateString(),
-      });
-      localStorage.setItem('cylixlab_learning_paths', JSON.stringify(existing));
-    } catch {
-      // fallback
+    const pathId = extractNumberId(lpName);
+    setLpStatus('Uploading PDF document...');
+
+    const saveLocallyAndComplete = (pdfUrlOrData) => {
+      try {
+        const existing = JSON.parse(localStorage.getItem('cylixlab_learning_paths') || '[]');
+        existing.push({
+          id: Date.now(),
+          pathId,
+          name: lpName.trim() || `Learning Path ${pathId}`,
+          fileName: lpFile ? lpFile.name : 'document.pdf',
+          date: new Date().toLocaleDateString(),
+        });
+        localStorage.setItem('cylixlab_learning_paths', JSON.stringify(existing));
+        if (pdfUrlOrData) {
+          try {
+            localStorage.setItem(`cylixlab_learning_pdf_${pathId}`, pdfUrlOrData);
+          } catch {
+            // localstorage quota safeguard
+          }
+          if (lpFile) {
+            localStorage.setItem(`cylixlab_learning_pdf_name_${pathId}`, lpFile.name);
+          }
+        }
+      } catch (err) {
+        console.warn('LocalStorage error:', err);
+      }
+      window.dispatchEvent(new CustomEvent('cylixlab_pdf_uploaded', { detail: { pathId } }));
+      setLpStatus(`✓ Learning Path "${lpName || 'Learning Path ' + pathId}" uploaded successfully!`);
+      setTimeout(() => {
+        setLpStatus('All set');
+      }, 4000);
+    };
+
+    if (lpFile) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Data = reader.result;
+        try {
+          const res = await axios.post('/api/courses/learning-path-pdf', {
+            pathId,
+            fileName: lpFile.name,
+            fileData: base64Data,
+          });
+          if (res.data && res.data.url) {
+            saveLocallyAndComplete(res.data.url);
+            return;
+          }
+        } catch (err) {
+          console.warn('Server upload fallback to local:', err);
+        }
+        saveLocallyAndComplete(base64Data);
+      };
+      reader.readAsDataURL(lpFile);
+    } else {
+      saveLocallyAndComplete(null);
     }
-    setLpStatus(`✓ Learning Path "${lpName || 'New Path'}" uploaded successfully!`);
-    setTimeout(() => {
-      setLpStatus('All set');
-    }, 4000);
   };
 
   // File drop & select handlers for Assignment
@@ -204,27 +251,66 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleAsgSubmit = () => {
+  const handleAsgSubmit = async () => {
     if (!asgName.trim() && !asgFile) {
       setAsgStatus('Please type name and select a PDF file first');
       return;
     }
-    try {
-      const existing = JSON.parse(localStorage.getItem('cylixlab_assignments') || '[]');
-      existing.push({
-        id: Date.now(),
-        name: asgName.trim() || 'New Assignment',
-        fileName: asgFile ? asgFile.name : 'assignment.pdf',
-        date: new Date().toLocaleDateString(),
-      });
-      localStorage.setItem('cylixlab_assignments', JSON.stringify(existing));
-    } catch {
-      // fallback
+    const asgId = extractNumberId(asgName);
+    setAsgStatus('Uploading Assignment document...');
+
+    const saveAsgLocallyAndComplete = (pdfUrlOrData) => {
+      try {
+        const existing = JSON.parse(localStorage.getItem('cylixlab_assignments') || '[]');
+        existing.push({
+          id: Date.now(),
+          assignmentId: asgId,
+          name: asgName.trim() || `Assignment ${asgId}`,
+          fileName: asgFile ? asgFile.name : 'assignment.pdf',
+          date: new Date().toLocaleDateString(),
+        });
+        localStorage.setItem('cylixlab_assignments', JSON.stringify(existing));
+        if (pdfUrlOrData) {
+          try {
+            localStorage.setItem(`cylixlab_assignment_pdf_${asgId}`, pdfUrlOrData);
+          } catch {}
+          if (asgFile) {
+            localStorage.setItem(`cylixlab_assignment_pdf_name_${asgId}`, asgFile.name);
+          }
+        }
+      } catch (err) {
+        console.warn('LocalStorage error:', err);
+      }
+      window.dispatchEvent(new CustomEvent('cylixlab_assignment_pdf_uploaded', { detail: { assignmentId: asgId } }));
+      setAsgStatus(`✓ Assignment "${asgName || 'Assignment ' + asgId}" saved for MCQ generation!`);
+      setTimeout(() => {
+        setAsgStatus('All set');
+      }, 4000);
+    };
+
+    if (asgFile) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Data = reader.result;
+        try {
+          const res = await axios.post('/api/courses/assignment-pdf', {
+            assignmentId: asgId,
+            fileName: asgFile.name,
+            fileData: base64Data,
+          });
+          if (res.data && res.data.url) {
+            saveAsgLocallyAndComplete(res.data.url);
+            return;
+          }
+        } catch (err) {
+          console.warn('Server assignment upload fallback to local:', err);
+        }
+        saveAsgLocallyAndComplete(base64Data);
+      };
+      reader.readAsDataURL(asgFile);
+    } else {
+      saveAsgLocallyAndComplete(null);
     }
-    setAsgStatus(`✓ Assignment "${asgName || 'New Assignment'}" saved for MCQ generation!`);
-    setTimeout(() => {
-      setAsgStatus('All set');
-    }, 4000);
   };
 
   return (
