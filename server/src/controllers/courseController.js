@@ -417,6 +417,82 @@ const getAssignmentPdf = async (req, res) => {
   }
 };
 
+const submissionsFile = path.join(uploadDir, 'assignment_submissions.json');
+
+const submitAssignmentProgress = async (req, res) => {
+  try {
+    const { assignmentId = '01', studentEmail, studentName, marks, total = 30, answeredCount } = req.body;
+    const safeAsgId = String(assignmentId).padStart(2, '0');
+
+    let submissions = [];
+    if (fs.existsSync(submissionsFile)) {
+      try {
+        submissions = JSON.parse(fs.readFileSync(submissionsFile, 'utf8'));
+      } catch {}
+    }
+
+    const email = (studentEmail && studentEmail.trim()) || 'student@cylixlab.com';
+    const newRecord = {
+      id: Date.now(),
+      assignmentId: safeAsgId,
+      studentEmail: email,
+      studentName: studentName || 'Student',
+      marks: Number(marks) || 0,
+      total: Number(total) || 30,
+      answeredCount: Number(answeredCount) || 0,
+      submittedAt: new Date().toISOString(),
+    };
+
+    const existingIndex = submissions.findIndex(
+      (s) => s.assignmentId === safeAsgId && s.studentEmail.toLowerCase() === email.toLowerCase()
+    );
+    if (existingIndex >= 0) {
+      submissions[existingIndex] = newRecord;
+    } else {
+      submissions.push(newRecord);
+    }
+
+    fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
+
+    return res.status(200).json({ success: true, message: 'Submission saved', record: newRecord });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+const getAdminAssignmentStats = async (req, res) => {
+  try {
+    let submissions = [];
+    if (fs.existsSync(submissionsFile)) {
+      try {
+        submissions = JSON.parse(fs.readFileSync(submissionsFile, 'utf8'));
+      } catch {}
+    }
+
+    const stats = ['01', '02', '03', '04', '05'].map((asgId, index) => {
+      const filtered = submissions.filter(
+        (s) => s.assignmentId === asgId || s.assignmentId === String(index + 1)
+      );
+      const completedStudents = filtered.length;
+      const totalMarks = filtered.reduce((acc, curr) => acc + (Number(curr.marks) || 0), 0);
+      const avgMarks = completedStudents > 0 ? Math.round(totalMarks / completedStudents) : 0;
+
+      return {
+        id: index + 1,
+        assignmentId: asgId,
+        name: `Assignment ${index + 1}`,
+        short: `Asg ${index + 1}`,
+        avgMarks,
+        completedStudents,
+      };
+    });
+
+    return res.status(200).json({ success: true, stats });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
   createCourse,
   getCourses,
@@ -427,4 +503,6 @@ module.exports = {
   getLearningPathPdf,
   uploadAssignmentPdf,
   getAssignmentPdf,
+  submitAssignmentProgress,
+  getAdminAssignmentStats,
 };

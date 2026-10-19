@@ -10,6 +10,8 @@ const {
   getLearningPathPdf,
   uploadAssignmentPdf,
   getAssignmentPdf,
+  submitAssignmentProgress,
+  getAdminAssignmentStats,
 } = require('../controllers/courseController');
 
 const { protect, authorize } = require('../middlewares/authMiddleware');
@@ -19,6 +21,10 @@ router.post('/learning-path-pdf', uploadLearningPathPdf);
 router.get('/learning-path-pdf/:pathId', getLearningPathPdf);
 router.post('/assignment-pdf', uploadAssignmentPdf);
 router.get('/assignment-pdf/:assignmentId', getAssignmentPdf);
+
+// Assignment submission and admin statistics routes
+router.post('/assignment-submit', submitAssignmentProgress);
+router.get('/admin-assignment-stats', getAdminAssignmentStats);
 
 router.get('/', getCourses);
 router.get('/:id', getCourseById);
