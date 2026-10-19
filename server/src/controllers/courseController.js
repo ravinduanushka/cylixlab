@@ -191,12 +191,52 @@ const uploadAssignmentPdf = async (req, res) => {
       console.warn('pdf-parse reading error:', parseErr.message);
     }
 
-    // 2. Call AI to extract structured MCQs (Groq / Gemini)
-    let extractedQuestions = [];
+    // 2. First attempt: Direct structured MCQ parsing if the PDF already contains MCQs (Q1..Q30, A/B/C/D)
+    const extractPreformattedMcqs = (fullText) => {
+      if (!fullText) return [];
+      const questions = [];
+      const regex = /(?:^|\n)(?:Q|Question\s*)(\d+)[\s\.:\-_A-Za-z0-9]*\n([\s\S]*?)(?=(?:\n(?:Q|Question\s*)\d+|\n-- \d+ of \d+ --|$))/gi;
+      let match;
+      while ((match = regex.exec(fullText)) !== null) {
+        const qNum = parseInt(match[1]);
+        const body = match[2];
+
+        const optA = body.match(/(?:^|\n)A\.\s*([\s\S]*?)(?=\nB\.\s+|$)/i);
+        const optB = body.match(/(?:^|\n)B\.\s*([\s\S]*?)(?=\nC\.\s+|$)/i);
+        const optC = body.match(/(?:^|\n)C\.\s*([\s\S]*?)(?=\nD\.\s+|$)/i);
+        const optD = body.match(/(?:^|\n)D\.\s*([\s\S]*?)(?=\n(?:Correct\s*answer|Why\s*it\s*is|--|\n\n|$))/i);
+
+        const correctMatch = body.match(/Correct\s*answer\s*:\s*([A-D])/i);
+        const correctLetter = correctMatch ? correctMatch[1].toUpperCase() : 'A';
+        const correctNum = { A: 1, B: 2, C: 3, D: 4 }[correctLetter] || 1;
+
+        const qPrompt = body.split(/\n[A-D]\.\s+/)[0].trim().replace(/\s+/g, ' ');
+
+        if (optA && optB && optC && optD && qPrompt) {
+          questions.push({
+            id: qNum,
+            label: `Question ${String(qNum).padStart(2, '0')}`,
+            question: qPrompt,
+            options: [
+              optA[1].trim().replace(/\s+/g, ' '),
+              optB[1].trim().replace(/\s+/g, ' '),
+              optC[1].trim().replace(/\s+/g, ' '),
+              optD[1].trim().replace(/\s+/g, ' '),
+            ],
+            correctAnswer: correctNum,
+          });
+        }
+      }
+      return questions;
+    };
+
+    let extractedQuestions = extractPreformattedMcqs(pdfText);
+
+    // 3. Second attempt: If direct parsing didn't find MCQs, call AI to generate them from the text (Groq / Gemini)
     const groqKey = process.env.GROQ_API_KEY || process.env.GROK_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
-    if (pdfText && pdfText.length > 30) {
+    if (extractedQuestions.length === 0 && pdfText && pdfText.length > 30) {
       const aiPrompt = `You are an expert educational exam and quiz question generator.
 Analyze the following course material extracted from an assignment PDF:
 """
