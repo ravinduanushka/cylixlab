@@ -46,42 +46,6 @@ const AnalyseProgressView = () => {
   }, []);
 
 
-  // Demo / Simulation helpers so user can test all 3 tiers right away
-  const handleSimulateScore = (id, marks) => {
-    const updated = {
-      ...assignmentsData,
-      [id]: {
-        assignmentId: id,
-        completed: true,
-        marks,
-        total: MAX_MARKS,
-        submittedAt: new Date().toISOString(),
-      },
-    };
-    setAssignmentsData(updated);
-    setSelectedAssignmentId(id);
-    localStorage.setItem('cylixlab_assignments_data', JSON.stringify(updated));
-  };
-
-  const handleSimulateAll = () => {
-    const demo = {
-      '01': { assignmentId: '01', completed: true, marks: 12, total: 30 },
-      '02': { assignmentId: '02', completed: true, marks: 17, total: 30 },
-      '03': { assignmentId: '03', completed: true, marks: 22, total: 30 },
-      '04': { assignmentId: '04', completed: true, marks: 26, total: 30 },
-      '05': { assignmentId: '05', completed: true, marks: 29, total: 30 },
-    };
-    setAssignmentsData(demo);
-    setSelectedAssignmentId('01');
-    localStorage.setItem('cylixlab_assignments_data', JSON.stringify(demo));
-  };
-
-  const handleResetData = () => {
-    setAssignmentsData({});
-    setSelectedAssignmentId('01');
-    localStorage.removeItem('cylixlab_assignments_data');
-  };
-
   return (
     <div className="ap-page-container">
       {/* Top 2 Columns: Left Bar Chart & Right Finished Works */}
@@ -233,50 +197,6 @@ const AnalyseProgressView = () => {
         </div>
       </div>
 
-      {/* Front-End Simulation & Testing Controls */}
-      <div className="ap-test-toolbar">
-        <span className="ap-test-label">🧪 Live Test & Preview:</span>
-        <button
-          type="button"
-          className="ap-test-btn"
-          onClick={() => handleSimulateScore('01', 8)}
-          title="Simulate 8 Marks (0-10 tier)"
-        >
-          Asg 1 (8 Marks: 0-10)
-        </button>
-        <button
-          type="button"
-          className="ap-test-btn"
-          onClick={() => handleSimulateScore('02', 16)}
-          title="Simulate 16 Marks (10-20 tier)"
-        >
-          Asg 2 (16 Marks: 10-20)
-        </button>
-        <button
-          type="button"
-          className="ap-test-btn"
-          onClick={() => handleSimulateScore('03', 27)}
-          title="Simulate 27 Marks (20-30 tier)"
-        >
-          Asg 3 (27 Marks: 20-30)
-        </button>
-        <button
-          type="button"
-          className="ap-test-btn ap-test-btn-all"
-          onClick={handleSimulateAll}
-          title="Simulate all 5 completed assignments"
-        >
-          Simulate All 5
-        </button>
-        <button
-          type="button"
-          className="ap-test-btn ap-test-btn-reset"
-          onClick={handleResetData}
-          title="Reset to clean state"
-        >
-          Reset All
-        </button>
-      </div>
     </div>
   );
 };

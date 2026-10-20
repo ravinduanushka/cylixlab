@@ -12,12 +12,12 @@ const ASSIGNMENT_COLORS = [
   '#1e3a8a', // Assignment 5: Deep Navy Blue
 ];
 
-const ASSIGNMENTS = [
-  { id: 1, name: 'Assignment 1', short: 'Asg 1', avgMarks: 12, completedStudents: 12, color: ASSIGNMENT_COLORS[0] },
-  { id: 2, name: 'Assignment 2', short: 'Asg 2', avgMarks: 17, completedStudents: 17, color: ASSIGNMENT_COLORS[1] },
-  { id: 3, name: 'Assignment 3', short: 'Asg 3', avgMarks: 22, completedStudents: 22, color: ASSIGNMENT_COLORS[2] },
-  { id: 4, name: 'Assignment 4', short: 'Asg 4', avgMarks: 26, completedStudents: 26, color: ASSIGNMENT_COLORS[3] },
-  { id: 5, name: 'Assignment 5', short: 'Asg 5', avgMarks: 30, completedStudents: 30, color: ASSIGNMENT_COLORS[4] },
+const DEFAULT_ASSIGNMENTS = [
+  { id: 1, assignmentId: '01', name: 'Assignment 1', short: 'Asg 1', avgMarks: 0, completedStudents: 0, color: ASSIGNMENT_COLORS[0] },
+  { id: 2, assignmentId: '02', name: 'Assignment 2', short: 'Asg 2', avgMarks: 0, completedStudents: 0, color: ASSIGNMENT_COLORS[1] },
+  { id: 3, assignmentId: '03', name: 'Assignment 3', short: 'Asg 3', avgMarks: 0, completedStudents: 0, color: ASSIGNMENT_COLORS[2] },
+  { id: 4, assignmentId: '04', name: 'Assignment 4', short: 'Asg 4', avgMarks: 0, completedStudents: 0, color: ASSIGNMENT_COLORS[3] },
+  { id: 5, assignmentId: '05', name: 'Assignment 5', short: 'Asg 5', avgMarks: 0, completedStudents: 0, color: ASSIGNMENT_COLORS[4] },
 ];
 
 const Y_TICKS = [30, 24, 18, 12, 6, 0];
@@ -48,12 +48,63 @@ const AdminDashboard = () => {
 
   // Live Registered People Stats from backend
   const [userStats, setUserStats] = useState({
-    studentPct: 24,
-    parentPct: 22,
-    students: 12,
-    parents: 11,
-    total: 23,
+    studentPct: 60,
+    parentPct: 40,
+    students: 3,
+    parents: 2,
+    total: 5,
   });
+
+  // Dynamic Assignment Stats (Average Marks & Completed Students)
+  const [assignmentStats, setAssignmentStats] = useState(DEFAULT_ASSIGNMENTS);
+
+  const fetchAssignmentStats = async () => {
+    try {
+      const res = await axios.get('/api/courses/admin-assignment-stats');
+      let serverStats = [];
+      if (res.data && res.data.success && Array.isArray(res.data.stats)) {
+        serverStats = res.data.stats;
+      }
+
+      let localData = {};
+      try {
+        const stored = localStorage.getItem('cylixlab_assignments_data');
+        if (stored) localData = JSON.parse(stored);
+      } catch {}
+
+      const updated = ['01', '02', '03', '04', '05'].map((asgId, idx) => {
+        const s = serverStats.find((item) => item.assignmentId === asgId) || {};
+        let count = s.completedStudents || 0;
+        let avg = s.avgMarks || 0;
+
+        const loc = localData[asgId] || localData[String(idx + 1)];
+        if (loc && loc.completed) {
+          const locMarks = Number(loc.correctCount !== undefined ? loc.correctCount : (loc.marks || 0));
+          if (count === 0) {
+            count = 1;
+            avg = locMarks;
+          } else {
+            avg = Math.round((avg * count + locMarks) / (count + 1));
+            count += 1;
+          }
+        }
+
+        return {
+          id: idx + 1,
+          assignmentId: asgId,
+          name: `Assignment ${idx + 1}`,
+          short: `Asg ${idx + 1}`,
+          avgMarks: Math.min(Math.max(avg, 0), 30),
+          completedStudents: Math.min(Math.max(count, 0), 30),
+          color: ASSIGNMENT_COLORS[idx],
+        };
+      });
+
+      setAssignmentStats(updated);
+    } catch (err) {
+      console.warn('Could not fetch assignment stats:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -61,11 +112,11 @@ const AdminDashboard = () => {
         const res = await axios.get('/api/auth/stats');
         if (res.data && res.data.success) {
           setUserStats({
-            studentPct: res.data.studentPct || 24,
-            parentPct: res.data.parentPct || 22,
-            students: res.data.students || 12,
-            parents: res.data.parents || 11,
-            total: res.data.total || 23,
+            studentPct: res.data.studentPct || 60,
+            parentPct: res.data.parentPct || 40,
+            students: res.data.students || 3,
+            parents: res.data.parents || 2,
+            total: res.data.total || 5,
           });
         }
       } catch {
@@ -73,6 +124,20 @@ const AdminDashboard = () => {
       }
     };
     fetchStats();
+    fetchAssignmentStats();
+
+    const handleUpdate = () => {
+      fetchStats();
+      fetchAssignmentStats();
+    };
+
+    window.addEventListener('cylixlab_assignment_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      window.removeEventListener('cylixlab_assignment_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
   }, []);
 
   // Learning Path Form State
@@ -347,7 +412,7 @@ const AdminDashboard = () => {
               />
             </div>
             <div className="admin-user-info-col">
-              <span className="admin-greeting-text">Hellow Anushka</span>
+              <span className="admin-greeting-text">Hello Anushka</span>
               <button
                 type="button"
                 onClick={handleLogout}
@@ -499,14 +564,14 @@ const AdminDashboard = () => {
             </div>
           </section>
 
-          {/* ROW 2: Graphs Row ("Averange Marks" & "Assignments Completed") */}
+          {/* ROW 2: Graphs Row ("Average Marks" & "Assignments Completed") */}
           <section className="admin-graphs-grid">
-            {/* Graph 1: Averange Marks */}
+            {/* Graph 1: Average Marks */}
             <div className="admin-graph-card">
-              <h2 className="admin-section-heading">Averange Marks</h2>
+              <h2 className="admin-section-heading">Average Marks</h2>
               <div className="admin-barchart-wrapper">
                 {/* Vertical Y-axis label */}
-                <div className="admin-yaxis-label">Averange Marks</div>
+                <div className="admin-yaxis-label">Average Marks</div>
 
                 {/* SVG Bar Chart with same 5 assignment colors */}
                 <svg viewBox="0 0 280 180" className="admin-chart-svg">
@@ -528,7 +593,7 @@ const AdminDashboard = () => {
                   <line x1="38" y1="150" x2="270" y2="150" stroke="#cbd5e1" strokeWidth="1.2" />
 
                   {/* 5 Assignment Bars */}
-                  {ASSIGNMENTS.map((asg, idx) => {
+                  {assignmentStats.map((asg, idx) => {
                     const barWidth = 32;
                     const barX = 48 + idx * 44;
                     const barHeight = (asg.avgMarks / 30) * 130;
@@ -593,7 +658,7 @@ const AdminDashboard = () => {
                   <line x1="38" y1="150" x2="270" y2="150" stroke="#cbd5e1" strokeWidth="1.2" />
 
                   {/* 5 Assignment Bars */}
-                  {ASSIGNMENTS.map((asg, idx) => {
+                  {assignmentStats.map((asg, idx) => {
                     const barWidth = 32;
                     const barX = 48 + idx * 44;
                     const barHeight = (asg.completedStudents / 30) * 130;

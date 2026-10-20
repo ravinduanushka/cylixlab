@@ -172,6 +172,24 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
           detail: { assignmentId: safeAsgId, marks: score },
         })
       );
+
+      // Post to backend server for Admin dashboard statistics
+      let studentEmail = 'student@cylixlab.com';
+      let studentName = 'Student';
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        if (u.email) studentEmail = u.email;
+        if (u.name) studentName = u.name;
+      } catch {}
+
+      axios.post('/api/courses/assignment-submit', {
+        assignmentId: safeAsgId,
+        studentEmail,
+        studentName,
+        marks: score,
+        total: totalQuestions,
+        answeredCount,
+      }).catch((err) => console.warn('Could not post submission to server:', err.message));
     } catch (e) {
       console.error('Error saving assignment progress:', e);
     }
