@@ -146,41 +146,6 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
     setSelectedAsgId((prev) => (prev === id ? null : id));
   };
 
-  // Simulation controls for live testing (optional dev helpers)
-  const handleSimulateState = (type) => {
-    if (type === 'real') {
-      loadRealProgress(studentName);
-      return;
-    }
-    let updated;
-    if (type === 'sample') {
-      updated = {
-        '01': { assignmentId: '01', completed: true, marks: 24 },
-        '02': { assignmentId: '02', completed: true, marks: 14 },
-        '03': { assignmentId: '03', completed: true, marks: 28 },
-        '04': { assignmentId: '04', completed: true, marks: 21 },
-        '05': { assignmentId: '05', completed: false, marks: 0 },
-      };
-    } else if (type === 'all_pass') {
-      updated = {
-        '01': { assignmentId: '01', completed: true, marks: 25 },
-        '02': { assignmentId: '02', completed: true, marks: 22 },
-        '03': { assignmentId: '03', completed: true, marks: 28 },
-        '04': { assignmentId: '04', completed: true, marks: 26 },
-        '05': { assignmentId: '05', completed: true, marks: 30 },
-      };
-    } else if (type === 'reset') {
-      updated = {
-        '01': { assignmentId: '01', completed: false, marks: 0 },
-        '02': { assignmentId: '02', completed: false, marks: 0 },
-        '03': { assignmentId: '03', completed: false, marks: 0 },
-        '04': { assignmentId: '04', completed: false, marks: 0 },
-        '05': { assignmentId: '05', completed: false, marks: 0 },
-      };
-    }
-    setAssignmentsData(updated);
-  };
-
   // Determine status color for an assignment: pass (green), not pass (red), not yet (blue)
   const getStatusInfo = (id) => {
     const data = assignmentsData[id];
@@ -431,43 +396,6 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
             Excellent work! You have shown a deep understanding of the subject and completed your tasks with great precision.
           </p>
         </div>
-      </div>
-
-      {/* SECTION 4: Live Development / Refresh Controls */}
-      <div className="psp-dev-toolbar">
-        <span className="psp-dev-label">📊 Data Controls:</span>
-        <button
-          type="button"
-          className="psp-dev-btn"
-          onClick={() => handleSimulateState('real')}
-          title="Reload latest live data from server"
-        >
-          🔄 Refresh Live Data
-        </button>
-        <button
-          type="button"
-          className="psp-dev-btn"
-          onClick={() => handleSimulateState('sample')}
-          title="Preview mock sample data"
-        >
-          Preview Sample
-        </button>
-        <button
-          type="button"
-          className="psp-dev-btn"
-          onClick={() => handleSimulateState('all_pass')}
-          title="Preview all 5 passed"
-        >
-          Preview All Pass
-        </button>
-        <button
-          type="button"
-          className="psp-dev-btn psp-dev-btn-reset"
-          onClick={() => handleSimulateState('reset')}
-          title="Reset to not started"
-        >
-          Reset
-        </button>
       </div>
     </div>
   );
