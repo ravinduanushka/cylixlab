@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
 
-dotenv.config({ path: path.join(__dirname, 'server/.env') });
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -12,7 +12,7 @@ cloudinary.config({
 });
 
 async function migrate() {
-  const uploadDir = path.join(__dirname, 'server/uploads');
+  const uploadDir = path.join(__dirname, 'uploads');
   const files = [
     { file: 'learning_path_01.pdf', folder: 'cylixlab/learning_paths', publicId: 'learning_path_01', type: 'lp', id: '01' },
     { file: 'learning_path_02.pdf', folder: 'cylixlab/learning_paths', publicId: 'learning_path_02', type: 'lp', id: '02' },
