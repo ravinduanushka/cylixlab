@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import Footer from './Footer';
 import TodoListManager from './TodoListManager';
 import LearningPathDetailView from './LearningPathDetailView';
