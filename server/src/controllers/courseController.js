@@ -3,6 +3,7 @@ const LearningPath = require('../models/LearningPath');
 const Assignment = require('../models/Assignment');
 const AssignmentSubmission = require('../models/AssignmentSubmission');
 const cloudinary = require('../config/cloudinary');
+const mongoose = require('mongoose');
 
 const fs = require('fs');
 const path = require('path');
@@ -212,48 +213,58 @@ const uploadLearningPathPdf = async (req, res) => {
 const getLearningPathPdf = async (req, res) => {
   try {
     const safePathId = String(req.params.pathId || '01').padStart(2, '0');
+    const targetFile = `learning_path_${safePathId}.pdf`;
+    const targetPath = path.join(uploadDir, targetFile);
+    const localExists = fs.existsSync(targetPath);
 
-    // 1. First check MongoDB
-    try {
-      const doc = await LearningPath.findOne({ pathId: safePathId });
-      if (doc) {
-        return res.status(200).json({
-          success: true,
-          exists: true,
-          url: doc.url,
-          fileName: doc.fileName,
-          totalPages: doc.totalPages || 12,
-        });
-      }
-    } catch (dbErr) {
-      console.warn('MongoDB query warning:', dbErr.message);
+    // Fast page count computation
+    let pageCount = 12;
+    if (localExists) {
+      try {
+        const content = fs.readFileSync(targetPath, 'latin1');
+        const matches = content.match(/\/Type\s*\/Page[^s]/g);
+        if (matches && matches.length > 0) pageCount = matches.length;
+      } catch {}
     }
 
-    // 2. Fallback check local file & metadata
+    // 1. Check MongoDB only if connected to avoid buffer freeze
+    let doc = null;
+    if (mongoose.connection && mongoose.connection.readyState === 1) {
+      try {
+        doc = await LearningPath.findOne({ pathId: safePathId });
+        if (doc && doc.totalPages) pageCount = doc.totalPages;
+      } catch (dbErr) {
+        console.warn('MongoDB query warning:', dbErr.message);
+      }
+    }
+
+    // 2. Check metadata file
     let meta = {};
     if (fs.existsSync(lpMetaFile)) {
       try {
         meta = JSON.parse(fs.readFileSync(lpMetaFile, 'utf8'));
       } catch {}
     }
-    const targetFile = `learning_path_${safePathId}.pdf`;
-    const targetPath = path.join(uploadDir, targetFile);
 
-    if (fs.existsSync(targetPath) || meta[safePathId]) {
-      let pageCount = 12;
-      try {
-        if (fs.existsSync(targetPath)) {
-          const content = fs.readFileSync(targetPath, 'latin1');
-          const matches = content.match(/\/Type\s*\/Page[^s]/g);
-          if (matches && matches.length > 0) pageCount = matches.length;
-        }
-      } catch {}
+    const host = req.get('host') || '';
+    const isLocalRequest = host.includes('localhost') || host.includes('127.0.0.1') || process.env.NODE_ENV !== 'production';
 
+    // Prioritize instant local file URL when running locally or file is on disk
+    let finalUrl;
+    if (localExists && (isLocalRequest || !doc?.url)) {
+      finalUrl = `/uploads/${targetFile}`;
+    } else {
+      finalUrl = doc?.url || meta[safePathId]?.url || `/uploads/${targetFile}`;
+    }
+
+    if (localExists || doc || meta[safePathId]) {
       return res.status(200).json({
         success: true,
         exists: true,
-        url: meta[safePathId]?.url || `/uploads/${targetFile}`,
-        fileName: meta[safePathId]?.fileName || targetFile,
+        url: finalUrl,
+        localUrl: `/uploads/${targetFile}`,
+        remoteUrl: doc?.url || meta[safePathId]?.url || null,
+        fileName: doc?.fileName || meta[safePathId]?.fileName || targetFile,
         totalPages: pageCount,
       });
     }
@@ -262,6 +273,7 @@ const getLearningPathPdf = async (req, res) => {
       success: true,
       exists: false,
       message: 'No PDF uploaded yet',
+      totalPages: 12,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server Error', error: error.message });
