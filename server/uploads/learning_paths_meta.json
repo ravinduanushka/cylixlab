@@ -10,5 +10,23 @@
     "fileName": "CylixLab_Module02_Theory_Study_Guide.pdf",
     "url": "/uploads/learning_path_02.pdf?t=1792447642025",
     "updatedAt": "2026-10-19T22:07:22.025Z"
+  },
+  "03": {
+    "pathId": "03",
+    "fileName": "CylixLab_Module03_Theory_Study_Guide.pdf",
+    "url": "/uploads/learning_path_03.pdf?t=1793035418235",
+    "updatedAt": "2026-10-26T17:23:38.235Z"
+  },
+  "04": {
+    "pathId": "04",
+    "fileName": "CylixLab_Module04_Theory_Study_Guide.pdf",
+    "url": "/uploads/learning_path_04.pdf?t=1793035485144",
+    "updatedAt": "2026-10-26T17:24:45.144Z"
+  },
+  "05": {
+    "pathId": "05",
+    "fileName": "CylixLab_Module05_Theory_Study_Guide.pdf",
+    "url": "/uploads/learning_path_05.pdf?t=1793036083764",
+    "updatedAt": "2026-10-26T17:34:43.764Z"
   }
 }
