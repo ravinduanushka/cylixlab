@@ -111,6 +111,72 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
     gender: 'male',
   });
   const [activeCycleIndex, setActiveCycleIndex] = useState(-1);
+  const [completedAssignments, setCompletedAssignments] = useState({});
+
+  // Fetch completed assignments for this student
+  const loadCompletedAssignments = async () => {
+    let email = '';
+    let name = '';
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      if (u.email) email = u.email;
+      if (u.name) name = u.name;
+    } catch {}
+
+    if (!email && userData.email) email = userData.email;
+    if (!name && userData.name) name = userData.name;
+
+    const completedMap = {};
+
+    // 1. Check user-scoped local storage
+    if (email) {
+      try {
+        const stored = localStorage.getItem(`cylixlab_assignments_data_${email}`);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          Object.keys(parsed).forEach((k) => {
+            const safe = String(k).padStart(2, '0');
+            if (parsed[k]?.completed) {
+              completedMap[safe] = true;
+            }
+          });
+        }
+      } catch {}
+    }
+
+    // 2. Fetch from backend submissions
+    if (email || (name && name.toLowerCase() !== 'student')) {
+      try {
+        const res = await axios.get('/api/courses/student-submissions', {
+          params: { studentEmail: email, studentName: name },
+        });
+        if (res.data && res.data.success && Array.isArray(res.data.submissions)) {
+          res.data.submissions.forEach((sub) => {
+            const safe = String(sub.assignmentId).padStart(2, '0');
+            completedMap[safe] = true;
+          });
+        }
+      } catch {}
+    }
+
+    setCompletedAssignments(completedMap);
+  };
+
+  useEffect(() => {
+    loadCompletedAssignments();
+
+    const handleUpdate = () => {
+      loadCompletedAssignments();
+    };
+
+    window.addEventListener('cylixlab_assignment_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      window.removeEventListener('cylixlab_assignment_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, [userData.email, userData.name, currentView, activeAssignment]);
 
   useEffect(() => {
     try {
@@ -479,16 +545,20 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
               <div className="learning-card-box">
                 <h3 className="learning-card-title">Assignment</h3>
                 <div className="learning-buttons-list">
-                  {['01', '02', '03', '04', '05'].map((num) => (
-                    <button
-                      key={`as-${num}`}
-                      type="button"
-                      className="learning-action-red-btn"
-                      onClick={() => setActiveAssignment(num)}
-                    >
-                      Assignment {num}
-                    </button>
-                  ))}
+                  {['01', '02', '03', '04', '05'].map((num) => {
+                    const isDone = !!completedAssignments[num];
+                    return (
+                      <button
+                        key={`as-${num}`}
+                        type="button"
+                        className={isDone ? 'learning-action-green-btn' : 'learning-action-red-btn'}
+                        onClick={() => setActiveAssignment(num)}
+                        title={isDone ? `Reattempt Assignment ${num}` : `Start Assignment ${num}`}
+                      >
+                        {isDone ? `Assignment ${num} (Reattempt)` : `Assignment ${num}`}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
