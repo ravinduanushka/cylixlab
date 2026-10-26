@@ -147,19 +147,21 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
     return count;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const score = getCorrectAnswersCount();
     setCorrectCount(score);
     setIsSubmitted(true);
     setShowSubmitModal(true);
     try {
-      let studentEmail = 'student@cylixlab.com';
+      let studentEmail = '';
       let studentName = 'Student';
       try {
         const u = JSON.parse(localStorage.getItem('user') || '{}');
         if (u.email) studentEmail = u.email;
         if (u.name) studentName = u.name;
       } catch {}
+
+      if (!studentEmail) studentEmail = 'student@cylixlab.com';
 
       const userStorageKey = `cylixlab_assignments_data_${studentEmail}`;
       const stored = localStorage.getItem(userStorageKey);
@@ -180,21 +182,22 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
       // Clean up any old global unscoped storage
       localStorage.removeItem('cylixlab_assignments_data');
 
-      window.dispatchEvent(
-        new CustomEvent('cylixlab_assignment_updated', {
-          detail: { assignmentId: safeAsgId, marks: score, studentEmail },
-        })
-      );
-
-      // Post to backend server for Admin dashboard statistics
-      axios.post('/api/courses/assignment-submit', {
+      // 1. Post to backend server first so database is updated with reattempt score
+      await axios.post('/api/courses/assignment-submit', {
         assignmentId: safeAsgId,
         studentEmail,
         studentName,
         marks: score,
         total: totalQuestions,
         answeredCount,
-      }).catch((err) => console.warn('Could not post submission to server:', err.message));
+      });
+
+      // 2. Notify all pages and components (Student Dashboard, Parent Dashboard, Analyse Progress, Admin)
+      window.dispatchEvent(
+        new CustomEvent('cylixlab_assignment_updated', {
+          detail: { assignmentId: safeAsgId, marks: score, studentEmail, studentName },
+        })
+      );
     } catch (e) {
       console.error('Error saving assignment progress:', e);
     }
