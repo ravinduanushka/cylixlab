@@ -614,24 +614,30 @@ const submitAssignmentProgress = async (req, res) => {
     const { assignmentId = '01', studentEmail, studentName, marks, total = 30, answeredCount } = req.body;
     const safeAsgId = String(assignmentId).padStart(2, '0');
     const email = (studentEmail && studentEmail.trim()) || 'student@cylixlab.com';
+    const name = (studentName && studentName.trim()) || 'Student';
 
     const newRecord = {
       id: Date.now(),
       assignmentId: safeAsgId,
       studentEmail: email,
-      studentName: studentName || 'Student',
+      studentName: name,
       marks: Number(marks) || 0,
       total: Number(total) || 30,
       answeredCount: Number(answeredCount) || 0,
       submittedAt: new Date(),
     };
 
-    // 1. Save / Update in MongoDB (works flawlessly in serverless without filesystem errors)
+    // 1. Save / Update in MongoDB (matches either by studentEmail or studentName)
     try {
+      const orConditions = [{ studentEmail: new RegExp(`^${email.trim()}$`, 'i') }];
+      if (name && name.toLowerCase() !== 'student') {
+        orConditions.push({ studentName: new RegExp(`^${name.trim()}$`, 'i') });
+      }
+
       await AssignmentSubmission.findOneAndUpdate(
         {
           assignmentId: safeAsgId,
-          studentEmail: new RegExp(`^${email.trim()}$`, 'i'),
+          $or: orConditions,
         },
         newRecord,
         { upsert: true, new: true }
@@ -640,7 +646,7 @@ const submitAssignmentProgress = async (req, res) => {
       console.warn('MongoDB submission save warning:', dbErr.message);
     }
 
-    // 2. Fallback: Save to local JSON file if running in writable environment
+    // 2. Fallback / Sync to local JSON file
     try {
       let submissions = [];
       if (fs.existsSync(submissionsFile)) {
@@ -652,7 +658,7 @@ const submitAssignmentProgress = async (req, res) => {
       const existingIndex = submissions.findIndex((s) => {
         const matchAsg = (s.assignmentId === safeAsgId || s.assignmentId === String(parseInt(safeAsgId, 10)));
         const matchEmail = s.studentEmail && email && (s.studentEmail.trim().toLowerCase() === email.trim().toLowerCase());
-        const matchName = s.studentName && studentName && (s.studentName.trim().toLowerCase() === studentName.trim().toLowerCase());
+        const matchName = s.studentName && name && name.toLowerCase() !== 'student' && (s.studentName.trim().toLowerCase() === name.trim().toLowerCase());
         return matchAsg && (matchEmail || matchName);
       });
 
@@ -675,24 +681,40 @@ const submitAssignmentProgress = async (req, res) => {
 
 const getAdminAssignmentStats = async (req, res) => {
   try {
-    let submissions = [];
+    const submissionMap = new Map();
 
     // 1. Try reading from MongoDB
     try {
       const dbSubmissions = await AssignmentSubmission.find().lean();
-      if (dbSubmissions && dbSubmissions.length > 0) {
-        submissions = dbSubmissions;
+      if (Array.isArray(dbSubmissions)) {
+        dbSubmissions.forEach((s) => {
+          const safeId = String(s.assignmentId).padStart(2, '0');
+          const studentKey = (s.studentEmail || s.studentName || 'unknown').trim().toLowerCase();
+          submissionMap.set(`${safeId}_${studentKey}`, s);
+        });
       }
     } catch (dbErr) {
       console.warn('MongoDB AssignmentSubmission query warning:', dbErr.message);
     }
 
-    // 2. Fallback to JSON file if MongoDB was empty or unavailable
-    if (submissions.length === 0 && fs.existsSync(submissionsFile)) {
+    // 2. Merge from JSON file so no submissions are missed
+    if (fs.existsSync(submissionsFile)) {
       try {
-        submissions = JSON.parse(fs.readFileSync(submissionsFile, 'utf8'));
+        const fileSubmissions = JSON.parse(fs.readFileSync(submissionsFile, 'utf8'));
+        if (Array.isArray(fileSubmissions)) {
+          fileSubmissions.forEach((s) => {
+            const safeId = String(s.assignmentId).padStart(2, '0');
+            const studentKey = (s.studentEmail || s.studentName || 'unknown').trim().toLowerCase();
+            const key = `${safeId}_${studentKey}`;
+            if (!submissionMap.has(key)) {
+              submissionMap.set(key, s);
+            }
+          });
+        }
       } catch {}
     }
+
+    const submissions = Array.from(submissionMap.values());
 
     const stats = ['01', '02', '03', '04', '05'].map((asgId, index) => {
       const filtered = submissions.filter(
@@ -721,41 +743,60 @@ const getAdminAssignmentStats = async (req, res) => {
 const getStudentSubmissions = async (req, res) => {
   try {
     const { studentName, studentEmail } = req.query;
-    let submissions = [];
+    const emailTrim = (studentEmail || '').trim().toLowerCase();
+    const nameTrim = (studentName || '').trim().toLowerCase();
 
-    // 1. Try reading from MongoDB
+    const submissionMap = new Map();
+
+    // 1. Try reading from MongoDB (matches email OR student name)
     try {
-      let query = {};
-      if (studentEmail && studentEmail.trim()) {
-        query.studentEmail = new RegExp(`^${studentEmail.trim()}$`, 'i');
-      } else if (studentName && studentName.trim() && studentName.trim().toLowerCase() !== 'student') {
-        query.studentName = new RegExp(`^${studentName.trim()}$`, 'i');
+      const orConditions = [];
+      if (emailTrim) {
+        orConditions.push({ studentEmail: new RegExp(`^${emailTrim}$`, 'i') });
+      }
+      if (nameTrim && nameTrim !== 'student') {
+        orConditions.push({ studentName: new RegExp(`^${nameTrim}$`, 'i') });
       }
 
-      if (Object.keys(query).length > 0) {
-        submissions = await AssignmentSubmission.find(query).lean();
+      if (orConditions.length > 0) {
+        const dbSubmissions = await AssignmentSubmission.find({ $or: orConditions }).lean();
+        if (Array.isArray(dbSubmissions)) {
+          dbSubmissions.forEach((sub) => {
+            const safeId = String(sub.assignmentId).padStart(2, '0');
+            submissionMap.set(safeId, sub);
+          });
+        }
       }
     } catch (dbErr) {
       console.warn('MongoDB student submissions query warning:', dbErr.message);
     }
 
-    // 2. Fallback to JSON file
-    if (submissions.length === 0 && fs.existsSync(submissionsFile)) {
+    // 2. Read from local submissions file and MERGE all assignments
+    if (fs.existsSync(submissionsFile)) {
       try {
         const fileSubmissions = JSON.parse(fs.readFileSync(submissionsFile, 'utf8'));
-        if (studentEmail && studentEmail.trim()) {
-          const emailLower = studentEmail.trim().toLowerCase();
-          submissions = fileSubmissions.filter(
-            (s) => s.studentEmail && s.studentEmail.toLowerCase() === emailLower
-          );
-        } else if (studentName && studentName.trim() && studentName.trim().toLowerCase() !== 'student') {
-          const nameLower = studentName.trim().toLowerCase();
-          submissions = fileSubmissions.filter(
-            (s) => s.studentName && s.studentName.trim().toLowerCase() === nameLower
-          );
+        if (Array.isArray(fileSubmissions)) {
+          fileSubmissions.forEach((s) => {
+            const sEmail = (s.studentEmail || '').trim().toLowerCase();
+            const sName = (s.studentName || '').trim().toLowerCase();
+
+            const matchEmail = emailTrim && (sEmail === emailTrim);
+            const matchName = nameTrim && nameTrim !== 'student' && (sName === nameTrim);
+
+            if (matchEmail || matchName) {
+              const safeId = String(s.assignmentId).padStart(2, '0');
+              if (!submissionMap.has(safeId)) {
+                submissionMap.set(safeId, s);
+              }
+            }
+          });
         }
-      } catch {}
+      } catch (fileErr) {
+        console.warn('File submissions read warning:', fileErr.message);
+      }
     }
+
+    const submissions = Array.from(submissionMap.values());
 
     // Retrieve uploaded assignment IDs from MongoDB and local fallback
     let uploadedAssignmentIds = [];
