@@ -1,4 +1,10 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Ensure reliable DNS resolution for mongodb+srv:// records
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {}
 
 let isConnected = false;
 
