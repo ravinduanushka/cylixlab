@@ -738,7 +738,7 @@
   "03": {
     "assignmentId": "03",
     "fileName": "CylixLab_Module03_MCQ_Assessment.pdf",
-    "url": "/uploads/assignment_03.pdf?t=1793035444606",
+    "url": "https://res.cloudinary.com/s55yuwzb/raw/upload/v1793039850/cylixlab/assignments/assignment_03.pdf",
     "questions": [
       {
         "id": 1,
@@ -1106,7 +1106,7 @@
   "04": {
     "assignmentId": "04",
     "fileName": "CylixLab_Module04_MCQ_Assessment.pdf",
-    "url": "/uploads/assignment_04.pdf?t=1793035769172",
+    "url": "https://res.cloudinary.com/s55yuwzb/raw/upload/v1793039853/cylixlab/assignments/assignment_04.pdf",
     "questions": [
       {
         "id": 1,
@@ -1474,7 +1474,7 @@
   "05": {
     "assignmentId": "05",
     "fileName": "CylixLab_Module05_MCQ_Assessment.pdf",
-    "url": "/uploads/assignment_05.pdf?t=1793036101658",
+    "url": "https://res.cloudinary.com/s55yuwzb/raw/upload/v1793039855/cylixlab/assignments/assignment_05.pdf",
     "questions": [
       {
         "id": 1,

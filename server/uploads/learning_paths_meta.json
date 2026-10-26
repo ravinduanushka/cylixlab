@@ -14,19 +14,19 @@
   "03": {
     "pathId": "03",
     "fileName": "CylixLab_Module03_Theory_Study_Guide.pdf",
-    "url": "/uploads/learning_path_03.pdf?t=1793035418235",
+    "url": "https://res.cloudinary.com/s55yuwzb/raw/upload/v1793039849/cylixlab/learning_paths/learning_path_03.pdf",
     "updatedAt": "2026-10-26T17:23:38.235Z"
   },
   "04": {
     "pathId": "04",
     "fileName": "CylixLab_Module04_Theory_Study_Guide.pdf",
-    "url": "/uploads/learning_path_04.pdf?t=1793035485144",
+    "url": "https://res.cloudinary.com/s55yuwzb/raw/upload/v1793039852/cylixlab/learning_paths/learning_path_04.pdf",
     "updatedAt": "2026-10-26T17:24:45.144Z"
   },
   "05": {
     "pathId": "05",
     "fileName": "CylixLab_Module05_Theory_Study_Guide.pdf",
-    "url": "/uploads/learning_path_05.pdf?t=1793036083764",
+    "url": "https://res.cloudinary.com/s55yuwzb/raw/upload/v1793039854/cylixlab/learning_paths/learning_path_05.pdf",
     "updatedAt": "2026-10-26T17:34:43.764Z"
   }
 }
