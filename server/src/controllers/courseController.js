@@ -493,6 +493,47 @@ const getAdminAssignmentStats = async (req, res) => {
   }
 };
 
+const getStudentSubmissions = async (req, res) => {
+  try {
+    const { studentName, studentEmail } = req.query;
+    let submissions = [];
+    if (fs.existsSync(submissionsFile)) {
+      try {
+        submissions = JSON.parse(fs.readFileSync(submissionsFile, 'utf8'));
+      } catch {}
+    }
+
+    let filtered = submissions;
+    if (studentEmail && studentEmail.trim()) {
+      const emailLower = studentEmail.trim().toLowerCase();
+      filtered = filtered.filter(
+        (s) => s.studentEmail && s.studentEmail.toLowerCase() === emailLower
+      );
+    } else if (studentName && studentName.trim()) {
+      const nameLower = studentName.trim().toLowerCase();
+      filtered = filtered.filter(
+        (s) => s.studentName && s.studentName.trim().toLowerCase() === nameLower
+      );
+    }
+
+    let meta = {};
+    if (fs.existsSync(asgMetaFile)) {
+      try {
+        meta = JSON.parse(fs.readFileSync(asgMetaFile, 'utf8'));
+      } catch {}
+    }
+    const uploadedAssignmentIds = Object.keys(meta);
+
+    return res.status(200).json({
+      success: true,
+      submissions: filtered,
+      uploadedAssignmentIds,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
   createCourse,
   getCourses,
@@ -505,4 +546,5 @@ module.exports = {
   getAssignmentPdf,
   submitAssignmentProgress,
   getAdminAssignmentStats,
+  getStudentSubmissions,
 };
