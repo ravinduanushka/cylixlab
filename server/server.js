@@ -79,7 +79,20 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 const uploadsPath = path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadsPath));
 
-// 7. API Routes
+// 7. Ensure DB connection on serverless requests (Vercel)
+app.use(async (req, res, next) => {
+  if (req.path === '/' || req.path.startsWith('/uploads')) {
+    return next();
+  }
+  try {
+    await connectDB();
+  } catch (dbErr) {
+    // Continue so route handlers can catch and report state cleanly
+  }
+  next();
+});
+
+// 8. API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/courses', courseRoutes);

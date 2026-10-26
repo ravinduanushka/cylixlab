@@ -1,9 +1,22 @@
 const User = require('../models/User');
+const mongoose = require('mongoose');
+const connectDB = require('../config/db');
 const jwt = require('jsonwebtoken'); 
 
 // 1. Register User
 const registerUser = async (req, res) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      try {
+        await connectDB();
+      } catch (connErr) {}
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({
+          message: 'Database is not connected. Please add your MongoDB Atlas connection string (MONGO_URI) in Vercel Environment Variables.',
+        });
+      }
+    }
+
     const { name, email, password, role, gender, age, studentName } = req.body;
 
     if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
@@ -136,6 +149,17 @@ const loginUser = async (req, res) => {
     }
 
     // 2. Regular User Authentication (Parent or Student sharing email with different passwords)
+    if (mongoose.connection.readyState !== 1) {
+      try {
+        await connectDB();
+      } catch (connErr) {}
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({
+          message: 'Database is not connected. Please add your MongoDB Atlas connection string (MONGO_URI) in Vercel Environment Variables.',
+        });
+      }
+    }
+
     let candidateUsers = await User.find({ email: trimmedEmail });
     if (!candidateUsers || candidateUsers.length === 0) {
       return res.status(400).json({ message: 'Invalid Credentials' });

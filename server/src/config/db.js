@@ -4,16 +4,18 @@ let isConnected = false;
 
 const connectDB = async () => {
   // Reuse existing connection if already open (essential for Vercel serverless)
-  if (isConnected || mongoose.connection.readyState >= 1) {
+  if (isConnected && mongoose.connection.readyState === 1) {
     return mongoose.connection;
   }
 
   try {
     if (!process.env.MONGO_URI) {
-      throw new Error('MONGO_URI is not defined in .env file');
+      throw new Error('MONGO_URI is not defined in environment variables');
     }
 
-    const conn = await mongoose.connect(process.env.MONGO_URI);
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
     isConnected = true;
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
 
@@ -26,10 +28,9 @@ const connectDB = async () => {
 
     return conn;
   } catch (error) {
+    isConnected = false;
     console.error(`❌ MongoDB Connection Error: ${error.message}`);
-    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-      // In local development, don't crash hard immediately if MongoDB is momentarily offline
-    }
+    throw error;
   }
 };
 
