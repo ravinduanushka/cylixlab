@@ -5600,50 +5600,6 @@
   color: #000000;
 }
 
-/* SECTION 4: Dev Simulation Toolbar */
-.psp-dev-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 12px 18px;
-  background: #f8fafc;
-  border-radius: 10px;
-  border: 1px dashed #cbd5e1;
-  margin-top: 8px;
-}
-
-.psp-dev-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #475569;
-}
-
-.psp-dev-btn {
-  background-color: #2563eb;
-  color: #ffffff;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-}
-
-.psp-dev-btn:hover {
-  background-color: #1d4ed8;
-}
-
-.psp-dev-btn-reset {
-  background-color: #64748b;
-}
-
-.psp-dev-btn-reset:hover {
-  background-color: #475569;
-}
-
 /* Responsive adjustments */
 @media (max-width: 900px) {
   .psp-top-grid,
