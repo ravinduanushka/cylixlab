@@ -6,21 +6,13 @@ const jwt = require('jsonwebtoken');
 // 1. Register User
 const registerUser = async (req, res) => {
   try {
-    let connErrMsg = '';
-    if (mongoose.connection.readyState !== 1) {
-      try {
-        await connectDB();
-      } catch (connErr) {
-        connErrMsg = connErr?.message || String(connErr);
-      }
-      if (mongoose.connection.readyState !== 1) {
-        return res.status(503).json({
-          message: 'Database is not connected. ' + (connErrMsg || 'Please add your MongoDB Atlas connection string (MONGO_URI) in Vercel Environment Variables.'),
-          error: connErrMsg,
-          hasMongoUri: !!process.env.MONGO_URI,
-          mongoUriPrefix: process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 18) + '...' : 'none',
-        });
-      }
+    try {
+      await connectDB();
+    } catch (connErr) {
+      return res.status(503).json({
+        message: 'Database connection failed: ' + (connErr?.message || 'Unable to connect to MongoDB Atlas'),
+        error: connErr?.message,
+      });
     }
 
     const { name, email, password, role, gender, age, studentName } = req.body;
@@ -155,21 +147,13 @@ const loginUser = async (req, res) => {
     }
 
     // 2. Regular User Authentication (Parent or Student sharing email with different passwords)
-    let connErrMsg = '';
-    if (mongoose.connection.readyState !== 1) {
-      try {
-        await connectDB();
-      } catch (connErr) {
-        connErrMsg = connErr?.message || String(connErr);
-      }
-      if (mongoose.connection.readyState !== 1) {
-        return res.status(503).json({
-          message: 'Database is not connected. ' + (connErrMsg || 'Please add your MongoDB Atlas connection string (MONGO_URI) in Vercel Environment Variables.'),
-          error: connErrMsg,
-          hasMongoUri: !!process.env.MONGO_URI,
-          mongoUriPrefix: process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 18) + '...' : 'none',
-        });
-      }
+    try {
+      await connectDB();
+    } catch (connErr) {
+      return res.status(503).json({
+        message: 'Database connection failed: ' + (connErr?.message || 'Unable to connect to MongoDB Atlas'),
+        error: connErr?.message,
+      });
     }
 
     let candidateUsers = await User.find({ email: trimmedEmail });
