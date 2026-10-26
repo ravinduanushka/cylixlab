@@ -6,37 +6,48 @@ try {
   dns.setServers(['8.8.8.8', '1.1.1.1']);
 } catch {}
 
-let isConnected = false;
+let cachedConn = null;
+let cachedPromise = null;
 
 const connectDB = async () => {
-  // Reuse existing connection if already open (essential for Vercel serverless)
-  if (isConnected && mongoose.connection.readyState === 1) {
-    return mongoose.connection;
+  if (cachedConn && mongoose.connection.readyState === 1) {
+    return cachedConn;
   }
 
-  try {
+  if (mongoose.connection.readyState === 1) {
+    cachedConn = mongoose.connection;
+    return cachedConn;
+  }
+
+  if (!cachedPromise) {
     if (!process.env.MONGO_URI) {
       throw new Error('MONGO_URI is not defined in environment variables');
     }
 
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
-    });
-    isConnected = true;
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    cachedPromise = mongoose
+      .connect(process.env.MONGO_URI, {
+        serverSelectionTimeoutMS: 8000,
+      })
+      .then((m) => {
+        cachedConn = m.connection;
+        console.log(`✅ MongoDB Connected: ${m.connection.host}`);
+        return cachedConn;
+      })
+      .catch((err) => {
+        cachedPromise = null;
+        cachedConn = null;
+        console.error(`❌ MongoDB Connection Error: ${err.message}`);
+        throw err;
+      });
+  }
 
-    // Drop obsolete single-field email_1 unique index if present so compound {email, role} works
-    try {
-      await conn.connection.db.collection('users').dropIndex('email_1');
-    } catch {
-      // Index already dropped or not present
-    }
-
-    return conn;
-  } catch (error) {
-    isConnected = false;
-    console.error(`❌ MongoDB Connection Error: ${error.message}`);
-    throw error;
+  try {
+    await cachedPromise;
+    return cachedConn;
+  } catch (e) {
+    cachedPromise = null;
+    cachedConn = null;
+    throw e;
   }
 };
 
