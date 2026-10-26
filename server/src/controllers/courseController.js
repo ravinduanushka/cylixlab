@@ -87,6 +87,7 @@ const asgMetaFile = path.join(uploadDir, 'assignments_meta.json');
 const uploadLearningPathPdf = async (req, res) => {
   try {
     const { pathId = '01', fileName = 'document.pdf', fileData } = req.body;
+    const safeFileName = path.basename(String(fileName)).replace(/[^a-zA-Z0-9._-]/g, '_');
     if (!fileData) {
       return res.status(400).json({ success: false, message: 'No file data provided' });
     }

@@ -6,14 +6,14 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password, role, gender, age, studentName } = req.body;
 
-    const trimmedEmail = (email || '').trim().toLowerCase();
+    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ message: 'Email and password must be valid strings.' });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
     const adminEmail = (process.env.ADMIN_EMAIL || 'ravinduanushka248@gmail.com').trim().toLowerCase();
     if (trimmedEmail === adminEmail) {
       return res.status(400).json({ message: 'Admin account is dedicated and cannot be registered publicly.' });
-    }
-
-    if (!trimmedEmail || !password) {
-      return res.status(400).json({ message: 'Email and password are required.' });
     }
 
     const targetRole = role || 'student';
@@ -85,8 +85,8 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Please provide email and password' });
+    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ message: 'Please provide a valid email and password' });
     }
 
     const trimmedEmail = (email || '').trim().toLowerCase();
