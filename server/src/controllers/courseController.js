@@ -552,40 +552,48 @@ Output STRICT JSON array only:`;
 const getAssignmentPdf = async (req, res) => {
   try {
     const safeAsgId = String(req.params.assignmentId || '01').padStart(2, '0');
+    const targetFile = `assignment_${safeAsgId}.pdf`;
+    const targetPath = path.join(uploadDir, targetFile);
+    const localExists = fs.existsSync(targetPath);
 
-    // 1. First check MongoDB
-    try {
-      const doc = await Assignment.findOne({ assignmentId: safeAsgId });
-      if (doc) {
-        return res.status(200).json({
-          success: true,
-          exists: true,
-          url: doc.url,
-          fileName: doc.fileName,
-          questions: doc.questions || [],
-        });
+    // 1. Check MongoDB only if connected
+    let doc = null;
+    if (mongoose.connection && mongoose.connection.readyState === 1) {
+      try {
+        doc = await Assignment.findOne({ assignmentId: safeAsgId });
+      } catch (dbErr) {
+        console.warn('MongoDB Assignment query warning:', dbErr.message);
       }
-    } catch (dbErr) {
-      console.warn('MongoDB Assignment query warning:', dbErr.message);
     }
 
-    // 2. Fallback check local file & metadata
+    // 2. Check metadata file
     let meta = {};
     if (fs.existsSync(asgMetaFile)) {
       try {
         meta = JSON.parse(fs.readFileSync(asgMetaFile, 'utf8'));
       } catch {}
     }
-    const targetFile = `assignment_${safeAsgId}.pdf`;
-    const targetPath = path.join(uploadDir, targetFile);
 
-    if (fs.existsSync(targetPath) || meta[safeAsgId]) {
-      const questions = meta[safeAsgId]?.questions || [];
+    const host = req.get('host') || '';
+    const isLocalRequest = host.includes('localhost') || host.includes('127.0.0.1') || process.env.NODE_ENV !== 'production';
+
+    let finalUrl;
+    if (localExists && (isLocalRequest || !doc?.url)) {
+      finalUrl = `/uploads/${targetFile}`;
+    } else {
+      finalUrl = doc?.url || meta[safeAsgId]?.url || `/uploads/${targetFile}`;
+    }
+
+    const questions = doc?.questions || meta[safeAsgId]?.questions || [];
+
+    if (localExists || doc || meta[safeAsgId]) {
       return res.status(200).json({
         success: true,
         exists: true,
-        url: meta[safeAsgId]?.url || `/uploads/${targetFile}`,
-        fileName: meta[safeAsgId]?.fileName || targetFile,
+        url: finalUrl,
+        localUrl: `/uploads/${targetFile}`,
+        remoteUrl: doc?.url || meta[safeAsgId]?.url || null,
+        fileName: doc?.fileName || meta[safeAsgId]?.fileName || targetFile,
         questions,
       });
     }

@@ -47,23 +47,32 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   const [zoomLevel, setZoomLevel] = useState(100);
   const [targetPage, setTargetPage] = useState(null);
 
-  // PDF URL state: loads from localStorage or backend
+  const isLocalEnv = typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+  // PDF URL state: on local machine, directly point to local file for instant 0ms load!
   const [pdfUrl, setPdfUrl] = useState(() => {
+    if (isLocalEnv) {
+      return `/uploads/learning_path_${safePathId}.pdf`;
+    }
     try {
-      return localStorage.getItem(`cylixlab_learning_pdf_${safePathId}`) || null;
+      return localStorage.getItem(`cylixlab_learning_pdf_${safePathId}`) || `/uploads/learning_path_${safePathId}.pdf`;
     } catch {
-      return null;
+      return `/uploads/learning_path_${safePathId}.pdf`;
     }
   });
 
-  // Countdown timer effect
+  // Countdown timer effect & path change
   useEffect(() => {
     setSecondsLeft(INITIAL_SECONDS);
     setIsRunning(true);
     setCurrentPage(1);
     setZoomLevel(100);
     setTargetPage(null);
-  }, [safePathId]);
+    if (isLocalEnv) {
+      setPdfUrl(`/uploads/learning_path_${safePathId}.pdf`);
+    }
+  }, [safePathId, isLocalEnv]);
 
   useEffect(() => {
     if (!isRunning || secondsLeft <= 0) return;
@@ -85,27 +94,26 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
   useEffect(() => {
     let isMounted = true;
 
-    try {
-      const local = localStorage.getItem(`cylixlab_learning_pdf_${safePathId}`);
-      if (local) {
-        setPdfUrl(local);
-      }
-    } catch {}
-
     const fetchServerPdf = async () => {
       try {
         const res = await axios.get(`/api/courses/learning-path-pdf/${safePathId}`);
-        if (isMounted && res.data && res.data.exists && res.data.url) {
-          setPdfUrl(res.data.url);
+        if (isMounted && res.data && res.data.exists) {
+          const nextUrl = (isLocalEnv && res.data.localUrl)
+            ? res.data.localUrl
+            : (res.data.url || `/uploads/learning_path_${safePathId}.pdf`);
+
+          setPdfUrl(nextUrl);
           if (res.data.totalPages) {
             setTotalPages(res.data.totalPages);
           }
           try {
-            localStorage.setItem(`cylixlab_learning_pdf_${safePathId}`, res.data.url);
+            localStorage.setItem(`cylixlab_learning_pdf_${safePathId}`, nextUrl);
           } catch {}
         }
       } catch (err) {
-        // Fallback to local
+        if (isMounted && !pdfUrl) {
+          setPdfUrl(`/uploads/learning_path_${safePathId}.pdf`);
+        }
       }
     };
 
@@ -126,7 +134,7 @@ const LearningPathDetailView = ({ pathId = '01', onBack }) => {
       isMounted = false;
       window.removeEventListener('cylixlab_pdf_uploaded', handlePdfUploaded);
     };
-  }, [safePathId]);
+  }, [safePathId, isLocalEnv]);
 
   // Handle body scroll locking and Escape key for full display
   useEffect(() => {
