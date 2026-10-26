@@ -12,59 +12,101 @@ const ASSIGNMENTS_CONFIG = [
 const MAX_MARKS = 30;
 const Y_AXIS_TICKS = [30, 24, 18, 12, 6, 0];
 
-const AnalyseProgressView = () => {
+const AnalyseProgressView = ({ studentEmail: propEmail = '', studentName: propName = '' }) => {
   const [assignmentsData, setAssignmentsData] = useState({});
   const [selectedAssignmentId, setSelectedAssignmentId] = useState('01');
 
   // Load assignments data strictly for current logged-in student
   const loadProgressData = async () => {
-    let studentName = '';
-    let studentEmail = '';
-    try {
-      const u = JSON.parse(localStorage.getItem('user') || '{}');
-      if (u.name) studentName = u.name;
-      if (u.email) studentEmail = u.email;
-    } catch {}
+    let studentName = propName;
+    let studentEmail = propEmail;
 
-    // Clean up any legacy unscoped storage from previous sessions
-    try {
-      localStorage.removeItem('cylixlab_assignments_data');
-    } catch {}
+    if (!studentEmail || !studentName) {
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!studentName && u.name) studentName = u.name;
+        if (!studentEmail && u.email) studentEmail = u.email;
+      } catch {}
+    }
+    if (!studentEmail) {
+      try {
+        const su = JSON.parse(localStorage.getItem('student_user') || '{}');
+        if (!studentName && su.name) studentName = su.name;
+        if (su.email) studentEmail = su.email;
+      } catch {}
+    }
+    if (!studentEmail) {
+      studentEmail = localStorage.getItem('student_email') || '';
+    }
+    if (!studentName) {
+      studentName = localStorage.getItem('student_name') || '';
+    }
 
     let studentData = {};
 
-    // 1. Load from user-scoped localStorage
+    // 1. Recover any legacy or offline stored progress so completed works are never wiped
+    try {
+      const legacy = localStorage.getItem('cylixlab_assignments_data');
+      if (legacy) {
+        const parsed = JSON.parse(legacy);
+        Object.assign(studentData, parsed);
+      }
+    } catch {}
+
+    try {
+      const defaultData = localStorage.getItem('cylixlab_assignments_data_student@cylixlab.com');
+      if (defaultData) {
+        const parsed = JSON.parse(defaultData);
+        Object.assign(studentData, parsed);
+      }
+    } catch {}
+
+    // 2. Load from user-scoped localStorage
     if (studentEmail) {
       try {
         const stored = localStorage.getItem(`cylixlab_assignments_data_${studentEmail}`);
         if (stored) {
-          studentData = JSON.parse(stored);
+          const parsed = JSON.parse(stored);
+          Object.assign(studentData, parsed);
         }
       } catch {}
     }
 
-    // 2. Fetch from backend server strictly for THIS student
-    if (studentEmail || (studentName && studentName.toLowerCase() !== 'student')) {
-      try {
-        const res = await axios.get('/api/courses/student-submissions', {
-          params: { studentName, studentEmail },
+    // 3. Fetch from backend server strictly for THIS student (merging MongoDB + server files)
+    try {
+      const res = await axios.get('/api/courses/student-submissions', {
+        params: {
+          studentName: studentName || undefined,
+          studentEmail: studentEmail || undefined,
+        },
+      });
+      if (res.data && res.data.success && Array.isArray(res.data.submissions)) {
+        res.data.submissions.forEach((sub) => {
+          const safeId = String(sub.assignmentId).padStart(2, '0');
+          const rec = {
+            assignmentId: safeId,
+            completed: true,
+            marks: Number(sub.marks) || 0,
+            total: sub.total || 30,
+            correctCount: Number(sub.marks) || 0,
+          };
+          studentData[safeId] = rec;
+          studentData[String(parseInt(safeId, 10))] = rec;
         });
-        if (res.data && res.data.success && Array.isArray(res.data.submissions)) {
-          res.data.submissions.forEach((sub) => {
-            const safeId = String(sub.assignmentId).padStart(2, '0');
-            studentData[safeId] = {
-              assignmentId: safeId,
-              completed: true,
-              marks: Number(sub.marks) || 0,
-              total: sub.total || 30,
-              correctCount: Number(sub.marks) || 0,
-            };
-          });
-        }
-      } catch (err) {
-        console.warn('Could not fetch student submissions:', err);
       }
+    } catch (err) {
+      console.warn('Could not fetch student submissions:', err);
     }
+
+    // 4. Save synced progress to localStorage so all past & new completions persist reliably
+    if (studentEmail) {
+      try {
+        localStorage.setItem(`cylixlab_assignments_data_${studentEmail}`, JSON.stringify(studentData));
+      } catch {}
+    }
+    try {
+      localStorage.setItem('cylixlab_assignments_data', JSON.stringify(studentData));
+    } catch {}
 
     setAssignmentsData(studentData);
   };
@@ -83,7 +125,7 @@ const AnalyseProgressView = () => {
       window.removeEventListener('cylixlab_assignment_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
-  }, []);
+  }, [propEmail, propName]);
 
 
   return (
@@ -169,7 +211,8 @@ const AnalyseProgressView = () => {
 
           <div className="ap-finished-box">
             {ASSIGNMENTS_CONFIG.map((asg) => {
-              const isCompleted = !!assignmentsData[asg.id]?.completed;
+              const data = assignmentsData[asg.id] || assignmentsData[String(parseInt(asg.id, 10))];
+              const isCompleted = !!data?.completed;
               const isSelected = selectedAssignmentId === asg.id;
 
               return (
