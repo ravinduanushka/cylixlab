@@ -572,7 +572,10 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
           ) : currentView === 'quotes' ? (
             <MotivationalQuotesView />
           ) : currentView === 'progress' ? (
-            <AnalyseProgressView />
+            <AnalyseProgressView
+              studentEmail={userData.email}
+              studentName={userData.name}
+            />
           ) : (
             <div className="student-features-list">
               {features.map((feature, index) => {
