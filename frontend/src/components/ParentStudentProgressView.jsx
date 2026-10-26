@@ -93,25 +93,9 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
       console.warn('Could not fetch server submissions:', err);
     }
 
-    // 2. Merge local browser submissions (cylixlab_assignments_data)
+    // 2. Clean up any stale global unscoped submissions
     try {
-      const local = localStorage.getItem('cylixlab_assignments_data');
-      if (local) {
-        const parsed = JSON.parse(local);
-        Object.keys(parsed).forEach((k) => {
-          const safeId = String(k).padStart(2, '0');
-          if (merged[safeId] && parsed[k]?.completed) {
-            merged[safeId] = {
-              assignmentId: safeId,
-              completed: true,
-              marks: Number(
-                parsed[k].correctCount !== undefined ? parsed[k].correctCount : (parsed[k].marks || 0)
-              ),
-              total: parsed[k].total || 30,
-            };
-          }
-        });
-      }
+      localStorage.removeItem('cylixlab_assignments_data');
     } catch {}
 
     setAssignmentsData(merged);

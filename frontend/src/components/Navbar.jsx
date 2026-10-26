@@ -23,8 +23,12 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('cylixlab_assignments_data');
+      localStorage.removeItem('cylixlab_parent_progress_data');
+    } catch {}
     setCurrentUser(null);
     navigate('/');
   };

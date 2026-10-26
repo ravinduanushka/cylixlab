@@ -504,17 +504,19 @@ const getStudentSubmissions = async (req, res) => {
       } catch {}
     }
 
-    let filtered = submissions;
+    let filtered = [];
     if (studentEmail && studentEmail.trim()) {
       const emailLower = studentEmail.trim().toLowerCase();
-      filtered = filtered.filter(
+      filtered = submissions.filter(
         (s) => s.studentEmail && s.studentEmail.toLowerCase() === emailLower
       );
-    } else if (studentName && studentName.trim()) {
+    } else if (studentName && studentName.trim() && studentName.trim().toLowerCase() !== 'student') {
       const nameLower = studentName.trim().toLowerCase();
-      filtered = filtered.filter(
+      filtered = submissions.filter(
         (s) => s.studentName && s.studentName.trim().toLowerCase() === nameLower
       );
+    } else {
+      filtered = [];
     }
 
     let meta = {};

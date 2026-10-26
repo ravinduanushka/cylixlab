@@ -153,7 +153,16 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
     setIsSubmitted(true);
     setShowSubmitModal(true);
     try {
-      const stored = localStorage.getItem('cylixlab_assignments_data');
+      let studentEmail = 'student@cylixlab.com';
+      let studentName = 'Student';
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        if (u.email) studentEmail = u.email;
+        if (u.name) studentName = u.name;
+      } catch {}
+
+      const userStorageKey = `cylixlab_assignments_data_${studentEmail}`;
+      const stored = localStorage.getItem(userStorageKey);
       const progressData = stored ? JSON.parse(stored) : {};
       const record = {
         assignmentId: safeAsgId,
@@ -166,22 +175,18 @@ const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
       };
       progressData[safeAsgId] = record;
       progressData[assignmentId] = record;
-      localStorage.setItem('cylixlab_assignments_data', JSON.stringify(progressData));
+      localStorage.setItem(userStorageKey, JSON.stringify(progressData));
+
+      // Clean up any old global unscoped storage
+      localStorage.removeItem('cylixlab_assignments_data');
+
       window.dispatchEvent(
         new CustomEvent('cylixlab_assignment_updated', {
-          detail: { assignmentId: safeAsgId, marks: score },
+          detail: { assignmentId: safeAsgId, marks: score, studentEmail },
         })
       );
 
       // Post to backend server for Admin dashboard statistics
-      let studentEmail = 'student@cylixlab.com';
-      let studentName = 'Student';
-      try {
-        const u = JSON.parse(localStorage.getItem('user') || '{}');
-        if (u.email) studentEmail = u.email;
-        if (u.name) studentName = u.name;
-      } catch {}
-
       axios.post('/api/courses/assignment-submit', {
         assignmentId: safeAsgId,
         studentEmail,
