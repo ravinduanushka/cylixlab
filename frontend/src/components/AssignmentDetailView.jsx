@@ -153,19 +153,45 @@ const AssignmentDetailView = ({ assignmentId = '01', studentEmail: propEmail = '
     setIsSubmitted(true);
     setShowSubmitModal(true);
     try {
-      let studentEmail = '';
-      let studentName = 'Student';
-      try {
-        const u = JSON.parse(localStorage.getItem('user') || '{}');
-        if (u.email) studentEmail = u.email;
-        if (u.name) studentName = u.name;
-      } catch {}
+      let studentEmail = propEmail;
+      let studentName = propName;
 
-      if (!studentEmail) studentEmail = 'student@cylixlab.com';
+      if (!studentEmail || !studentName) {
+        try {
+          const u = JSON.parse(localStorage.getItem('user') || '{}');
+          if (!studentEmail && u.email) studentEmail = u.email;
+          if (!studentName && u.name) studentName = u.name;
+        } catch {}
+      }
+      if (!studentEmail) {
+        try {
+          const su = JSON.parse(localStorage.getItem('student_user') || '{}');
+          if (!studentEmail && su.email) studentEmail = su.email;
+          if (!studentName && su.name) studentName = su.name;
+        } catch {}
+      }
+      if (!studentEmail) studentEmail = localStorage.getItem('student_email') || 'student@cylixlab.com';
+      if (!studentName || studentName === 'Student') studentName = localStorage.getItem('student_name') || 'Student';
 
       const userStorageKey = `cylixlab_assignments_data_${studentEmail}`;
-      const stored = localStorage.getItem(userStorageKey);
-      const progressData = stored ? JSON.parse(stored) : {};
+      let progressData = {};
+
+      // 1. Recover existing completions from all local storage keys so previous work is never lost
+      try {
+        const legacy = localStorage.getItem('cylixlab_assignments_data');
+        if (legacy) Object.assign(progressData, JSON.parse(legacy));
+      } catch {}
+
+      try {
+        const defStored = localStorage.getItem('cylixlab_assignments_data_student@cylixlab.com');
+        if (defStored) Object.assign(progressData, JSON.parse(defStored));
+      } catch {}
+
+      try {
+        const stored = localStorage.getItem(userStorageKey);
+        if (stored) Object.assign(progressData, JSON.parse(stored));
+      } catch {}
+
       const record = {
         assignmentId: safeAsgId,
         completed: true,
@@ -177,10 +203,11 @@ const AssignmentDetailView = ({ assignmentId = '01', studentEmail: propEmail = '
       };
       progressData[safeAsgId] = record;
       progressData[assignmentId] = record;
-      localStorage.setItem(userStorageKey, JSON.stringify(progressData));
+      progressData[String(parseInt(safeAsgId, 10))] = record;
 
-      // Clean up any old global unscoped storage
-      localStorage.removeItem('cylixlab_assignments_data');
+      // Persist to user storage and mirror to fallback storage
+      localStorage.setItem(userStorageKey, JSON.stringify(progressData));
+      localStorage.setItem('cylixlab_assignments_data', JSON.stringify(progressData));
 
       // 1. Post to backend server first so database is updated with reattempt score
       await axios.post('/api/courses/assignment-submit', {
