@@ -148,10 +148,15 @@ const OnlineChatbox = ({ role: propRole }) => {
           replyText = response.data.reply;
         }
       } catch (err) {
-        // Direct fallback to port 5000 if relative path failed
+        // Fallback request
         try {
+          const fallbackEndpoint =
+            window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+              ? 'http://localhost:5000/api/chat'
+              : 'https://cylixlab.vercel.app/api/chat';
+
           const directResponse = await axios.post(
-            'http://localhost:5000/api/chat',
+            fallbackEndpoint,
             {
               message: trimmed,
               role: effectiveRole,
