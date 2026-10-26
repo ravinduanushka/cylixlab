@@ -128,36 +128,36 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
 
     const completedMap = {};
 
-    // 1. Check user-scoped local storage
-    if (email) {
-      try {
-        const stored = localStorage.getItem(`cylixlab_assignments_data_${email}`);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          Object.keys(parsed).forEach((k) => {
-            const safe = String(k).padStart(2, '0');
-            if (parsed[k]?.completed) {
-              completedMap[safe] = true;
-            }
-          });
-        }
-      } catch {}
-    }
+    // 1. Check local storage (legacy, default, user-scoped)
+    ['cylixlab_assignments_data', 'cylixlab_assignments_data_student@cylixlab.com', email ? `cylixlab_assignments_data_${email}` : null]
+      .filter(Boolean)
+      .forEach((key) => {
+        try {
+          const stored = localStorage.getItem(key);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            Object.keys(parsed).forEach((k) => {
+              const safe = String(k).padStart(2, '0');
+              if (parsed[k]?.completed) {
+                completedMap[safe] = true;
+              }
+            });
+          }
+        } catch {}
+      });
 
-    // 2. Fetch from backend submissions
-    if (email || (name && name.toLowerCase() !== 'student')) {
-      try {
-        const res = await axios.get('/api/courses/student-submissions', {
-          params: { studentEmail: email, studentName: name },
+    // 2. Fetch from backend submissions (merges all server records)
+    try {
+      const res = await axios.get('/api/courses/student-submissions', {
+        params: { studentEmail: email || undefined, studentName: name || undefined },
+      });
+      if (res.data && res.data.success && Array.isArray(res.data.submissions)) {
+        res.data.submissions.forEach((sub) => {
+          const safe = String(sub.assignmentId).padStart(2, '0');
+          completedMap[safe] = true;
         });
-        if (res.data && res.data.success && Array.isArray(res.data.submissions)) {
-          res.data.submissions.forEach((sub) => {
-            const safe = String(sub.assignmentId).padStart(2, '0');
-            completedMap[safe] = true;
-          });
-        }
-      } catch {}
-    }
+      }
+    } catch {}
 
     setCompletedAssignments(completedMap);
   };
@@ -322,6 +322,8 @@ const StudentDashboard = ({ initialView = 'dashboard' }) => {
         ) : currentView === 'learning' && activeAssignment ? (
           <AssignmentDetailView
             assignmentId={activeAssignment}
+            studentEmail={userData.email}
+            studentName={userData.name}
             onBack={() => setActiveAssignment(null)}
           />
         ) : (
