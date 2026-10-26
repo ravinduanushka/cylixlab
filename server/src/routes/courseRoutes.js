@@ -12,6 +12,7 @@ const {
   getAssignmentPdf,
   submitAssignmentProgress,
   getAdminAssignmentStats,
+  getStudentSubmissions,
 } = require('../controllers/courseController');
 
 const { protect, authorize } = require('../middlewares/authMiddleware');
@@ -25,6 +26,7 @@ router.get('/assignment-pdf/:assignmentId', getAssignmentPdf);
 // Assignment submission and admin statistics routes
 router.post('/assignment-submit', submitAssignmentProgress);
 router.get('/admin-assignment-stats', getAdminAssignmentStats);
+router.get('/student-submissions', getStudentSubmissions);
 
 router.get('/', getCourses);
 router.get('/:id', getCourseById);
