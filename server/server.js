@@ -101,6 +101,11 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Start listen locally, or connect to DB on Vercel/Production
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  startServer();
+} else {
+  connectDB();
+}
 
 module.exports = app;
