@@ -444,9 +444,12 @@ const submitAssignmentProgress = async (req, res) => {
       submittedAt: new Date().toISOString(),
     };
 
-    const existingIndex = submissions.findIndex(
-      (s) => s.assignmentId === safeAsgId && s.studentEmail.toLowerCase() === email.toLowerCase()
-    );
+    const existingIndex = submissions.findIndex((s) => {
+      const matchAsg = (s.assignmentId === safeAsgId || s.assignmentId === String(parseInt(safeAsgId, 10)));
+      const matchEmail = s.studentEmail && email && (s.studentEmail.trim().toLowerCase() === email.trim().toLowerCase());
+      const matchName = s.studentName && studentName && (s.studentName.trim().toLowerCase() === studentName.trim().toLowerCase());
+      return matchAsg && (matchEmail || matchName);
+    });
     if (existingIndex >= 0) {
       submissions[existingIndex] = newRecord;
     } else {
