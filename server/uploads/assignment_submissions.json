@@ -8,5 +8,15 @@
     "total": 30,
     "answeredCount": 2,
     "submittedAt": "2026-10-26T09:48:14.394Z"
+  },
+  {
+    "id": 1793017703165,
+    "assignmentId": "01",
+    "studentEmail": "malindukalhara20@gmail.com",
+    "studentName": "Malindu Kalhara",
+    "marks": 6,
+    "total": 30,
+    "answeredCount": 30,
+    "submittedAt": "2026-10-26T12:28:23.165Z"
   }
 ]
