@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Footer from './Footer';
 
 const ASSIGNMENTS_CONFIG = [
@@ -14,18 +15,17 @@ const MAX_MARKS = 30;
 const PASSING_THRESHOLD = 20;
 const Y_AXIS_TICKS = [30, 24, 18, 12, 6, 0];
 
-// Default sample data showcasing all 3 states: pass (green), not pass (red), not yet (blue)
-const DEFAULT_PROGRESS_DATA = {
-  '01': { assignmentId: '01', completed: true, marks: 24 }, // Pass (>=20) -> Green
-  '02': { assignmentId: '02', completed: true, marks: 14 }, // Not Pass (<20) -> Red
-  '03': { assignmentId: '03', completed: true, marks: 28 }, // Pass (>=20) -> Green
-  '04': { assignmentId: '04', completed: true, marks: 21 }, // Pass (>=20) -> Green
-  '05': { assignmentId: '05', completed: false, marks: 0 },  // Not yet -> Blue
+const EMPTY_PROGRESS_DATA = {
+  '01': { assignmentId: '01', completed: false, marks: 0 },
+  '02': { assignmentId: '02', completed: false, marks: 0 },
+  '03': { assignmentId: '03', completed: false, marks: 0 },
+  '04': { assignmentId: '04', completed: false, marks: 0 },
+  '05': { assignmentId: '05', completed: false, marks: 0 },
 };
 
 const ParentStudentProgressView = ({ standalone = false, onBack = null, studentName: propStudentName = '' }) => {
   const navigate = useNavigate();
-  const [assignmentsData, setAssignmentsData] = useState(DEFAULT_PROGRESS_DATA);
+  const [assignmentsData, setAssignmentsData] = useState(EMPTY_PROGRESS_DATA);
   const [studentName, setStudentName] = useState(propStudentName || 'Student');
   const [selectedAsgId, setSelectedAsgId] = useState(null);
 
@@ -36,7 +36,7 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
     }
   }, [propStudentName]);
 
-  // Load student name and any stored progress data
+  // Load student name from user / parent storage
   useEffect(() => {
     try {
       if (!propStudentName) {
@@ -47,21 +47,91 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
             setStudentName(parsed.studentName);
           }
         } else {
-          const lastRegStudent = localStorage.getItem('lastRegisteredStudentName');
+          const lastRegStudent = localStorage.getItem('lastRegisteredStudentName') || localStorage.getItem('parent_student_name');
           if (lastRegStudent) {
             setStudentName(lastRegStudent);
           }
         }
       }
-
-      const storedProgress = localStorage.getItem('cylixlab_parent_progress_data');
-      if (storedProgress) {
-        setAssignmentsData(JSON.parse(storedProgress));
-      }
     } catch {
       // fallback
     }
   }, [propStudentName]);
+
+  // Load real student progress data from backend server + local storage
+  const loadRealProgress = async (nameToQuery) => {
+    const currentStudent = nameToQuery || studentName || propStudentName || 'Student';
+
+    const merged = {
+      '01': { assignmentId: '01', completed: false, marks: 0 },
+      '02': { assignmentId: '02', completed: false, marks: 0 },
+      '03': { assignmentId: '03', completed: false, marks: 0 },
+      '04': { assignmentId: '04', completed: false, marks: 0 },
+      '05': { assignmentId: '05', completed: false, marks: 0 },
+    };
+
+    // 1. Fetch real student submissions from backend server
+    try {
+      const res = await axios.get('/api/courses/student-submissions', {
+        params: { studentName: currentStudent },
+      });
+      if (res.data && res.data.success && Array.isArray(res.data.submissions)) {
+        res.data.submissions.forEach((sub) => {
+          const safeId = String(sub.assignmentId).padStart(2, '0');
+          if (merged[safeId]) {
+            merged[safeId] = {
+              assignmentId: safeId,
+              completed: true,
+              marks: Number(sub.marks) || 0,
+              total: sub.total || 30,
+              answeredCount: sub.answeredCount || 0,
+            };
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('Could not fetch server submissions:', err);
+    }
+
+    // 2. Merge local browser submissions (cylixlab_assignments_data)
+    try {
+      const local = localStorage.getItem('cylixlab_assignments_data');
+      if (local) {
+        const parsed = JSON.parse(local);
+        Object.keys(parsed).forEach((k) => {
+          const safeId = String(k).padStart(2, '0');
+          if (merged[safeId] && parsed[k]?.completed) {
+            merged[safeId] = {
+              assignmentId: safeId,
+              completed: true,
+              marks: Number(
+                parsed[k].correctCount !== undefined ? parsed[k].correctCount : (parsed[k].marks || 0)
+              ),
+              total: parsed[k].total || 30,
+            };
+          }
+        });
+      }
+    } catch {}
+
+    setAssignmentsData(merged);
+  };
+
+  useEffect(() => {
+    loadRealProgress(studentName);
+
+    const handleUpdate = () => {
+      loadRealProgress(studentName);
+    };
+
+    window.addEventListener('cylixlab_assignment_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      window.removeEventListener('cylixlab_assignment_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, [studentName]);
 
   const handleBack = () => {
     if (onBack) {
@@ -71,30 +141,26 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
     }
   };
 
-  // Toggle completion of an assignment
-  const handleToggleComplete = (id) => {
-    setAssignmentsData((prev) => {
-      const current = prev[id] || { assignmentId: id, completed: false, marks: 0 };
-      const nextCompleted = !current.completed;
-      const nextMarks = nextCompleted ? (current.marks > 0 ? current.marks : 22) : 0;
-      const updated = {
-        ...prev,
-        [id]: {
-          ...current,
-          completed: nextCompleted,
-          marks: nextMarks,
-        },
-      };
-      localStorage.setItem('cylixlab_parent_progress_data', JSON.stringify(updated));
-      return updated;
-    });
+  // Toggle selection on assignment click
+  const handleSelectAssignment = (id) => {
+    setSelectedAsgId((prev) => (prev === id ? null : id));
   };
 
-  // Simulation controls for live testing
+  // Simulation controls for live testing (optional dev helpers)
   const handleSimulateState = (type) => {
+    if (type === 'real') {
+      loadRealProgress(studentName);
+      return;
+    }
     let updated;
     if (type === 'sample') {
-      updated = DEFAULT_PROGRESS_DATA;
+      updated = {
+        '01': { assignmentId: '01', completed: true, marks: 24 },
+        '02': { assignmentId: '02', completed: true, marks: 14 },
+        '03': { assignmentId: '03', completed: true, marks: 28 },
+        '04': { assignmentId: '04', completed: true, marks: 21 },
+        '05': { assignmentId: '05', completed: false, marks: 0 },
+      };
     } else if (type === 'all_pass') {
       updated = {
         '01': { assignmentId: '01', completed: true, marks: 25 },
@@ -113,7 +179,6 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
       };
     }
     setAssignmentsData(updated);
-    localStorage.setItem('cylixlab_parent_progress_data', JSON.stringify(updated));
   };
 
   // Determine status color for an assignment: pass (green), not pass (red), not yet (blue)
@@ -138,20 +203,7 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
 
   const contentJSX = (
     <div className="psp-main-content">
-      {/* Back button to Parent Dashboard */}
-      <button
-        type="button"
-        className="dashboard-back-link-below psp-back-btn"
-        onClick={handleBack}
-        aria-label="Back to Parent Dashboard"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        <span>Back to Parent Dashboard</span>
-      </button>
-
-      {/* Student Name Title */}
+      {/* Student Name Title - situated cleanly at top with no duplicate back button */}
       <div className="psp-student-name-row">
         <h2 className="psp-student-name-heading">
           Student Name - {studentName ? (studentName.charAt(0).toUpperCase() + studentName.slice(1)) : 'Student'}
@@ -193,13 +245,16 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
                   const marks = isCompleted ? Math.min(Math.max(Number(data.marks || 0), 0), MAX_MARKS) : 0;
                   const heightPercent = (marks / MAX_MARKS) * 100;
                   const status = getStatusInfo(asg.id);
+                  const isSelected = selectedAsgId === asg.id;
 
                   return (
                     <div
                       key={`bar-${asg.id}`}
-                      className="psp-bar-col"
-                      onClick={() => handleToggleComplete(asg.id)}
-                      title={`${asg.label}: ${isCompleted ? `${marks} / 30 marks (${status.label})` : 'Not completed yet (Click to toggle)'}`}
+                      className={`psp-bar-col ${isSelected ? 'psp-bar-col-selected' : ''}`}
+                      onClick={() => handleSelectAssignment(asg.id)}
+                      title={`${asg.label}: ${isCompleted ? `${marks} / 30 marks (${status.label})` : 'Not completed yet'}`}
+                      role="button"
+                      tabIndex={0}
                     >
                       <div className="psp-bar-slot">
                         {isCompleted && (
@@ -233,12 +288,13 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
             <div className="psp-grey-box-list">
               {ASSIGNMENTS_CONFIG.map((asg) => {
                 const isCompleted = !!assignmentsData[asg.id]?.completed;
+                const isSelected = selectedAsgId === asg.id;
                 return (
                   <div
                     key={`fw-${asg.id}`}
-                    className="psp-fw-row"
-                    onClick={() => handleToggleComplete(asg.id)}
-                    title={`Click to mark Assignment ${asg.id} as ${isCompleted ? 'unfinished' : 'finished'}`}
+                    className={`psp-fw-row ${isSelected ? 'psp-row-selected' : ''}`}
+                    onClick={() => handleSelectAssignment(asg.id)}
+                    title={`Assignment ${asg.id}: ${isCompleted ? 'Completed' : 'Not finished yet'}`}
                     role="button"
                     tabIndex={0}
                   >
@@ -262,12 +318,13 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
             <div className="psp-grey-box-list">
               {ASSIGNMENTS_CONFIG.map((asg) => {
                 const status = getStatusInfo(asg.id);
+                const isCompleted = !!assignmentsData[asg.id]?.completed;
                 return (
                   <div key={`st-${asg.id}`} className="psp-status-row">
                     <div
                       className="psp-status-rect"
                       style={{ backgroundColor: status.color }}
-                      title={`Assignment ${asg.id}: ${status.label} (${assignmentsData[asg.id]?.completed ? `${assignmentsData[asg.id]?.marks || 0} marks` : 'not submitted'})`}
+                      title={`Assignment ${asg.id}: ${status.label} (${isCompleted ? `${assignmentsData[asg.id]?.marks || 0} marks` : 'not submitted'})`}
                     />
                   </div>
                 );
@@ -286,7 +343,7 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
 
             <div className="psp-donut-container">
               <svg viewBox="0 0 200 200" className="psp-donut-svg" aria-label="Marks cycle chart with 5 assignment colors">
-                {/* 5 Segments in 5 distinct colors matching user Image 2 */}
+                {/* 5 Segments in 5 distinct colors */}
                 {ASSIGNMENTS_CONFIG.map((asg, index) => {
                   const data = assignmentsData[asg.id];
                   const isCompleted = !!data?.completed;
@@ -302,17 +359,17 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
                       cy="100"
                       r={radius}
                       fill="none"
-                      stroke={asg.cycleColor}
+                      stroke={isCompleted ? asg.cycleColor : '#cbd5e1'}
                       strokeWidth={isSelected ? strokeWidth + 4 : strokeWidth}
                       strokeDasharray={`${visibleSegmentLength} ${circumference - visibleSegmentLength}`}
                       strokeDashoffset={0}
                       transform={`rotate(${rotationAngle} 100 100)`}
                       className="psp-donut-segment"
-                      onClick={() => setSelectedAsgId(asg.id === selectedAsgId ? null : asg.id)}
+                      onClick={() => handleSelectAssignment(asg.id)}
                       style={{
                         cursor: 'pointer',
                         transition: 'stroke-width 0.2s ease, opacity 0.2s ease',
-                        opacity: isCompleted ? 1 : 0.85,
+                        opacity: isCompleted ? 1 : 0.35,
                       }}
                     >
                       <title>{`${asg.label}: ${isCompleted ? `${marks} / 30 marks` : 'Not completed yet'}`}</title>
@@ -376,30 +433,38 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
         </div>
       </div>
 
-      {/* SECTION 4: Live Development Simulation Controls */}
+      {/* SECTION 4: Live Development / Refresh Controls */}
       <div className="psp-dev-toolbar">
-        <span className="psp-dev-label">🧪 Live UI Preview:</span>
+        <span className="psp-dev-label">📊 Data Controls:</span>
+        <button
+          type="button"
+          className="psp-dev-btn"
+          onClick={() => handleSimulateState('real')}
+          title="Reload latest live data from server"
+        >
+          🔄 Refresh Live Data
+        </button>
         <button
           type="button"
           className="psp-dev-btn"
           onClick={() => handleSimulateState('sample')}
-          title="Load default mixed states: Pass (Green), Not Pass (Red), and Not Yet (Blue)"
+          title="Preview mock sample data"
         >
-          Sample Data (Pass/Fail/Not yet)
+          Preview Sample
         </button>
         <button
           type="button"
           className="psp-dev-btn"
           onClick={() => handleSimulateState('all_pass')}
-          title="Mark all 5 assignments as Passed"
+          title="Preview all 5 passed"
         >
-          All 5 Passed
+          Preview All Pass
         </button>
         <button
           type="button"
           className="psp-dev-btn psp-dev-btn-reset"
           onClick={() => handleSimulateState('reset')}
-          title="Reset to not started yet"
+          title="Reset to not started"
         >
           Reset
         </button>
@@ -427,6 +492,17 @@ const ParentStudentProgressView = ({ standalone = false, onBack = null, studentN
 
         {/* Scrollable Main Area */}
         <main className="student-dashboard-main psp-page-main">
+          <button
+            type="button"
+            className="dashboard-back-link-below"
+            onClick={handleBack}
+            aria-label="Back to Parent Dashboard"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            <span>Back to Parent Dashboard</span>
+          </button>
           {contentJSX}
         </main>
 

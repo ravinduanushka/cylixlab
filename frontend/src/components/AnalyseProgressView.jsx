@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const ASSIGNMENTS_CONFIG = [
   { id: '01', label: 'Assignment 1', color: '#4dd0e1' },
@@ -15,18 +16,43 @@ const AnalyseProgressView = () => {
   const [assignmentsData, setAssignmentsData] = useState({});
   const [selectedAssignmentId, setSelectedAssignmentId] = useState('01');
 
-  // Load assignments data from localStorage
-  const loadProgressData = () => {
+  // Load assignments data from localStorage and backend
+  const loadProgressData = async () => {
+    let merged = {};
     try {
       const stored = localStorage.getItem('cylixlab_assignments_data');
       if (stored) {
-        setAssignmentsData(JSON.parse(stored));
-      } else {
-        setAssignmentsData({});
+        merged = JSON.parse(stored);
       }
-    } catch {
-      setAssignmentsData({});
-    }
+    } catch {}
+
+    try {
+      let studentName = '';
+      let studentEmail = '';
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      if (u.name) studentName = u.name;
+      if (u.email) studentEmail = u.email;
+
+      const res = await axios.get('/api/courses/student-submissions', {
+        params: { studentName, studentEmail },
+      });
+      if (res.data && res.data.success && Array.isArray(res.data.submissions)) {
+        res.data.submissions.forEach((sub) => {
+          const safeId = String(sub.assignmentId).padStart(2, '0');
+          if (!merged[safeId] || !merged[safeId].completed) {
+            merged[safeId] = {
+              assignmentId: safeId,
+              completed: true,
+              marks: Number(sub.marks) || 0,
+              total: sub.total || 30,
+              correctCount: Number(sub.marks) || 0,
+            };
+          }
+        });
+      }
+    } catch {}
+
+    setAssignmentsData(merged);
   };
 
   useEffect(() => {
