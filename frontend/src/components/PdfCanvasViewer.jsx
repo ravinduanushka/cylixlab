@@ -19,30 +19,45 @@ const PdfCanvasViewer = ({
   const [pdfDoc, setPdfDoc] = useState(null);
   const canvasRefs = useRef({});
 
-  // 1. Load PDF Document
+  // 1. Load PDF Document with automatic fallback
   useEffect(() => {
     if (!url) return;
     let isCancelled = false;
     setLoading(true);
     setError(null);
 
-    const cleanUrl = url.split('#')[0];
+    const loadWithFallback = (targetUrl, isFallbackAttempt = false) => {
+      const cleanUrl = targetUrl.split('#')[0];
+      const loadingTask = pdfjsLib.getDocument(cleanUrl);
 
-    const loadingTask = pdfjsLib.getDocument(cleanUrl);
-    loadingTask.promise
-      .then((doc) => {
-        if (isCancelled) return;
-        setPdfDoc(doc);
-        setNumPages(doc.numPages);
-        if (onTotalPages) onTotalPages(doc.numPages);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (isCancelled) return;
-        console.error('Error loading PDF with PDF.js:', err);
-        setError('Failed to load PDF');
-        setLoading(false);
-      });
+      loadingTask.promise
+        .then((doc) => {
+          if (isCancelled) return;
+          setPdfDoc(doc);
+          setNumPages(doc.numPages);
+          if (onTotalPages) onTotalPages(doc.numPages);
+          setLoading(false);
+        })
+        .catch((err) => {
+          if (isCancelled) return;
+          console.warn(`Error loading PDF from ${cleanUrl}:`, err);
+
+          // If remote (e.g. Cloudinary 401 ACL) fails, attempt automatic fallback to local /uploads/
+          if (!isFallbackAttempt) {
+            const match = cleanUrl.match(/(learning_path_\d+|assignment_\d+)\.pdf/i);
+            if (match) {
+              const localUrl = `/uploads/${match[0]}`;
+              console.log('Attempting local fallback for PDF:', localUrl);
+              return loadWithFallback(localUrl, true);
+            }
+          }
+
+          setError('Failed to load PDF');
+          setLoading(false);
+        });
+    };
+
+    loadWithFallback(url);
 
     return () => {
       isCancelled = true;
