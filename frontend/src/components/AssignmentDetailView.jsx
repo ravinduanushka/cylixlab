@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AssignmentDetailView = ({ assignmentId = '01', onBack }) => {
+const AssignmentDetailView = ({ assignmentId = '01', studentEmail: propEmail = '', studentName: propName = '', onBack }) => {
   const safeAsgId = String(assignmentId).padStart(2, '0');
 
   // 30 minutes countdown timer (30 * 60 = 1800 seconds)
