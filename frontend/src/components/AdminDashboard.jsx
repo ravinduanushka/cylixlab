@@ -66,28 +66,10 @@ const AdminDashboard = () => {
         serverStats = res.data.stats;
       }
 
-      let localData = {};
-      try {
-        const stored = localStorage.getItem('cylixlab_assignments_data');
-        if (stored) localData = JSON.parse(stored);
-      } catch {}
-
       const updated = ['01', '02', '03', '04', '05'].map((asgId, idx) => {
         const s = serverStats.find((item) => item.assignmentId === asgId) || {};
-        let count = s.completedStudents || 0;
-        let avg = s.avgMarks || 0;
-
-        const loc = localData[asgId] || localData[String(idx + 1)];
-        if (loc && loc.completed) {
-          const locMarks = Number(loc.correctCount !== undefined ? loc.correctCount : (loc.marks || 0));
-          if (count === 0) {
-            count = 1;
-            avg = locMarks;
-          } else {
-            avg = Math.round((avg * count + locMarks) / (count + 1));
-            count += 1;
-          }
-        }
+        const count = s.completedStudents || 0;
+        const avg = s.avgMarks || 0;
 
         return {
           id: idx + 1,
