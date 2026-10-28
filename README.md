@@ -176,7 +176,7 @@ CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model su
 
 ---
 
-## 🔌 API Endpoints Reference
+##  API Endpoints Reference
 
 ### 1. Authentication & User Management (`/api/auth`)
 
@@ -215,7 +215,7 @@ CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model su
 
 ---
 
-## 🚀 How to Run Locally
+##  How to Run Locally
 
 ### Prerequisites
 Before running the application, ensure the following are installed:
