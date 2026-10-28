@@ -257,52 +257,9 @@ Once both servers are running:
 
 ## ☁️ Deployment
 
-### Deploying on Vercel
+CylixLab is deployed on [Vercel](https://vercel.com/):
 
-CylixLab is optimized for deployment on [Vercel](https://vercel.com/):
-
-1. **Frontend Deployment**:
-   - Framework preset: `Vite`
-   - Root directory: `frontend`
-   - Build command: `npm run build`
-   - Output directory: `dist`
-   - Environment variables: Set `VITE_API_URL` to your production backend URL.
-
-2. **Backend Serverless Deployment**:
-   - Root directory: `server`
-   - Built-in `vercel.json` routes all incoming requests to `index.js`:
-     ```json
-     {
-       "version": 2,
-       "builds": [{ "src": "index.js", "use": "@vercel/node" }],
-       "routes": [{ "src": "/(.*)", "dest": "index.js" }]
-     }
-     ```
-   - Add all environment variables from `server/.env` into the Vercel Project Settings.
-
----
-
-## ❓ Troubleshooting & FAQs
-
-<details>
-<summary><b>1. Why does the PDF viewer display a blank canvas locally?</b></summary>
-Ensure that you have uploaded a valid PDF file via the Admin Dashboard or that your server's static <code>/uploads</code> path has read permissions. The custom <code>PdfCanvasViewer</code> also gracefully falls back to bundled assignment PDFs.
-</details>
-
-<details>
-<summary><b>2. How can parents and students share the same email address?</b></summary>
-The MongoDB <code>User</code> schema uses a compound unique index on <code>{ email: 1, role: 1 }</code>. This allows a student and parent account to register with the same email address without credential conflicts.
-</details>
-
-<details>
-<summary><b>3. What happens if the AI API keys are not provided?</b></summary>
-The CylixLab Chatbox features an intelligent built-in deterministic fallback engine that resolves basic math equations, common coding syntax inquiries, and study guidance even when third-party AI API keys are absent.
-</details>
-
-<details>
-<summary><b>4. CORS errors during local development?</b></summary>
-Ensure Vite's development proxy is configured in <code>frontend/vite.config.js</code> to forward <code>/api</code> and <code>/uploads</code> to <code>http://localhost:5000</code>.
-</details>
+- 🌐 **Live Link:** [https://cylixlab-77bz.vercel.app/](https://cylixlab-77bz.vercel.app/)
 
 ---
 
