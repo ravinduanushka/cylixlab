@@ -12,7 +12,7 @@ The platform provides personalized learning pathways, interactive assignment sub
 
 ---
 
-##  Key Features
+## ✨ Key Features
 
 ### 1. Student Experience
 - **Personal Profile Management**: View and manage profile details including name, age, grade, email, and academic credentials.
@@ -126,13 +126,13 @@ The platform provides personalized learning pathways, interactive assignment sub
 
 ---
 
-##  User Roles & Permissions
+## 👥 User Roles & Permissions
 
 CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model supporting four primary roles:
 
 ### Role Descriptions
 
-1.  **Student (`student`)**:
+1. 👨‍🎓 **Student (`student`)**:
    - Accesses the personalized Student Dashboard.
    - Views personal academic profile and grade information.
    - Manages personal To-Do tasks (creating, editing, completing, filtering).
@@ -141,21 +141,22 @@ CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model su
    - Tracks individual progress charts and assignment performance.
    - Interacts with the AI Assistant for academic and programming support.
 
-2.  **Parent (`parent`)**:
+2. 👨‍👩‍👧 **Parent (`parent`)**:
    - Accesses the dedicated Parent Dashboard.
    - Links with the registered student account using the student's name or family email.
    - Monitors student assignment submissions, score reports, and pass/fail indicators.
    - Accesses the Parent Advisor AI for guidance on study routines and motivation.
    - Browses motivational resources to encourage positive learning habits.
 
-3.  **Administrator (`admin`)**:
+3. 🛡️ **Administrator (`admin`)**:
    - Accesses the restricted Admin Control Center.
    - Observes global user registration metrics (student-to-parent distribution).
    - Monitors institutional analytics (average assignment marks and student completion rates).
    - Uploads, updates, and manages PDF curricula for Learning Paths and Assignments.
    - Oversees system health and platform operations.
 
-
+4. 👨‍🏫 **Teacher / Instructor (`teacher` / `instructor`)**:
+   - Authorized to manage course details, curriculum content, and evaluate student work.
 
 ---
 
@@ -175,7 +176,7 @@ CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model su
 
 ---
 
-##  Folder Structure
+## 📂 Folder Structure
 
 ```
 cylixlab/
@@ -250,16 +251,96 @@ cylixlab/
 
 ---
 
+## 🔌 API Endpoints Reference
+
+### Authentication (`/api/auth`)
+| Method | Endpoint | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register new account (`student`, `parent`, `teacher`) | Public |
+| `POST` | `/api/auth/login` | Authenticate user & return JWT token + user details | Public |
+| `POST` | `/api/auth/google` | Single Sign-On with Google OAuth credential | Public |
+| `GET` | `/api/auth/verify-email` | Verify account via verification token link | Public |
+| `GET` | `/api/auth/profile` | Retrieve profile information for logged-in user | Authenticated |
+| `GET` | `/api/auth/stats` | Retrieve registration metrics (student vs. parent counts) | Public / Admin |
+
+### Courses, Learning Paths & Assignments (`/api/courses`)
+| Method | Endpoint | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/courses` | Fetch all available courses | Public |
+| `GET` | `/api/courses/:id` | Fetch specific course by ID | Public |
+| `POST` | `/api/courses` | Create new course record | Authenticated |
+| `PUT` | `/api/courses/:id` | Update existing course record | Admin / Instructor |
+| `DELETE` | `/api/courses/:id` | Remove course record | Admin / Instructor |
+| `POST` | `/api/courses/learning-path-pdf` | Upload or update Learning Path PDF file | Admin / Instructor |
+| `GET` | `/api/courses/learning-path-pdf/:pathId` | Download / stream Learning Path PDF | Public |
+| `POST` | `/api/courses/assignment-pdf` | Upload or update Assignment PDF file | Admin / Instructor |
+| `GET` | `/api/courses/assignment-pdf/:assignmentId` | Download / stream Assignment PDF | Public |
+| `POST` | `/api/courses/assignment-submit` | Submit student assignment work and record marks | Authenticated |
+| `GET` | `/api/courses/admin-assignment-stats` | Fetch institutional completion counts & average marks | Admin |
+| `GET` | `/api/courses/student-submissions` | Retrieve submission records for a specific student | Authenticated |
+
+### AI Assistant (`/api/chat`)
+| Method | Endpoint | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/chat` | Send prompt to AI tutor and receive role-specific response | Public / Authenticated |
+| `POST` | `/api/chat/message` | Alternative route for chat completions | Public / Authenticated |
+
 ---
 
+## 🔐 Environment Variables
+
+### Backend Configuration (`server/.env`)
+
+```env
+# Server Port
+PORT=5000
+
+# MongoDB Connection String (Atlas or Local)
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/cylixlab?retryWrites=true&w=majority
+
+# JWT Token Secret
+JWT_SECRET=your_super_secret_jwt_key_here_cylixlab_2026
+
+# Client Application URL (For CORS whitelist)
+CLIENT_URL=http://localhost:5173
+
+# Admin Credentials (Protected system administrator account)
+ADMIN_EMAIL=admin@cylixlab.com
+ADMIN_PASSWORD=AdminSecurePassword123!
+
+# AI Chatbot Integration (Provide at least one)
+GEMINI_API_KEY=your_google_gemini_api_key_here
+GROK_API_KEY=your_xai_grok_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Cloudinary Storage (For hosting curriculum PDF files)
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+# Email Service (Nodemailer for verification emails)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_gmail_app_password
+
+# Google OAuth Integration
+GOOGLE_CLIENT_ID=your_google_oauth_client_id.apps.googleusercontent.com
+```
+
+### Frontend Configuration (`frontend/.env`)
+
+```env
+# Base API URL (Leave blank in local dev to use Vite proxy; set to backend URL in production)
+VITE_API_URL=https://cylixlab.vercel.app
+```
 
 ---
 
-##  How to Run Locally
+## 🚀 How to Run Locally
 
 ### Prerequisites
 Before running the application, ensure the following are installed:
-- [Node.js](https://nodejs.org/) (`v18.x` or higher recommended)
+- [Node.js](https://nodejs.org/)
 - [npm](https://www.npmjs.com/) or [pnpm](https://pnpm.io/)
 - [MongoDB](https://www.mongodb.com/) (Local installation or free [MongoDB Atlas](https://www.mongodb.com/atlas) cluster)
 - [Git](https://git-scm.com/)
@@ -287,11 +368,7 @@ cd cylixlab
    npm install
    ```
 
-3. Create your `.env` configuration:
-   ```bash
-   cp .env.example .env
-   # or manually create .env and fill in the variables listed above
-   ```
+3. Create your `.env` configuration file with the variables listed above.
 
 4. Start the backend development server:
    ```bash
@@ -338,7 +415,7 @@ Once both servers are running:
 
 ---
 
-##  Deployment
+## ☁️ Deployment
 
 ### Deploying on Vercel
 
@@ -365,11 +442,37 @@ CylixLab is optimized for deployment on [Vercel](https://vercel.com/):
 
 ---
 
+## ❓ Troubleshooting & FAQs
+
+<details>
+<summary><b>1. Why does the PDF viewer display a blank canvas locally?</b></summary>
+Ensure that you have uploaded a valid PDF file via the Admin Dashboard or that your server's static <code>/uploads</code> path has read permissions. The custom <code>PdfCanvasViewer</code> also gracefully falls back to bundled assignment PDFs.
+</details>
+
+<details>
+<summary><b>2. How can parents and students share the same email address?</b></summary>
+The MongoDB <code>User</code> schema uses a compound unique index on <code>{ email: 1, role: 1 }</code>. This allows a student and parent account to register with the same email address without credential conflicts.
+</details>
+
+<details>
+<summary><b>3. What happens if the AI API keys are not provided?</b></summary>
+The CylixLab Chatbox features an intelligent built-in deterministic fallback engine that resolves basic math equations, common coding syntax inquiries, and study guidance even when third-party AI API keys are absent.
+</details>
+
+<details>
+<summary><b>4. CORS errors during local development?</b></summary>
+Ensure Vite's development proxy is configured in <code>frontend/vite.config.js</code> to forward <code>/api</code> and <code>/uploads</code> to <code>http://localhost:5000</code>.
+</details>
+
 ---
+
+## 📄 License
+
+This project is licensed under the [ISC License](LICENSE).
 
 ---
 
 <p align="center">
-  <b>Built with  for better learning by the CylixLab Team.</b><br>
+  <b>Built with ❤️ for better learning by the CylixLab Team.</b><br>
   <sub>Learn Smarter. Achieve More. &bull; <a href="https://cylixlab-77bz.vercel.app/">Visit Live App</a></sub>
 </p>
