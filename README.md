@@ -176,7 +176,46 @@ CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model su
 
 ---
 
-##  How to Run Locally
+## 🔌 API Endpoints Reference
+
+### 1. Authentication & User Management (`/api/auth`)
+
+| Method | Endpoint | Description | Request Body / Params | Access |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new user account | `{ name, email, password, role, gender, age, studentName, grade }` | Public |
+| `POST` | `/api/auth/login` | Authenticate user & issue JWT token | `{ email, password, role }` | Public |
+| `POST` | `/api/auth/google` | Single Sign-On with Google OAuth credential | `{ credential, role, studentName }` | Public |
+| `GET` | `/api/auth/verify-email` | Verify account via email token link | Query: `?token=<verificationToken>` | Public |
+| `GET` | `/api/auth/profile` | Retrieve profile of the logged-in user | Header: `Authorization: Bearer <token>` | Authenticated (JWT) |
+| `GET` | `/api/auth/stats` | Retrieve platform registration statistics | None | Public / Admin |
+
+### 2. Courses, Learning Paths & Assignments (`/api/courses`)
+
+| Method | Endpoint | Description | Request Body / Params | Access |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/api/courses` | Retrieve all available courses | Query filters (optional) | Public |
+| `GET` | `/api/courses/:id` | Retrieve specific course details by ID | Param: `:id` | Public |
+| `POST` | `/api/courses` | Create a new course record | Course object payload | Authenticated |
+| `PUT` | `/api/courses/:id` | Update an existing course record | Param: `:id`, Updated course data | Admin / Instructor |
+| `DELETE` | `/api/courses/:id` | Delete a course record | Param: `:id` | Admin / Instructor |
+| `POST` | `/api/courses/learning-path-pdf` | Upload or update Learning Path PDF file | Multipart `file` or Base64 payload + `pathId` | Admin / Instructor |
+| `GET` | `/api/courses/learning-path-pdf/:pathId` | Retrieve / stream Learning Path PDF | Param: `:pathId` | Public |
+| `POST` | `/api/courses/assignment-pdf` | Upload or update Assignment PDF file | Multipart `file` or Base64 payload + `assignmentId` | Admin / Instructor |
+| `GET` | `/api/courses/assignment-pdf/:assignmentId` | Retrieve / stream Assignment PDF | Param: `:assignmentId` | Public |
+| `POST` | `/api/courses/assignment-submit` | Submit student assignment marks & progress | `{ studentEmail, studentName, assignmentId, marks, completed }` | Authenticated |
+| `GET` | `/api/courses/admin-assignment-stats` | Fetch institutional completion counts & averages | None | Admin |
+| `GET` | `/api/courses/student-submissions` | Retrieve all assignment submissions for a student | Query: `?email=<studentEmail>&name=<studentName>` | Authenticated |
+
+### 3. AI Assistant & Smart Chatbot (`/api/chat`)
+
+| Method | Endpoint | Description | Request Body / Params | Access |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/chat` | Send query to AI tutor (Gemini, Grok, Groq, OpenAI) | `{ message, role, history }` | Public / Authenticated |
+| `POST` | `/api/chat/message` | Alternative endpoint for chat message query | `{ message, role, history }` | Public / Authenticated |
+
+---
+
+## 🚀 How to Run Locally
 
 ### Prerequisites
 Before running the application, ensure the following are installed:
