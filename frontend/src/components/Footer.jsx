@@ -27,7 +27,7 @@ const Footer = ({ compact = false, className = '' }) => {
             <span>info@CylixLab.com</span>
           </a>
           <span className="contact-divider" aria-hidden="true"></span>
-          <a href="tel:+94771234567" className="contact-item contact-phone">
+          <a href="tel:+94779118207" className="contact-item contact-phone">
             <PhoneIcon size={15} />
             <span>+94 77 9118207</span>
           </a>
