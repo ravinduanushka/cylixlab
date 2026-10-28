@@ -29,7 +29,7 @@ const Footer = ({ compact = false, className = '' }) => {
           <span className="contact-divider" aria-hidden="true"></span>
           <a href="tel:+94771234567" className="contact-item contact-phone">
             <PhoneIcon size={15} />
-            <span>+94 77 123 4567</span>
+            <span>+94 77 9118207</span>
           </a>
         </div>
       </div>
