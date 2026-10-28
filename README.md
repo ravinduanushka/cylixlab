@@ -163,13 +163,13 @@ The platform provides personalized learning pathways, interactive assignment sub
 
 ---
 
-## 👥 User Roles & Permissions
+##  User Roles & Permissions
 
 CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model supporting four primary roles:
 
 ### Role Descriptions
 
-1. 👨‍🎓 **Student (`student`)**:
+1.  **Student (`student`)**:
    - Accesses the personalized Student Dashboard.
    - Views personal academic profile and grade information.
    - Manages personal To-Do tasks (creating, editing, completing, filtering).
@@ -178,14 +178,14 @@ CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model su
    - Tracks individual progress charts and assignment performance.
    - Interacts with the AI Assistant for academic and programming support.
 
-2. 👨‍👩‍👧 **Parent (`parent`)**:
+2.  **Parent (`parent`)**:
    - Accesses the dedicated Parent Dashboard.
    - Links with the registered student account using the student's name or family email.
    - Monitors student assignment submissions, score reports, and pass/fail indicators.
    - Accesses the Parent Advisor AI for guidance on study routines and motivation.
    - Browses motivational resources to encourage positive learning habits.
 
-3. 🛡️ **Administrator (`admin`)**:
+3.  **Administrator (`admin`)**:
    - Accesses the restricted Admin Control Center.
    - Observes global user registration metrics (student-to-parent distribution).
    - Monitors institutional analytics (average assignment marks and student completion rates).
@@ -212,7 +212,7 @@ CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model su
 
 ---
 
-## 📂 Folder Structure
+##  Folder Structure
 
 ```
 cylixlab/
@@ -292,7 +292,7 @@ cylixlab/
 
 ---
 
-## 🚀 How to Run Locally
+##  How to Run Locally
 
 ### Prerequisites
 Before running the application, ensure the following are installed:
@@ -375,7 +375,7 @@ Once both servers are running:
 
 ---
 
-## ☁️ Deployment
+##  Deployment
 
 ### Deploying on Vercel
 
@@ -407,6 +407,6 @@ CylixLab is optimized for deployment on [Vercel](https://vercel.com/):
 ---
 
 <p align="center">
-  <b>Built with ❤️ for better learning by the CylixLab Team.</b><br>
+  <b>Built with  for better learning by the CylixLab Team.</b><br>
   <sub>Learn Smarter. Achieve More. &bull; <a href="https://cylixlab-77bz.vercel.app/">Visit Live App</a></sub>
 </p>
