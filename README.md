@@ -176,166 +176,6 @@ CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model su
 
 ---
 
-## 📂 Folder Structure
-
-```
-cylixlab/
-├── .gitignore                      # Git ignored files (node_modules, .env, uploads)
-├── README.md                       # Comprehensive project documentation
-│
-├── frontend/                       # React 19 + Vite Frontend Application
-│   ├── public/                     # Static public assets
-│   ├── src/
-│   │   ├── api/
-│   │   │   ├── api.js              # Re-exported unified Axios API instance
-│   │   │   └── axios.js            # Axios client configuration with dynamic Base URL
-│   │   ├── assets/                 # Brand assets, vectors, and imagery (hero.png, react.svg)
-│   │   ├── components/
-│   │   │   ├── AdminDashboard.jsx           # Institutional metrics, PDF uploaders, analytics
-│   │   │   ├── AnalyseProgressView.jsx      # Student progress bar charts & score summary
-│   │   │   ├── AssignmentDetailView.jsx     # Assignment viewer, question reader, submissions
-│   │   │   ├── FeaturesSection.jsx          # Public landing page features grid
-│   │   │   ├── Footer.jsx                   # Universal application footer
-│   │   │   ├── Hero.jsx                     # Landing page hero section & call-to-actions
-│   │   │   ├── Icons.jsx                    # Reusable SVG vector icon components
-│   │   │   ├── LearningPathDetailView.jsx   # Learning track viewer & curriculum display
-│   │   │   ├── Login.jsx                    # User authentication portal (Local & Google OAuth)
-│   │   │   ├── MotivationalQuotesView.jsx   # Curated inspirational quotes carousel
-│   │   │   ├── Navbar.jsx                   # Navigation bar with responsive links & auth state
-│   │   │   ├── OnlineChatbox.jsx            # Multi-model AI Chatbot widget (Student/Parent)
-│   │   │   ├── ParentDashboard.jsx          # Dedicated parent portal home
-│   │   │   ├── ParentStudentProgressView.jsx# Child progress monitoring & performance metrics
-│   │   │   ├── PdfCanvasViewer.jsx          # Custom high-fidelity PDF.js canvas viewer
-│   │   │   ├── PlanSection.jsx              # Landing page study roadmap cards
-│   │   │   ├── Register.jsx                 # Role-based user registration portal
-│   │   │   ├── StudentDashboard.jsx         # Core student hub (To-Do, Paths, Progress, AI)
-│   │   │   └── TodoListManager.jsx          # Full-featured task management board
-│   │   ├── App.css                 # Application-wide styling & theme variables
-│   │   ├── App.jsx                 # React Router configuration & route declarations
-│   │   ├── index.css               # Global CSS reset & typography styles
-│   │   └── main.jsx                # Application root entry point
-│   ├── index.html                  # HTML5 template
-│   ├── package.json                # Frontend scripts and dependencies
-│   └── vite.config.js              # Vite server & proxy configuration
-│
-└── server/                         # Express 5 + Node.js REST API Backend
-    ├── index.js                    # Serverless entry wrapper for Vercel deployment
-    ├── server.js                   # Primary Express application setup, middlewares, routes
-    ├── vercel.json                 # Vercel deployment configuration & route rewrites
-    ├── package.json                # Backend dependencies and execution scripts
-    ├── uploads/                    # Local storage fallback for PDF files & submissions
-    └── src/
-        ├── config/
-        │   ├── cloudinary.js       # Cloudinary SDK credentials & storage initialization
-        │   └── db.js               # MongoDB connection handler with connection caching
-        ├── controllers/
-        │   ├── authController.js   # User registration, login, Google OAuth, stats
-        │   ├── chatController.js   # Multi-provider AI chatbot handler & prompt personas
-        │   └── courseController.js # PDF uploads, assignment submissions, course management
-        ├── middlewares/
-        │   ├── authMiddleware.js   # JWT verification & role authorization guards
-        │   └── uploadMiddleware.js # Multer & Cloudinary multipart/form-data handler
-        ├── models/
-        │   ├── Assignment.js       # Assignment schema & metadata
-        │   ├── AssignmentSubmission.js # Student assignment submission records & marks
-        │   ├── Course.js           # Course schema
-        │   ├── LearningPath.js     # Learning path modules & PDF mapping
-        │   └── User.js             # User schema (roles, bcrypt hooks, OAuth IDs)
-        ├── routes/
-        │   ├── authRoutes.js       # Auth endpoints (/api/auth)
-        │   ├── chatRoutes.js       # AI chat endpoints (/api/chat)
-        │   └── courseRoutes.js     # Course & PDF endpoints (/api/courses)
-        └── utils/
-            └── sendEmail.js        # Nodemailer SMTP email sender utility
-```
-
----
-
-## 🔌 API Endpoints Reference
-
-### Authentication (`/api/auth`)
-| Method | Endpoint | Description | Access |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Register new account (`student`, `parent`, `teacher`) | Public |
-| `POST` | `/api/auth/login` | Authenticate user & return JWT token + user details | Public |
-| `POST` | `/api/auth/google` | Single Sign-On with Google OAuth credential | Public |
-| `GET` | `/api/auth/verify-email` | Verify account via verification token link | Public |
-| `GET` | `/api/auth/profile` | Retrieve profile information for logged-in user | Authenticated |
-| `GET` | `/api/auth/stats` | Retrieve registration metrics (student vs. parent counts) | Public / Admin |
-
-### Courses, Learning Paths & Assignments (`/api/courses`)
-| Method | Endpoint | Description | Access |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/courses` | Fetch all available courses | Public |
-| `GET` | `/api/courses/:id` | Fetch specific course by ID | Public |
-| `POST` | `/api/courses` | Create new course record | Authenticated |
-| `PUT` | `/api/courses/:id` | Update existing course record | Admin / Instructor |
-| `DELETE` | `/api/courses/:id` | Remove course record | Admin / Instructor |
-| `POST` | `/api/courses/learning-path-pdf` | Upload or update Learning Path PDF file | Admin / Instructor |
-| `GET` | `/api/courses/learning-path-pdf/:pathId` | Download / stream Learning Path PDF | Public |
-| `POST` | `/api/courses/assignment-pdf` | Upload or update Assignment PDF file | Admin / Instructor |
-| `GET` | `/api/courses/assignment-pdf/:assignmentId` | Download / stream Assignment PDF | Public |
-| `POST` | `/api/courses/assignment-submit` | Submit student assignment work and record marks | Authenticated |
-| `GET` | `/api/courses/admin-assignment-stats` | Fetch institutional completion counts & average marks | Admin |
-| `GET` | `/api/courses/student-submissions` | Retrieve submission records for a specific student | Authenticated |
-
-### AI Assistant (`/api/chat`)
-| Method | Endpoint | Description | Access |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/chat` | Send prompt to AI tutor and receive role-specific response | Public / Authenticated |
-| `POST` | `/api/chat/message` | Alternative route for chat completions | Public / Authenticated |
-
----
-
-## 🔐 Environment Variables
-
-### Backend Configuration (`server/.env`)
-
-```env
-# Server Port
-PORT=5000
-
-# MongoDB Connection String (Atlas or Local)
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/cylixlab?retryWrites=true&w=majority
-
-# JWT Token Secret
-JWT_SECRET=your_super_secret_jwt_key_here_cylixlab_2026
-
-# Client Application URL (For CORS whitelist)
-CLIENT_URL=http://localhost:5173
-
-# Admin Credentials (Protected system administrator account)
-ADMIN_EMAIL=admin@cylixlab.com
-ADMIN_PASSWORD=AdminSecurePassword123!
-
-# AI Chatbot Integration (Provide at least one)
-GEMINI_API_KEY=your_google_gemini_api_key_here
-GROK_API_KEY=your_xai_grok_api_key_here
-GROQ_API_KEY=your_groq_api_key_here
-OPENAI_API_KEY=your_openai_api_key_here
-
-# Cloudinary Storage (For hosting curriculum PDF files)
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-
-# Email Service (Nodemailer for verification emails)
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_gmail_app_password
-
-# Google OAuth Integration
-GOOGLE_CLIENT_ID=your_google_oauth_client_id.apps.googleusercontent.com
-```
-
-### Frontend Configuration (`frontend/.env`)
-
-```env
-# Base API URL (Leave blank in local dev to use Vite proxy; set to backend URL in production)
-VITE_API_URL=https://cylixlab.vercel.app
-```
-
----
-
 ## 🚀 How to Run Locally
 
 ### Prerequisites
@@ -368,7 +208,7 @@ cd cylixlab
    npm install
    ```
 
-3. Create your `.env` configuration file with the variables listed above.
+3. Configure your `server/.env` file with your database URI, JWT secret, and port.
 
 4. Start the backend development server:
    ```bash
@@ -463,12 +303,6 @@ The CylixLab Chatbox features an intelligent built-in deterministic fallback eng
 <summary><b>4. CORS errors during local development?</b></summary>
 Ensure Vite's development proxy is configured in <code>frontend/vite.config.js</code> to forward <code>/api</code> and <code>/uploads</code> to <code>http://localhost:5000</code>.
 </details>
-
----
-
-## 📄 License
-
-This project is licensed under the [ISC License](LICENSE).
 
 ---
 
