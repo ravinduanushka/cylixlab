@@ -1,0 +1,412 @@
+# CylixLab - AI-Powered Learning Management & Skill Assessment Platform
+
+[![Live Application](https://img.shields.io/badge/Live%20Demo-cylixlab--77bz.vercel.app-00C49F?style=for-the-badge&logo=vercel&logoColor=white)](https://cylixlab-77bz.vercel.app/)
+[![React](https://img.shields.io/badge/Frontend-React%2019%20%7C%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%205-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB%20%7C%20Mongoose-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![License](https://img.shields.io/badge/License-ISC-blue.svg?style=for-the-badge)](LICENSE)
+
+> **Live Deployment:** [https://cylixlab-77bz.vercel.app/](https://cylixlab-77bz.vercel.app/)  
+> 
+
+---
+
+##  Table of Contents
+
+- [Overview](#-overview)
+- [Live Demo](#-live-demo)
+- [Key Features](#-key-features)
+  - [Student Experience](#1-student-experience)
+  - [Parent Experience](#2-parent-experience)
+  - [Administrator Dashboard](#3-administrator-dashboard)
+  - [AI Assistant & Smart Tutoring](#4-ai-assistant--smart-tutoring)
+  - [Security & Authentication](#5-security--authentication)
+- [Tech Stack](#-tech-stack)
+- [User Roles & Permissions](#-user-roles--permissions)
+  - [Role Descriptions](#role-descriptions)
+  - [Role-Based Access Matrix](#role-based-access-control-rbac-matrix)
+- [Folder Structure](#-folder-structure)
+- [API Endpoints Reference](#-api-endpoints-reference)
+- [Environment Variables](#-environment-variables)
+- [How to Run Locally](#-how-to-run-locally)
+  - [Prerequisites](#prerequisites)
+  - [Step 1: Clone the Repository](#step-1-clone-the-repository)
+  - [Step 2: Server Setup & Configuration](#step-2-server-setup--configuration)
+  - [Step 3: Frontend Setup & Configuration](#step-3-frontend-setup--configuration)
+  - [Step 4: Running in Development Mode](#step-4-running-in-development-mode)
+- [Deployment](#-deployment)
+- [Troubleshooting & FAQs](#-troubleshooting--faqs)
+
+---
+
+##  Overview
+
+**CylixLab** (*"Learn Smarter. Achieve More"*) is an AI-powered learning management and skill assessment platform designed to connect **Students**, **Parents**, and **Administrators** in one unified digital ecosystem.
+
+The platform provides personalized learning pathways, interactive assignment submissions with an embedded high-performance PDF canvas viewer, smart to-do productivity management, multi-provider AI tutoring (supporting English and Sinhala), real-time progress analytics with comparative bar charts, and an administrator control center for curriculum uploads and institutional metrics.
+
+---
+
+---
+
+##  Key Features
+
+### 1. Student Experience
+- **Personal Profile Management**: View and manage profile details including name, age, grade, email, and academic credentials.
+- **Interactive To-Do List Manager**:
+  - Filter tasks by **All Tasks**, **Today**, **Upcoming**, **Overdue**, and **Completed**.
+  - Priority labeling: `Urgent`, `High`, `Medium`, and `Low`.
+  - Due date tracking, inline task creation, editing, deletion, and quick status toggling.
+  - Persistent state management with dual-layer synchronization (Local Storage + Cloud state).
+- **Curriculum Learning Paths (Paths 01 to 05)**:
+  - Step-by-step modular curriculum tracks.
+  - Interactive view with integrated learning objectives and study materials.
+- **Interactive Assignments (Assignments 01 to 05)**:
+  - High-performance in-browser **PDF Canvas Viewer** powered by `pdfjs-dist` (no browser extensions or downloads needed).
+  - Multi-page navigation, high-DPI scaling, and responsive rendering.
+  - Direct student response submission with marks scoring (scaled out of 30).
+  - Status tracking with immediate feedback and automatic progress calculation.
+- **Analyze Progress Dashboard**:
+  - Custom SVG/CSS bar charts displaying individual assignment marks against maximum scores (30 marks scale).
+  - Completion status indicators, total performance summary, and pass/fail thresholds.
+- **Motivational Quotes Hub**:
+  - Curated collection of uplifting quotes from renowned thinkers and leaders to inspire daily study habits.
+- **Interactive AI Study Assistant**:
+  - Direct arithmetic and mathematics problem solver (e.g., `12 * 5`, `100 / 4`).
+  - Programming tutor for Python, JavaScript, and algorithmic concepts.
+  - English and Sinhala bilingual query support.
+
+### 2. Parent Experience
+- **Parent Portal Dashboard**: Tailored interface designed specifically for parental monitoring and encouragement.
+- **Linked Student Progress Tracking**:
+  - Real-time visibility into the child's assignment progress, individual scores, and completion status.
+  - Color-coded assignment indicators: Orange (Asg 1), Peach (Asg 2), Coral Pink (Asg 3), Green (Asg 4), and Grey (Asg 5).
+  - Passing score evaluation (threshold at 20/30 marks) and score summaries.
+- **Parent Advisor AI**:
+  - Specialized AI assistant configured to answer parental queries regarding study routines, exam stress, and learning motivation in concise 1–3 sentence responses.
+- **Shared Account Support**:
+  - Students and parents can register independently using the same family email address with strict role segregation in MongoDB (`{ email: 1, role: 1 }` unique compound index).
+
+### 3. Administrator Dashboard
+- **Institutional Analytics**:
+  - Live breakdown of registered users (Student vs. Parent percentages and counts).
+  - Dynamic assignment performance metrics across the entire student body (Average Marks & Total Completed Students per assignment).
+- **Curriculum & Asset Management**:
+  - Drag-and-drop / file browser upload for **Learning Path PDFs** and **Assignment PDFs**.
+  - Dual payload support: Multipart form uploads via Multer and base64 payloads for serverless compatibility.
+  - Cloudinary cloud storage integration with local disk fallback.
+- **Real-Time Operational Widgets**:
+  - Live dynamic digital clock and formatted date display (`Day, DDth Month`).
+  - Instant synchronization upon student submission events via custom window event dispatchers.
+- **Role-Gated Security**:
+  - Strict client-side route guards and server-side JWT authorization ensuring only verified `admin` roles can access management capabilities.
+
+### 4. AI Assistant & Smart Tutoring
+- **Multi-Engine LLM Fallback Pipeline**:
+  - Primary: **Google Generative AI (Gemini 1.5 / 2.0)**
+  - Alternative: **Grok AI / xAI (`grok-beta`)**
+  - Fallback: **Groq (`llama-3.3-70b-versatile`)** and **OpenAI (`gpt-4o-mini`)**
+  - Offline / Local Fallback: Built-in deterministic regex arithmetic engine and instant knowledge base for uninterrupted offline development.
+- **Persona-Aware Prompt Engineering**:
+  - Adapts response tone, brevity, and focus depending on whether the caller is a `student` (concise academic tutor) or `parent` (encouraging educational guide).
+
+### 5. Security & Authentication
+- **Authentication Flows**:
+  - Standard email and password authentication with `bcryptjs` salt hashing (10 rounds).
+  - Google OAuth single sign-on via `google-auth-library`.
+  - Transactional email verification powered by `nodemailer`.
+- **API Hardening**:
+  - **Helmet**: Sets HTTP security headers (`cross-origin-resource-policy`, disables Express header fingerprinting).
+  - **Express Rate Limit**: Brute-force and DoS mitigation (60 authentication attempts per 15 min; 1000 general API requests per 15 min).
+  - **CORS Protection**: Whitelisted origins covering local development (`localhost:5173`, `localhost:3000`) and Vercel domains (`*.vercel.app`).
+
+---
+
+##  Tech Stack
+
+### Frontend
+
+| Technology | Version | Purpose / Usage |
+| :--- | :--- | :--- |
+| **React** | `^19.2.8` | Core UI library for reactive, component-based user interfaces |
+| **Vite** | `^8.3.0` | Ultra-fast build tool, local dev server with Hot Module Replacement (HMR) |
+| **React Router DOM** | `^7.18.4` | Declarative client-side routing and protected navigation |
+| **Axios** | `^1.20.0` | Promise-based HTTP client for API communications with credentials support |
+| **PDF.js (`pdfjs-dist`)** | `^3.11.174` | Hardware-accelerated HTML5 Canvas PDF rendering for learning materials |
+| **CSS3 / Glassmorphism** | Vanilla | Custom modular styling, responsive grid, gradients, and dark/light themes |
+
+### Backend
+
+| Technology | Version | Purpose / Usage |
+| :--- | :--- | :--- |
+| **Node.js** | `>= 18.x` | JavaScript runtime environment executing the server backend |
+| **Express** | `^5.2.1` | Lightweight, scalable REST API web framework |
+| **MongoDB & Mongoose** | `^9.8.0` | Document database and Object Data Modeling (ODM) with schema validation |
+| **JSON Web Token (`jsonwebtoken`)** | `^9.0.3` | Cryptographically signed stateless bearer authentication tokens |
+| **Bcrypt.js** | `^3.0.3` | One-way hashing algorithm for storing salted user passwords securely |
+| **Google Generative AI** | `^0.24.1` | Gemini API client powering the intelligent interactive chatbot |
+| **Cloudinary & Multer** | `^1.41.3` / `^2.5.0` | Cloud-hosted file storage and multipart form handling for PDF curricula |
+| **Nodemailer** | `^9.0.3` | SMTP mailer for account verification and password reset workflows |
+| **Helmet** | `^8.3.0` | HTTP header security suite safeguarding against common web vulnerabilities |
+| **Express Rate Limit** | `^8.7.1` | IP-based request throttling protecting endpoints against abuse and DoS |
+| **Google Auth Library** | `^10.9.0` | Google OAuth token verification and credential processing |
+| **PDF-Parse** | `^2.4.5` | Server-side parsing and text extraction utility for PDF documents |
+
+### Cloud Services & DevOps
+
+| Service | Provider | Purpose |
+| :--- | :--- | :--- |
+| **Frontend Hosting** | Vercel | Global CDN deployment with continuous deployment from GitHub |
+| **Backend API Hosting** | Vercel Serverless | Express app wrapped in Vercel Serverless function (`index.js` / `server.js`) |
+| **Database Cluster** | MongoDB Atlas | Managed cloud NoSQL database with automated replication and backups |
+| **Asset & PDF Storage** | Cloudinary | High-availability CDN delivery for learning path and assignment PDFs |
+
+---
+
+## 👥 User Roles & Permissions
+
+CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model supporting four primary roles:
+
+### Role Descriptions
+
+1. 👨‍🎓 **Student (`student`)**:
+   - Accesses the personalized Student Dashboard.
+   - Views personal academic profile and grade information.
+   - Manages personal To-Do tasks (creating, editing, completing, filtering).
+   - Explores modular Learning Paths (01–05) and views accompanying curriculum PDFs.
+   - Solves and submits Assignments (01–05) with real-time mark calculation.
+   - Tracks individual progress charts and assignment performance.
+   - Interacts with the AI Assistant for academic and programming support.
+
+2. 👨‍👩‍👧 **Parent (`parent`)**:
+   - Accesses the dedicated Parent Dashboard.
+   - Links with the registered student account using the student's name or family email.
+   - Monitors student assignment submissions, score reports, and pass/fail indicators.
+   - Accesses the Parent Advisor AI for guidance on study routines and motivation.
+   - Browses motivational resources to encourage positive learning habits.
+
+3. 🛡️ **Administrator (`admin`)**:
+   - Accesses the restricted Admin Control Center.
+   - Observes global user registration metrics (student-to-parent distribution).
+   - Monitors institutional analytics (average assignment marks and student completion rates).
+   - Uploads, updates, and manages PDF curricula for Learning Paths and Assignments.
+   - Oversees system health and platform operations.
+
+
+
+---
+
+### Role-Based Access Control (RBAC) Matrix
+
+| Feature / Capability | Student | Parent | Admin | Teacher |
+| :--- | :---: | :---: | :---: | :---: |
+| **View Landing Page & Course Plans** | ✅ | ✅ | ✅ | ✅ |
+| **Manage Personal To-Do Lists** | ✅ | ❌ | ❌ | ❌ |
+| **View Learning Paths & PDF Viewer** | ✅ | ❌ | ✅ | ✅ |
+| **Submit Assignments & View Marks** | ✅ | ❌ | ❌ | ❌ |
+| **View Individual Student Analytics** | ✅ | ✅ *(Linked)* | ✅ *(All)* | ✅ |
+| **Access AI Assistant** | ✅ *(Student AI)* | ✅ *(Parent AI)* | ✅ | ✅ |
+| **Upload Learning Path & Assignment PDFs** | ❌ | ❌ | ✅ | ✅ |
+| **View Global Institutional Stats & Charts**| ❌ | ❌ | ✅ | ✅ |
+| **Manage Course & Curriculum Records** | ❌ | ❌ | ✅ | ✅ |
+
+---
+
+## 📂 Folder Structure
+
+```
+cylixlab/
+├── .gitignore                      # Git ignored files (node_modules, .env, uploads)
+├── README.md                       # Comprehensive project documentation
+│
+├── frontend/                       # React 19 + Vite Frontend Application
+│   ├── public/                     # Static public assets
+│   ├── src/
+│   │   ├── api/
+│   │   │   ├── api.js              # Re-exported unified Axios API instance
+│   │   │   └── axios.js            # Axios client configuration with dynamic Base URL
+│   │   ├── assets/                 # Brand assets, vectors, and imagery (hero.png, react.svg)
+│   │   ├── components/
+│   │   │   ├── AdminDashboard.jsx           # Institutional metrics, PDF uploaders, analytics
+│   │   │   ├── AnalyseProgressView.jsx      # Student progress bar charts & score summary
+│   │   │   ├── AssignmentDetailView.jsx     # Assignment viewer, question reader, submissions
+│   │   │   ├── FeaturesSection.jsx          # Public landing page features grid
+│   │   │   ├── Footer.jsx                   # Universal application footer
+│   │   │   ├── Hero.jsx                     # Landing page hero section & call-to-actions
+│   │   │   ├── Icons.jsx                    # Reusable SVG vector icon components
+│   │   │   ├── LearningPathDetailView.jsx   # Learning track viewer & curriculum display
+│   │   │   ├── Login.jsx                    # User authentication portal (Local & Google OAuth)
+│   │   │   ├── MotivationalQuotesView.jsx   # Curated inspirational quotes carousel
+│   │   │   ├── Navbar.jsx                   # Navigation bar with responsive links & auth state
+│   │   │   ├── OnlineChatbox.jsx            # Multi-model AI Chatbot widget (Student/Parent)
+│   │   │   ├── ParentDashboard.jsx          # Dedicated parent portal home
+│   │   │   ├── ParentStudentProgressView.jsx# Child progress monitoring & performance metrics
+│   │   │   ├── PdfCanvasViewer.jsx          # Custom high-fidelity PDF.js canvas viewer
+│   │   │   ├── PlanSection.jsx              # Landing page study roadmap cards
+│   │   │   ├── Register.jsx                 # Role-based user registration portal
+│   │   │   ├── StudentDashboard.jsx         # Core student hub (To-Do, Paths, Progress, AI)
+│   │   │   └── TodoListManager.jsx          # Full-featured task management board
+│   │   ├── App.css                 # Application-wide styling & theme variables
+│   │   ├── App.jsx                 # React Router configuration & route declarations
+│   │   ├── index.css               # Global CSS reset & typography styles
+│   │   └── main.jsx                # Application root entry point
+│   ├── index.html                  # HTML5 template
+│   ├── package.json                # Frontend scripts and dependencies
+│   └── vite.config.js              # Vite server & proxy configuration
+│
+└── server/                         # Express 5 + Node.js REST API Backend
+    ├── index.js                    # Serverless entry wrapper for Vercel deployment
+    ├── server.js                   # Primary Express application setup, middlewares, routes
+    ├── vercel.json                 # Vercel deployment configuration & route rewrites
+    ├── package.json                # Backend dependencies and execution scripts
+    ├── uploads/                    # Local storage fallback for PDF files & submissions
+    └── src/
+        ├── config/
+        │   ├── cloudinary.js       # Cloudinary SDK credentials & storage initialization
+        │   └── db.js               # MongoDB connection handler with connection caching
+        ├── controllers/
+        │   ├── authController.js   # User registration, login, Google OAuth, stats
+        │   ├── chatController.js   # Multi-provider AI chatbot handler & prompt personas
+        │   └── courseController.js # PDF uploads, assignment submissions, course management
+        ├── middlewares/
+        │   ├── authMiddleware.js   # JWT verification & role authorization guards
+        │   └── uploadMiddleware.js # Multer & Cloudinary multipart/form-data handler
+        ├── models/
+        │   ├── Assignment.js       # Assignment schema & metadata
+        │   ├── AssignmentSubmission.js # Student assignment submission records & marks
+        │   ├── Course.js           # Course schema
+        │   ├── LearningPath.js     # Learning path modules & PDF mapping
+        │   └── User.js             # User schema (roles, bcrypt hooks, OAuth IDs)
+        ├── routes/
+        │   ├── authRoutes.js       # Auth endpoints (/api/auth)
+        │   ├── chatRoutes.js       # AI chat endpoints (/api/chat)
+        │   └── courseRoutes.js     # Course & PDF endpoints (/api/courses)
+        └── utils/
+            └── sendEmail.js        # Nodemailer SMTP email sender utility
+```
+
+---
+
+---
+
+
+---
+
+## 🚀 How to Run Locally
+
+### Prerequisites
+Before running the application, ensure the following are installed:
+- [Node.js](https://nodejs.org/) (`v18.x` or higher recommended)
+- [npm](https://www.npmjs.com/) or [pnpm](https://pnpm.io/)
+- [MongoDB](https://www.mongodb.com/) (Local installation or free [MongoDB Atlas](https://www.mongodb.com/atlas) cluster)
+- [Git](https://git-scm.com/)
+
+---
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/your-username/cylixlab.git
+cd cylixlab
+```
+
+---
+
+### Step 2: Server Setup & Configuration
+
+1. Navigate to the `server` directory:
+   ```bash
+   cd server
+   ```
+
+2. Install backend dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create your `.env` configuration:
+   ```bash
+   cp .env.example .env
+   # or manually create .env and fill in the variables listed above
+   ```
+
+4. Start the backend development server:
+   ```bash
+   npm run dev
+   ```
+   *The server will start on `http://localhost:5000` with nodemon auto-reload.*
+
+---
+
+### Step 3: Frontend Setup & Configuration
+
+1. Open a new terminal window and navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+   *The client will start on `http://localhost:5173`.*
+
+---
+
+### Step 4: Running in Development Mode
+
+Once both servers are running:
+1. Open your browser and visit: `http://localhost:5173`
+2. **Register a Student Account**:
+   - Go to `http://localhost:5173/register`
+   - Select the **Student** role, fill in your details, and submit.
+3. **Register a Parent Account**:
+   - Go to `http://localhost:5173/register`
+   - Select the **Parent** role, enter your details and the registered student's name.
+4. **Log in as Administrator**:
+   - Go to `http://localhost:5173/login`
+   - Enter your configured `ADMIN_EMAIL` and `ADMIN_PASSWORD` from `server/.env`.
+   - Access the Admin Dashboard at `http://localhost:5173/admin`.
+
+---
+
+## ☁️ Deployment
+
+### Deploying on Vercel
+
+CylixLab is optimized for deployment on [Vercel](https://vercel.com/):
+
+1. **Frontend Deployment**:
+   - Framework preset: `Vite`
+   - Root directory: `frontend`
+   - Build command: `npm run build`
+   - Output directory: `dist`
+   - Environment variables: Set `VITE_API_URL` to your production backend URL.
+
+2. **Backend Serverless Deployment**:
+   - Root directory: `server`
+   - Built-in `vercel.json` routes all incoming requests to `index.js`:
+     ```json
+     {
+       "version": 2,
+       "builds": [{ "src": "index.js", "use": "@vercel/node" }],
+       "routes": [{ "src": "/(.*)", "dest": "index.js" }]
+     }
+     ```
+   - Add all environment variables from `server/.env` into the Vercel Project Settings.
+
+---
+
+---
+
+---
+
+<p align="center">
+  <b>Built with ❤️ for better learning by the CylixLab Team.</b><br>
+  <sub>Learn Smarter. Achieve More. &bull; <a href="https://cylixlab-77bz.vercel.app/">Visit Live App</a></sub>
+</p>
