@@ -1,51 +1,14 @@
 # CylixLab - AI-Powered Learning Management & Skill Assessment Platform
 
-[![Live Application](https://img.shields.io/badge/Live%20Demo-cylixlab--77bz.vercel.app-00C49F?style=for-the-badge&logo=vercel&logoColor=white)](https://cylixlab-77bz.vercel.app/)
-[![React](https://img.shields.io/badge/Frontend-React%2019%20%7C%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%205-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/Database-MongoDB%20%7C%20Mongoose-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![License](https://img.shields.io/badge/License-ISC-blue.svg?style=for-the-badge)](LICENSE)
-
-> **Live Deployment:** [https://cylixlab-77bz.vercel.app/](https://cylixlab-77bz.vercel.app/)  
-> 
+> **Live Application:** [https://cylixlab-77bz.vercel.app/](https://cylixlab-77bz.vercel.app/)
 
 ---
 
-##  Table of Contents
-
-- [Overview](#-overview)
-- [Live Demo](#-live-demo)
-- [Key Features](#-key-features)
-  - [Student Experience](#1-student-experience)
-  - [Parent Experience](#2-parent-experience)
-  - [Administrator Dashboard](#3-administrator-dashboard)
-  - [AI Assistant & Smart Tutoring](#4-ai-assistant--smart-tutoring)
-  - [Security & Authentication](#5-security--authentication)
-- [Tech Stack](#-tech-stack)
-- [User Roles & Permissions](#-user-roles--permissions)
-  - [Role Descriptions](#role-descriptions)
-  - [Role-Based Access Matrix](#role-based-access-control-rbac-matrix)
-- [Folder Structure](#-folder-structure)
-- [API Endpoints Reference](#-api-endpoints-reference)
-- [Environment Variables](#-environment-variables)
-- [How to Run Locally](#-how-to-run-locally)
-  - [Prerequisites](#prerequisites)
-  - [Step 1: Clone the Repository](#step-1-clone-the-repository)
-  - [Step 2: Server Setup & Configuration](#step-2-server-setup--configuration)
-  - [Step 3: Frontend Setup & Configuration](#step-3-frontend-setup--configuration)
-  - [Step 4: Running in Development Mode](#step-4-running-in-development-mode)
-- [Deployment](#-deployment)
-- [Troubleshooting & FAQs](#-troubleshooting--faqs)
-
----
-
-##  Overview
+## 🌟 Overview
 
 **CylixLab** (*"Learn Smarter. Achieve More"*) is an AI-powered learning management and skill assessment platform designed to connect **Students**, **Parents**, and **Administrators** in one unified digital ecosystem.
 
 The platform provides personalized learning pathways, interactive assignment submissions with an embedded high-performance PDF canvas viewer, smart to-do productivity management, multi-provider AI tutoring (supporting English and Sinhala), real-time progress analytics with comparative bar charts, and an administrator control center for curriculum uploads and institutional metrics.
-
----
 
 ---
 
@@ -122,35 +85,35 @@ The platform provides personalized learning pathways, interactive assignment sub
 
 ---
 
-##  Tech Stack
+## 🛠 Tech Stack
 
 ### Frontend
 
-| Technology | Version | Purpose / Usage |
-| :--- | :--- | :--- |
-| **React** | `^19.2.8` | Core UI library for reactive, component-based user interfaces |
-| **Vite** | `^8.3.0` | Ultra-fast build tool, local dev server with Hot Module Replacement (HMR) |
-| **React Router DOM** | `^7.18.4` | Declarative client-side routing and protected navigation |
-| **Axios** | `^1.20.0` | Promise-based HTTP client for API communications with credentials support |
-| **PDF.js (`pdfjs-dist`)** | `^3.11.174` | Hardware-accelerated HTML5 Canvas PDF rendering for learning materials |
-| **CSS3 / Glassmorphism** | Vanilla | Custom modular styling, responsive grid, gradients, and dark/light themes |
+| Technology | Purpose / Usage |
+| :--- | :--- |
+| **React** | Core UI library for reactive, component-based user interfaces |
+| **Vite** | Ultra-fast build tool, local dev server with Hot Module Replacement (HMR) |
+| **React Router DOM** | Declarative client-side routing and protected navigation |
+| **Axios** | Promise-based HTTP client for API communications with credentials support |
+| **PDF.js (`pdfjs-dist`)** | Hardware-accelerated HTML5 Canvas PDF rendering for learning materials |
+| **CSS3 / Glassmorphism** | Custom modular styling, responsive grid, gradients, and dark/light themes |
 
 ### Backend
 
-| Technology | Version | Purpose / Usage |
-| :--- | :--- | :--- |
-| **Node.js** | `>= 18.x` | JavaScript runtime environment executing the server backend |
-| **Express** | `^5.2.1` | Lightweight, scalable REST API web framework |
-| **MongoDB & Mongoose** | `^9.8.0` | Document database and Object Data Modeling (ODM) with schema validation |
-| **JSON Web Token (`jsonwebtoken`)** | `^9.0.3` | Cryptographically signed stateless bearer authentication tokens |
-| **Bcrypt.js** | `^3.0.3` | One-way hashing algorithm for storing salted user passwords securely |
-| **Google Generative AI** | `^0.24.1` | Gemini API client powering the intelligent interactive chatbot |
-| **Cloudinary & Multer** | `^1.41.3` / `^2.5.0` | Cloud-hosted file storage and multipart form handling for PDF curricula |
-| **Nodemailer** | `^9.0.3` | SMTP mailer for account verification and password reset workflows |
-| **Helmet** | `^8.3.0` | HTTP header security suite safeguarding against common web vulnerabilities |
-| **Express Rate Limit** | `^8.7.1` | IP-based request throttling protecting endpoints against abuse and DoS |
-| **Google Auth Library** | `^10.9.0` | Google OAuth token verification and credential processing |
-| **PDF-Parse** | `^2.4.5` | Server-side parsing and text extraction utility for PDF documents |
+| Technology | Purpose / Usage |
+| :--- | :--- |
+| **Node.js** | JavaScript runtime environment executing the server backend |
+| **Express** | Lightweight, scalable REST API web framework |
+| **MongoDB & Mongoose** | Document database and Object Data Modeling (ODM) with schema validation |
+| **JSON Web Token (`jsonwebtoken`)** | Cryptographically signed stateless bearer authentication tokens |
+| **Bcrypt.js** | One-way hashing algorithm for storing salted user passwords securely |
+| **Google Generative AI** | Gemini API client powering the intelligent interactive chatbot |
+| **Cloudinary & Multer** | Cloud-hosted file storage and multipart form handling for PDF curricula |
+| **Nodemailer** | SMTP mailer for account verification and password reset workflows |
+| **Helmet** | HTTP header security suite safeguarding against common web vulnerabilities |
+| **Express Rate Limit** | IP-based request throttling protecting endpoints against abuse and DoS |
+| **Google Auth Library** | Google OAuth token verification and credential processing |
+| **PDF-Parse** | Server-side parsing and text extraction utility for PDF documents |
 
 ### Cloud Services & DevOps
 
