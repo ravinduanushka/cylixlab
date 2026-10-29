@@ -5601,13 +5601,15 @@
   .student-content-container.progress-content-container {
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
+    padding: 16px 12px 40px;
   }
 
   .ap-top-columns {
     flex-direction: column;
     align-items: center;
-    gap: 28px;
+    gap: 24px;
+    width: 100%;
   }
 
   .ap-chart-card,
@@ -5616,8 +5618,35 @@
     max-width: 440px;
   }
 
+  .ap-chart-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ap-green-feedback-box {
+    padding: 18px 16px;
+  }
+
   .ap-feedback-text-wrap {
-    font-size: 16px;
+    font-size: 14.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ap-feedback-text-wrap {
+    font-size: 13.5px;
+  }
+  .ap-finished-name {
+    font-size: 15px;
+  }
+  .ap-green-feedback-box {
+    padding: 14px 12px;
+  }
+  .ap-feedback-row {
+    gap: 8px;
+  }
+  .ap-asterisk {
+    font-size: 20px;
   }
 }
 
@@ -6121,6 +6150,50 @@
 
   .psp-legend-table {
     margin-right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .psp-page-main {
+    padding: 16px 12px 40px;
+  }
+  .psp-barchart-card {
+    padding: 16px 8px;
+    width: 100%;
+  }
+  .psp-barchart-plot {
+    height: 200px;
+  }
+  .psp-finished-and-status-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+  }
+  .psp-finished-box {
+    width: 100%;
+    max-width: 200px;
+  }
+  .psp-status-box {
+    width: 100%;
+    max-width: 135px;
+  }
+  .psp-cycle-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .psp-yellow-note-pill {
+    font-size: 13.5px;
+    padding: 10px 16px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .psp-green-card {
+    padding: 16px 14px;
+  }
+  .psp-green-text {
+    font-size: 13px;
   }
 }
 
