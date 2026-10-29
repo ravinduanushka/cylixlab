@@ -6769,14 +6769,10 @@
 
 /* Responsive adjustments for Admin page */
 @media (max-width: 820px) {
-  .admin-top-metrics-grid,
-  .admin-graphs-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .admin-content-card {
-    padding: 24px 20px;
+  .admin-page-header {
+    height: auto;
+    min-height: 90px;
+    padding: 16px 20px;
   }
 
   .admin-header-content {
@@ -6787,5 +6783,76 @@
 
   .admin-header-right {
     align-items: flex-start;
+  }
+
+  .admin-greeting-text {
+    font-size: 20px;
+  }
+
+  .admin-header-title {
+    font-size: 22px;
+  }
+
+  .admin-top-metrics-grid,
+  .admin-graphs-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .admin-content-card {
+    padding: 24px 18px;
+  }
+
+  .admin-input-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .admin-underline-input {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .admin-upload-teal-bar {
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-upload-teal-hint {
+    font-size: 12px;
+  }
+
+  .admin-dropzone-box {
+    padding: 24px 16px;
+  }
+
+  .admin-dropzone-text {
+    font-size: 13px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-registered-circles {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .admin-clock-card {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .admin-digital-time-block {
+    align-items: center;
+  }
+
+  .admin-content-card {
+    padding: 16px 12px;
   }
 }
