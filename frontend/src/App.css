@@ -45,6 +45,46 @@
   opacity: 0.9;
 }
 
+/* Mobile Hamburger Toggle (Hidden by default on desktop) */
+.navbar-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 60;
+}
+
+.navbar-mobile-toggle .toggle-bar {
+  width: 100%;
+  height: 3px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.navbar-mobile-toggle.is-open .toggle-bar:nth-child(1) {
+  transform: translateY(9.5px) rotate(45deg);
+}
+
+.navbar-mobile-toggle.is-open .toggle-bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.navbar-mobile-toggle.is-open .toggle-bar:nth-child(3) {
+  transform: translateY(-9.5px) rotate(-45deg);
+}
+
+.navbar-mobile-backdrop {
+  display: none;
+}
+
 .navbar-links {
   display: flex;
   align-items: center;

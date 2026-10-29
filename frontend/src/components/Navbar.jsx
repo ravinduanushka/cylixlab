@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const Navbar = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -30,6 +31,7 @@ const Navbar = () => {
       localStorage.removeItem('cylixlab_parent_progress_data');
     } catch {}
     setCurrentUser(null);
+    setMobileMenuOpen(false);
     navigate('/');
   };
 
@@ -52,6 +54,7 @@ const Navbar = () => {
 
   const scrollToSection = (e, sectionId) => {
     e.preventDefault();
+    setMobileMenuOpen(false);
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -62,9 +65,33 @@ const Navbar = () => {
     <header className="navbar-container">
       <div className="navbar-content">
         <div className="navbar-logo">
-          <Link to="/">CylixLab</Link>
+          <Link to="/" onClick={() => setMobileMenuOpen(false)}>CylixLab</Link>
         </div>
-        <nav className="navbar-links">
+
+        {/* Mobile Hamburger Button */}
+        <button
+          type="button"
+          className={`navbar-mobile-toggle ${mobileMenuOpen ? 'is-open' : ''}`}
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={mobileMenuOpen}
+        >
+          <span className="toggle-bar"></span>
+          <span className="toggle-bar"></span>
+          <span className="toggle-bar"></span>
+        </button>
+
+        {/* Mobile Menu Backdrop */}
+        {mobileMenuOpen && (
+          <div
+            className="navbar-mobile-backdrop"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Navigation Links */}
+        <nav className={`navbar-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <a
             href="#home"
             className="nav-link active"
@@ -95,7 +122,11 @@ const Navbar = () => {
           </a>
           {dashboardInfo && (
             <>
-              <Link to={dashboardInfo.to} className="nav-link">
+              <Link
+                to={dashboardInfo.to}
+                className="nav-link"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 {dashboardInfo.label}
               </Link>
               <button
