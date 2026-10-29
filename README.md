@@ -126,6 +126,152 @@
 
 ---
 
+## 📊 Database Architecture & Entity-Relationship Diagram (ERD)
+
+CylixLab leverages **MongoDB Atlas** with **Mongoose ODM** alongside cloud document storage on **Cloudinary**. The database schema establishes clean relational mapping with index optimization for role separation, curriculum delivery, interactive quiz scoring, and task management.
+
+### Entity-Relationship Diagram (ERD)
+
+```mermaid
+erDiagram
+    %% ==========================================
+    %% RELATIONSHIPS & CARDINALITIES
+    %% ==========================================
+
+    %% 1:1 - Learning Path corresponds directly to each Assignment track
+    LEARNING_PATH ||--|| ASSIGNMENT : "guides (1:1)"
+
+    %% 1:N - An Assignment receives multiple student submissions
+    ASSIGNMENT ||--o{ ASSIGNMENT_SUBMISSION : "receives (1:N)"
+
+    %% 1:N - A Student submits multiple assignment submissions
+    USER ||--o{ ASSIGNMENT_SUBMISSION : "submits (1:N)"
+
+    %% 1:N - A Student manages multiple To-Do tasks
+    USER ||--o{ TODO_TASK : "manages (1:N)"
+
+    %% 1:N - An Instructor creates multiple courses
+    USER ||--o{ COURSE : "instructs (1:N)"
+
+    %% 1:N - Course modules and lessons hierarchy
+    COURSE ||--|{ CHAPTER : "contains (1:N)"
+    CHAPTER ||--|{ LESSON : "contains (1:N)"
+
+    %% 1:N - Parent monitors student account(s) via studentName / email
+    USER ||--o{ USER : "parent monitors student (1:N)"
+
+    %% ==========================================
+    %% ENTITIES & ATTRIBUTES
+    %% ==========================================
+
+    USER {
+        string _id PK "Unique ObjectId"
+        string name "Full Name"
+        string email UK "User Email Address"
+        string password "Hashed bcrypt Password"
+        string role "student | parent | teacher | admin"
+        string gender "Male | Female | Other"
+        int age "Student Age"
+        string studentName "Linked Student (Parent role)"
+        string grade "Class Grade / Year"
+        boolean isVerified "Account Verified"
+        string verificationToken "Secure Token"
+        date verificationTokenExpire "Token Expiry"
+        string googleId "Google OAuth ID"
+        string authProvider "local | google"
+        date createdAt "Creation Timestamp"
+        date updatedAt "Last Update Timestamp"
+    }
+
+    LEARNING_PATH {
+        string _id PK "Unique ObjectId"
+        string pathId UK "Path ID (01, 02, 03, 04, 05)"
+        string fileName "Curriculum PDF Name"
+        string url "Cloudinary PDF URL"
+        string cloudinaryPublicId "Cloudinary Asset ID"
+        int totalPages "Total Pages (Default: 12)"
+        date createdAt "Creation Timestamp"
+        date updatedAt "Last Update Timestamp"
+    }
+
+    ASSIGNMENT {
+        string _id PK "Unique ObjectId"
+        string assignmentId UK "Assignment ID (01, 02, 03, 04, 05)"
+        string fileName "Assignment PDF Name"
+        string url "Cloudinary PDF URL"
+        string cloudinaryPublicId "Cloudinary Asset ID"
+        json questions "30 MCQ Questions Array"
+        date createdAt "Creation Timestamp"
+        date updatedAt "Last Update Timestamp"
+    }
+
+    ASSIGNMENT_SUBMISSION {
+        string _id PK "Unique ObjectId"
+        string assignmentId FK "References ASSIGNMENT.assignmentId"
+        string studentEmail FK "References USER.email"
+        string studentName "Student Full Name"
+        int marks "Score Obtained (0 to 30)"
+        int total "Maximum Marks (30)"
+        int answeredCount "Number of Answered Questions"
+        date submittedAt "Submission Timestamp"
+        date createdAt "Creation Timestamp"
+        date updatedAt "Last Update Timestamp"
+    }
+
+    TODO_TASK {
+        string _id PK "Unique ObjectId / UUID"
+        string studentEmail FK "References USER.email"
+        string title "Task Title"
+        string category "Study | Personal | Work"
+        date dueDate "Due Deadline"
+        boolean completed "Completion Status (true / false)"
+        date createdAt "Creation Timestamp"
+    }
+
+    COURSE {
+        string _id PK "Unique ObjectId"
+        string title "Course Title"
+        string description "Course Description"
+        string category "Course Domain / Category"
+        string instructor FK "References USER._id"
+        float price "Course Price"
+        string thumbnail "Image Cover URL"
+        boolean isPublished "Published Status"
+        date createdAt "Creation Timestamp"
+        date updatedAt "Last Update Timestamp"
+    }
+
+    CHAPTER {
+        string _id PK "Unique ObjectId"
+        string course_id FK "References COURSE._id"
+        string title "Chapter Module Title"
+    }
+
+    LESSON {
+        string _id PK "Unique ObjectId"
+        string chapter_id FK "References CHAPTER._id"
+        string title "Lesson Lecture Title"
+        string videoUrl "Cloudinary / Stream URL"
+        string duration "Duration (e.g. 15 mins)"
+        boolean isFreePreview "Preview Allowed"
+    }
+```
+
+### Database Cardinality & Relationships Table
+
+| Source Entity | Relationship | Target Entity | Foreign Key / Mapping | Description |
+| :--- | :---: | :--- | :--- | :--- |
+| **LEARNING_PATH** | **1:1** | **ASSIGNMENT** | `pathId` ⟷ `assignmentId` | Each curriculum path (01–05) directly corresponds to its interactive assignment. |
+| **ASSIGNMENT** | **1:N** | **ASSIGNMENT_SUBMISSION** | `assignmentId` ➔ `ASSIGNMENT.assignmentId` | An assignment can be completed and submitted by multiple students. |
+| **USER** *(Student)* | **1:N** | **ASSIGNMENT_SUBMISSION** | `studentEmail` ➔ `USER.email` | A student completes and records multiple assignment submissions. |
+| **USER** *(Student)* | **1:N** | **TODO_TASK** | `studentEmail` ➔ `USER.email` | A student creates and manages multiple To-Do tasks and deadlines. |
+| **USER** *(Instructor)* | **1:N** | **COURSE** | `instructor` ➔ `USER._id` | An instructor designs and publishes multiple courses. |
+| **COURSE** | **1:N** | **CHAPTER** | `course_id` ➔ `COURSE._id` | A course contains multiple learning chapters. |
+| **CHAPTER** | **1:N** | **LESSON** | `chapter_id` ➔ `CHAPTER._id` | A chapter contains multiple video lectures/lessons. |
+| **USER** *(Parent)* | **1:N** | **USER** *(Student)* | `studentName` / family `email` | A parent account monitors student progress via the child's registered name. |
+
+---
+
 ##  User Roles & Permissions
 
 CylixLab incorporates a multi-tier Role-Based Access Control (**RBAC**) model supporting four primary roles:
