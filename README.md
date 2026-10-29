@@ -126,7 +126,7 @@
 
 ---
 
-## 📊 Database Architecture & Entity-Relationship Diagram (ERD)
+##  Database Architecture & Entity-Relationship Diagram (ERD)
 
 CylixLab leverages **MongoDB Atlas** with **Mongoose ODM** alongside cloud document storage on **Cloudinary**. The database schema establishes clean relational mapping with index optimization for role separation, curriculum delivery, interactive quiz scoring, and task management.
 
