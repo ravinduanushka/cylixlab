@@ -1,5 +1,7 @@
 # CylixLab - AI-Powered Learning Management & Skill Assessment Platform
 
+[![Welcome to CylixLab](images/welcome-banner.png)](https://cylixlab-77bz.vercel.app/)
+
 > **Live Application:** [https://cylixlab-77bz.vercel.app/](https://cylixlab-77bz.vercel.app/)
 
 ---
